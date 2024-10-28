@@ -30,18 +30,6 @@ class AboutLckViewModel @Inject constructor(
     private val _rankingDetails = MutableStateFlow<AboutLckRankingDetailsModel?>(null)
     val rankingDetails: StateFlow<AboutLckRankingDetailsModel?> get() = _rankingDetails
 
-
-    val temp = MutableSharedFlow<AboutLckMatchDetailsModel>()
-
-    /*fun fetch(){
-        viewModelScope.launch {
-            repository.fetchLckMatchDetails("2024-08-21").onSuccess {
-                temp.emit(it)
-            }.onFailure {
-
-            }
-        }
-    }*/
     fun fetchLckMatchDetails(searchDate: String){
         viewModelScope.launch{
             val result = repository.fetchLckMatchDetails(searchDate)
