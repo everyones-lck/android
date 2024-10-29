@@ -59,10 +59,10 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
                 viewModel.fetchTodayMatchPog(matchId)
 
                 // 탭 선택 리스너 설정
-                viewModel.selectedTabIndex.observe(viewLifecycleOwner) { tabIndex ->
-                    this.tabIndex = tabIndex
-                    Timber.d("Tab selected: $tabIndex")
-                }
+//                viewModel.selectedTabIndex.observe(viewLifecycleOwner) { tabIndex ->
+//                    this.tabIndex = tabIndex
+//                    Timber.d("Tab selected: $tabIndex")
+//                }
             }
         }
     }
@@ -74,10 +74,11 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
         // 어댑터 설정 (초기에는 기본 setCount로 설정)
         lckPogMatchRVA = LckPogMatchRVA(
             setCount = newSetCount,
-            onTabSelected = { tabIndex ->
-                viewModel.updateSelectedTab(tabIndex)
-                Timber.d("frtabIndex %s", tabIndex.toString())
-            }
+            onTabSelected = 0
+//            onTabSelected = { tabIndex ->
+//                viewModel.updateSelectedTab(tabIndex)
+//                Timber.d("frtabIndex %s", tabIndex.toString())
+//            }
         )
         binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
         binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA

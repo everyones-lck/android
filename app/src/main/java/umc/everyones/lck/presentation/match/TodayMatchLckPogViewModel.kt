@@ -27,13 +27,13 @@ class TodayMatchLckPogViewModel @Inject constructor(
     private val _pogData = MutableLiveData<CommonTodayMatchPogModel>()
     val pogData: LiveData<CommonTodayMatchPogModel> get() = _pogData
 
-    private val _selectedTabIndex = MutableLiveData<Int>()
-    val selectedTabIndex: LiveData<Int> get() = _selectedTabIndex
-
-    fun updateSelectedTab(tabIndex: Int) {
-        _selectedTabIndex.value = tabIndex
-        Timber.d("tabIndex %s", tabIndex.toString())
-    }
+//    private val _selectedTabIndex = MutableLiveData<Int>()
+//    val selectedTabIndex: LiveData<Int> get() = _selectedTabIndex
+//
+//    fun updateSelectedTab(tabIndex: Int) {
+//        _selectedTabIndex.value = tabIndex
+//        Timber.d("tabIndex %s", tabIndex.toString())
+//    }
     // 세트 수를 저장하는 LiveData
     private val _setCount = MutableLiveData<TodayMatchSetCountModel>()
     val setCount: LiveData<TodayMatchSetCountModel> get() = _setCount
