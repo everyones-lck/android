@@ -26,23 +26,9 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
     override fun initObserver() {
         // 세트 수를 받아와서 탭 레이아웃 설정
         viewModel.setCount.observe(viewLifecycleOwner) { setCountModel ->
-            lckPogMatchRVA.updateSetCount(setCountModel.setCount)
+            setupRecyclerView(setCountModel.setCount) // setCount 변경 시 RecyclerView 초기화
             Timber.d("Set Count: ${setCountModel.setCount}")
         }
-//        // 각 세트의 POG 데이터를 관찰하여 리사이클러뷰 업데이트
-//        viewModel.setPogData.observe(viewLifecycleOwner) { pogData ->
-//            pogData?.let {
-//                lckPogMatchRVA.updatePlayers(listOf(CommonTodayMatchPogModel(it.id, it.name, it.profileImageUrl, it.seasonInfo, it.matchNumber, it.matchDate, tabIndex)))
-//                Timber.d("Set POG Data: $pogData")
-//            }
-//        }
-//        // 매치 POG 데이터를 관찰하여 리사이클러뷰 업데이트
-//        viewModel.matchPogData.observe(viewLifecycleOwner) { pogData ->
-//            pogData?.let {
-//                lckPogMatchRVA.updatePlayers(listOf(CommonTodayMatchPogModel(it.id, it.name, it.profileImageUrl, it.seasonInfo, it.matchNumber, it.matchDate, tabIndex)))
-//                Timber.d("Match POG Data: $pogData")
-//            }
-//        }
 
         viewModel.pogData.observe(viewLifecycleOwner) { response ->
             response?.let {
@@ -82,12 +68,12 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
     }
 
     override fun initView() {
-        setupRecyclerView()
+
     }
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(newSetCount: Int) {
         // 어댑터 설정 (초기에는 기본 setCount로 설정)
         lckPogMatchRVA = LckPogMatchRVA(
-            setCount = 1,  // 초기값
+            setCount = newSetCount,
             onTabSelected = { tabIndex ->
                 viewModel.updateSelectedTab(tabIndex)
                 Timber.d("frtabIndex %s", tabIndex.toString())

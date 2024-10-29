@@ -51,17 +51,15 @@ class LckPogPlayerRVA() :
         }
     }
     class DiffCallback : DiffUtil.ItemCallback<CommonTodayMatchPogModel.PogPlayerModel>() {
-//        override fun areItemsTheSame(oldItem: CommonTodayMatchPogModel.PogPlayerModel, newItem: CommonTodayMatchPogModel.PogPlayerModel) =
-//            oldItem.name == newItem.name
-    override fun areItemsTheSame(oldItem: CommonTodayMatchPogModel.PogPlayerModel, newItem: CommonTodayMatchPogModel.PogPlayerModel): Boolean {
-        return when {
-            oldItem is CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel && newItem is CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel ->
-                oldItem.playerId == newItem.playerId
-            oldItem is CommonTodayMatchPogModel.PogPlayerModel.MatchPogResponseModel && newItem is CommonTodayMatchPogModel.PogPlayerModel.MatchPogResponseModel ->
-                oldItem.playerId == newItem.playerId
-            else -> false
+        override fun areItemsTheSame(oldItem: CommonTodayMatchPogModel.PogPlayerModel, newItem: CommonTodayMatchPogModel.PogPlayerModel): Boolean {
+            return when {
+                oldItem is CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel && newItem is CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel ->
+                    oldItem.playerId == newItem.playerId
+                oldItem is CommonTodayMatchPogModel.PogPlayerModel.MatchPogResponseModel && newItem is CommonTodayMatchPogModel.PogPlayerModel.MatchPogResponseModel ->
+                    oldItem.playerId == newItem.playerId
+                else -> false
+            }
         }
-    }
 
 
         override fun areContentsTheSame(oldItem: CommonTodayMatchPogModel.PogPlayerModel, newItem: CommonTodayMatchPogModel.PogPlayerModel) =
