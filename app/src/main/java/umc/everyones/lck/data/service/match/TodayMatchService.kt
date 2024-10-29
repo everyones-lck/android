@@ -30,17 +30,6 @@ interface TodayMatchService {
         @Query("match-id") matchId: Long
     ): BaseResponse<MatchTodayMatchResponseDto>
 
-//    @POST("pog/set")
-//    suspend fun fetchTodayMatchSetPog(
-//        @Query("set-index") setIndex: Int,
-//        @Body request: CommonPogRequestDto
-//    ): BaseResponse<CommonTodayMatchPogResponseDto>
-//
-//    @POST("pog/match")
-//    suspend fun fetchTodayMatchMatchPog(
-//        @Body request: CommonPogRequestDto
-//    ): BaseResponse<CommonTodayMatchPogResponseDto>
-
     @POST("pog/result")
     suspend fun fetchTodayMatchPog(
         @Body request: CommonPogRequestDto

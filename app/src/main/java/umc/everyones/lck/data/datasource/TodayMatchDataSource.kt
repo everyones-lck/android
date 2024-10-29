@@ -16,8 +16,6 @@ interface TodayMatchDataSource{
     suspend fun fetchTodayMatchInformation(): BaseResponse<TodayMatchInformationResponseDto>
     suspend fun fetchTodayMatchVoteMatch(matchId: Long): BaseResponse<MatchTodayMatchResponseDto>
     suspend fun fetchTodayMatchPogPlayer(matchId: Long): BaseResponse<PogPlayerTodayMatchResponseDto>
-//    suspend fun fetchTodayMatchSetPog(setIndex: Int, request: CommonPogRequestDto): BaseResponse<CommonTodayMatchPogResponseDto>
-//    suspend fun fetchTodayMatchMatchPog(request: CommonPogRequestDto): BaseResponse<CommonTodayMatchPogResponseDto>
     suspend fun fetchTodayMatchPog(request: CommonPogRequestDto): BaseResponse<CommonTodayMatchPogResponseDto>
     suspend fun voteSetPog(request: VoteSetPogRequestDto): BaseResponse<CommonVotePogResponseDto>
     suspend fun voteMatch(request: VoteMatchRequestDto): BaseResponse<CommonVotePogResponseDto>

@@ -17,7 +17,7 @@ import umc.everyones.lck.util.extension.toOrdinal
 
 class LckPogMatchRVA(
     private var setCount: Int,  // 세트 수를 받아서 탭을 동적으로 추가
-    private val onTabSelected: (Int) -> Unit  // 탭 선택 시 호출할 함수
+    private val onTabSelected: Int // 탭 선택 시 호출할 함수
 ) : ListAdapter<CommonTodayMatchPogModel, LckPogMatchRVA.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,11 +27,6 @@ class LckPogMatchRVA(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    fun updateSetCount(newSetCount: Int) {
-        setCount = newSetCount
-        notifyDataSetChanged() // 세트 수 변경 시 UI 업데이트
     }
 
     inner class ViewHolder(private val binding: ItemLckPogMatchBinding) :
@@ -59,23 +54,6 @@ class LckPogMatchRVA(
                     it.layoutParams = layoutParams
                 }
             }
-
-//            // 탭 선택 시 리스너 설정
-//            binding.tabTodayMatchLckPog.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-//                override fun onTabSelected(tab: TabLayout.Tab?) {
-//                    tab?.position?.let { position ->
-//                        onTabSelected(position)  // 선택된 탭의 인덱스를 전달
-//                    }
-//                }
-//
-//                override fun onTabUnselected(tab: TabLayout.Tab?) {}
-//                override fun onTabReselected(tab: TabLayout.Tab?) {}
-//            })
-            // 초기 탭 선택 및 비워두기
-//            if (binding.tabTodayMatchLckPog.tabCount > 0) {
-//                binding.tabTodayMatchLckPog.getTabAt(1)?.select()
-//                playerAdapter.submitList(emptyList()) // 초기에는 빈 리스트로 설정
-//            }
 
             // 탭 선택 리스너
             binding.tabTodayMatchLckPog.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -111,10 +89,8 @@ class LckPogMatchRVA(
 
         fun bind(item: CommonTodayMatchPogModel) {
             currentItem = item
-//            binding.tabTodayMatchLckPog.getTabAt(item.tabIndex)?.select()
             binding.tvTodayMatchLckPogMatchTitle.text = "${item.seasonInfo} ${item.matchNumber.toOrdinal()} Match"
             binding.tvTodayMatchLckPogMatchDate.text = item.matchDate
-//            playerAdapter.submitList(listOf(item))
             // 첫 번째 탭을 기본으로 설정 (1st POG tab에 해당하는 플레이어만 표시)
             val firstTabPlayerList = item.setPogResponses.filter { it.setIndex == 1 }.take(1)
 
