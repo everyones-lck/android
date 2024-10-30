@@ -313,7 +313,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="참여자 목록 확인하기"
+                        android:text="채팅방 목록 확인하기"
                         android:textAppearance="@style/TextAppearance.LCK.Light.Body_14sp"
                         android:textColor="@color/gray"
                         app:layout_constraintEnd_toEndOf="parent"

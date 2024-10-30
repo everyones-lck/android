@@ -18,8 +18,7 @@ class WsClient @Inject constructor(
 ) : WebSocketListener() {
     private var webSocket: WebSocket? = null
     private var nickname = spf.getString("nickName", "") ?: "알 수 없음"
-    private val roomId = viewModel.roomId.value.toInt()
-
+    private val roomId = viewModel.roomId.value
     fun connectWebSocket() {
         webSocket = okHttpClient.newWebSocket(request, this)
     }
@@ -52,31 +51,31 @@ class WsClient @Inject constructor(
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        Timber.d("WebSocket", "Connection opened: $response")
+        Timber.tag("WebSocket").d( "Connection opened: $response")
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
-        Timber.d("WebSocket", "Message received: $text")
+        Timber.tag("WebSocket").d("Message received: $text")
         if (!text.contains("님이 입장했습니다.")) {
             viewModel.refreshViewingPartyChatLog()
         }
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: okio.ByteString) {
-        Timber.d("WebSocket", "Message received (binary): ${bytes.hex()}")
+        Timber.tag("WebSocket").d("Message received (binary): ${bytes.hex()}")
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-        Timber.d("WebSocket", "Connection closing: $code / $reason")
+        Timber.tag("WebSocket").d( "Connection closing: $code / $reason")
         webSocket.close(code, reason)
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-        Timber.d("WebSocket", "Connection closed: $code / $reason")
+        Timber.tag("WebSocket").d( "Connection closed: $code / $reason")
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        Timber.e("WebSocket", "Error: ${t.message}", t)
+        Timber.tag("WebSocket").e(t, "Error: " + t.message)
             connectWebSocket()
             enterChatRoom("") // 필요시 다시 입장 시도
     }

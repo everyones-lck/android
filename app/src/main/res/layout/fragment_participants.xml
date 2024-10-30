@@ -7,174 +7,192 @@
 
     </data>
 
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/layout_read_coordinator"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_participants_viewing_party"
+            style="@style/TextAppearance.LCK.Bold.Title1_22sp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/end_gradient_color"
-            android:elevation="0dp"
-            android:stateListAnimator="@null"
-            app:liftOnScrollColor="@color/end_gradient_color">
+            android:layout_marginTop="30dp"
+            android:text="Viewing Party"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/tv_participants_viewing_party_title"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="240514 홍대 뷰파"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/tv_participants_viewing_party"
+            app:layout_constraintStart_toStartOf="@id/tv_participants_viewing_party"
+            app:layout_constraintTop_toBottomOf="@id/tv_participants_viewing_party" />
+
+        <ImageView
+            android:id="@+id/iv_participants_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="9dp"
+            android:src="@drawable/ic_back_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_participants_viewing_party"
+            app:layout_constraintBottom_toBottomOf="@id/tv_participants_viewing_party_title"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_participants_profile_background"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="43dp"
+            android:layout_marginTop="28dp"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_participants_viewing_party_title">
+
+            <ImageView
+                android:id="@+id/iv_participants_profile_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_t1" />
+        </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:id="@+id/tv_participants_viewing_party"
-                    style="@style/TextAppearance.LCK.Bold.Title1_22sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="Viewing Party"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv_participants_writer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Perfect 조아 | KT"
+            android:textAppearance="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/cv_participants_profile_background"
+            app:layout_constraintStart_toEndOf="@id/cv_participants_profile_background"
+            app:layout_constraintTop_toTopOf="@id/cv_participants_profile_background" />
 
-                <TextView
-                    android:id="@+id/tv_participants_viewing_party_title"
-                    style="@style/TextAppearance.LCK.Light.Body_14sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="240514 홍대 뷰파"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/tv_participants_viewing_party"
-                    app:layout_constraintStart_toStartOf="@id/tv_participants_viewing_party"
-                    app:layout_constraintTop_toBottomOf="@id/tv_participants_viewing_party" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/shape_rect_4_gray_fill"
+            android:minHeight="500dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_participants_writer"
+            app:layout_constraintVertical_bias="0">
 
-                <ImageView
-                    android:id="@+id/iv_participants_back_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="36dp"
-                    android:layout_marginTop="9dp"
-                    android:src="@drawable/ic_back_btn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_participants_viewing_party" />
+            <ImageView
+                android:id="@+id/iv_background_decoration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-36dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/img_background_decoration"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_participants_title" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_participants_title"
+                style="@style/TextAppearance.LCK.Bold.Title1_22sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:text="채팅방 목록"
+                android:textColor="@color/gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+            <TextView
+                android:id="@+id/tv_participants_chat_participant_guide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="18dp"
+                android:text="채팅 참여자"
+                android:textAppearance="@style/TextAppearance.LCK.Bold"
+                android:textColor="#898989"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_participants_title" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/sv_participants"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:overScrollMode="never"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/iv_participants_chat_participant_guide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:src="@drawable/ic_chat_participate"
+                app:layout_constraintBottom_toBottomOf="@id/tv_participants_chat_participant_guide"
+                app:layout_constraintEnd_toStartOf="@id/tv_participants_chat_participant_guide"
+                app:layout_constraintTop_toTopOf="@id/tv_participants_chat_participant_guide" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_participants_viewing_party_participant_guide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="뷰잉파티 참여자"
+                android:textAppearance="@style/TextAppearance.LCK.Bold"
+                android:textColor="#83B272"
+                android:textSize="10sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_participants_chat_participant_guide"
+                app:layout_constraintEnd_toStartOf="@id/iv_participants_chat_participant_guide" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_participants_profile_background"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="43dp"
-                    android:layout_marginTop="20dp"
-                    app:cardCornerRadius="4dp"
-                    app:cardElevation="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/iv_participants_viewing_party_participant_guide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:src="@drawable/img_viewing_party_participate"
+                app:layout_constraintBottom_toBottomOf="@id/tv_participants_viewing_party_participant_guide"
+                app:layout_constraintEnd_toStartOf="@id/tv_participants_viewing_party_participant_guide"
+                app:layout_constraintTop_toTopOf="@id/tv_participants_viewing_party_participant_guide" />
 
-                    <ImageView
-                        android:id="@+id/iv_participants_profile_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_t1" />
-                </androidx.cardview.widget.CardView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_participants_list"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginBottom="72dp"
+                android:orientation="vertical"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false"
+                android:scrollbarSize="4dp"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                android:clipToOutline="true"
+                android:scrollbarThumbVertical="@drawable/white_scrollbar"
+                android:scrollbarFadeDuration="0"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_participants_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:listitem="@layout/item_participant" />
 
-                <TextView
-                    android:id="@+id/tv_participants_writer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="Perfect 조아 | KT"
-                    android:textAppearance="@style/TextAppearance.LCK.Light.Body_14sp"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@id/cv_participants_profile_background"
-                    app:layout_constraintStart_toEndOf="@id/cv_participants_profile_background"
-                    app:layout_constraintTop_toTopOf="@id/cv_participants_profile_background" />
+            <ImageView
+                android:id="@+id/iv_background_decoration2"
+                android:layout_width="121dp"
+                android:layout_height="111dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="17dp"
+                android:layout_marginBottom="29dp"
+                android:src="@drawable/img_background_decoration"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="40dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginBottom="25dp"
-                    android:minHeight="500dp"
-                    android:background="@drawable/shape_rect_4_gray_fill"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_participants_writer"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintVertical_bias="0">
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ImageView
-                        android:id="@+id/iv_background_decoration"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="@id/tv_participants_title"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginStart="-36dp"
-                        android:src="@drawable/img_background_decoration" />
-
-                    <TextView
-                        android:id="@+id/tv_participants_title"
-                        style="@style/TextAppearance.LCK.Bold.Title1_22sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="36dp"
-                        android:text="참여자 목록"
-                        android:textColor="@color/gray"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_participants_list"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:overScrollMode="never"
-                        android:nestedScrollingEnabled="false"
-                        app:layout_constraintTop_toBottomOf="@id/tv_participants_title"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="58dp"
-                        android:layout_marginBottom="20dp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_participant"/>
-
-                    <ImageView
-                        android:id="@+id/iv_background_decoration2"
-                        android:layout_width="121dp"
-                        android:layout_height="111dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="29dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="17dp"
-                        android:src="@drawable/img_background_decoration" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.core.widget.NestedScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

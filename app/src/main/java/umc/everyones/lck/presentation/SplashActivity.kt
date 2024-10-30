@@ -21,7 +21,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
         Handler(Looper.getMainLooper()).postDelayed({
             val isLoggedIn = spf.getBoolean("isLoggedIn", false) // SharedPreferences에서 로그인 상태 가져오기
             val intent = if (isLoggedIn) {

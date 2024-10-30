@@ -14,6 +14,8 @@ data class ViewingPartyParticipantsModel(
         val id: Long,
         val name: String,
         val team: String,
-        val image: String
+        val image: String,
+        val isParticipating: Boolean,
+        val isChatting: Boolean
     )
 }

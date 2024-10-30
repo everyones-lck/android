@@ -142,4 +142,5 @@ dependencies {
     implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
 
     implementation ("com.jakewharton.timber:timber:5.0.1")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }

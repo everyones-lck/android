@@ -18,6 +18,7 @@ import timber.log.Timber
 import umc.everyones.lck.domain.model.response.party.ViewingPartyChatLogModel
 import umc.everyones.lck.domain.model.response.party.ViewingPartyChatRoomModel
 import umc.everyones.lck.domain.repository.party.ViewingPartyRepository
+import umc.everyones.lck.presentation.party.adapter.ChatRVA.Companion.TIME_STAMP
 import umc.everyones.lck.util.chat.WebSocketResource
 import umc.everyones.lck.util.network.EventFlow
 import umc.everyones.lck.util.network.MutableEventFlow
@@ -27,7 +28,7 @@ import umc.everyones.lck.util.network.UiState
 class ViewingPartyChatViewModel @Inject constructor(
     private val repository: ViewingPartyRepository,
 ) : ViewModel() {
-    private var _pagingSource = repository.fetchChatLogPagingSource(0L)
+    private var _pagingSource = repository.fetchChatLogPagingSource("")
     val pagingSource get() = _pagingSource
 
     private val _postId = MutableStateFlow<Long>(-1)
@@ -36,8 +37,8 @@ class ViewingPartyChatViewModel @Inject constructor(
     private val _participantsId = MutableStateFlow<String>("")
     val participantsId: StateFlow<String> get() = _participantsId
 
-    private val _roomId = MutableStateFlow<Long>(0L)
-    val roomId: StateFlow<Long> get() = _roomId
+    private val _roomId = MutableStateFlow<String>("")
+    val roomId: StateFlow<String> get() = _roomId
 
     private val _viewingPartyChatEvent =
         MutableStateFlow<UiState<ViewingPartyChatEvent>>(UiState.Empty)
@@ -49,6 +50,7 @@ class ViewingPartyChatViewModel @Inject constructor(
     private val isPageLast = MutableStateFlow<Boolean>(false)
     private val page = MutableStateFlow<Int>(0)
     private val temp = MutableStateFlow<List<ViewingPartyChatLogModel.ChatLogModel>>(emptyList())
+    private val previousDate = MutableStateFlow("")
 
 
     sealed class ViewingPartyChatEvent {
@@ -78,7 +80,6 @@ class ViewingPartyChatViewModel @Inject constructor(
                         UiState.Success(ViewingPartyChatEvent.CreateChatRoom(response))
                     Timber.d("createViewingPartyChatRoom", response.toString())
                     _roomId.value = response.roomId
-                    _pagingSource = repository.fetchChatLogPagingSource(response.roomId)
                 }.onFailure {
                     Timber.d("createViewingPartyChatRoom error", it.stackTraceToString())
                 }
@@ -104,24 +105,32 @@ class ViewingPartyChatViewModel @Inject constructor(
             viewModelScope.launch {
                 _viewingPartyChatEvent.value = UiState.Loading
                 delay(200)
-                repository.fetchViewingPartyChatLog(roomId.value, page.value, 10)
+                repository.fetchViewingPartyChatLog(roomId.value, page.value, 20)
                     .onSuccess { response ->
                         Timber.d("fetchViewingPartyChatLog", response.toString())
-                        temp.value += response.chatMessageList
+                        temp.value += response.chatMessageList.filter { !it.message.contains("입장했습니다.") }
                         isPageLast.value = response.isLast
                         page.value += 1
+
+                        val list = if (response.isLast) {
+                            temp.value.toMutableList().apply {
+                                if(this.isNotEmpty()) {
+                                    this[lastIndex].isLastIndex = true
+                                }
+                            }
+                        } else {
+                            temp.value
+                        }
+
                         _viewingPartyChatEvent.value =
                             UiState.Success(
                                 ViewingPartyChatEvent.FetchChatLog(
-                                    response.copy(
-                                        chatMessageList = temp.value.filter {
-                                            !it.message.contains("입장했습니다.")
-                                        })
+                                    response.copy(chatMessageList = list)
                                 )
                             )
                     }.onFailure {
-                    Timber.d("createViewingPartyChatRoom error", it.stackTraceToString())
-                }
+                        Timber.d("createViewingPartyChatRoom error", it.stackTraceToString())
+                    }
             }
         }
     }
@@ -133,18 +142,27 @@ class ViewingPartyChatViewModel @Inject constructor(
                 .onSuccess { response ->
                     Timber.d("fetchViewingPartyChatLog", response.toString())
                     temp.value = response.chatMessageList + temp.value
+
+                    val list = if (response.isLast) {
+                        temp.value.toMutableList().apply {
+                            if(this.isNotEmpty()) {
+                                this[lastIndex].isLastIndex = true
+                            }
+                        }
+                    } else {
+                        temp.value
+                    }
+
                     _viewingPartyChatEvent.value =
                         UiState.Success(
                             ViewingPartyChatEvent.FetchChatLog(
-                                response.copy(
-                                    chatMessageList = temp.value.filter {
-                                        !it.message.contains("입장했습니다.")
-                                    })
+                                response.copy(chatMessageList = list)
                             )
                         )
+
                 }.onFailure {
-                Timber.d("createViewingPartyChatRoom error", it.stackTraceToString())
-            }
+                    Timber.d("createViewingPartyChatRoom error", it.stackTraceToString())
+                }
         }
     }
 }

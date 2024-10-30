@@ -51,10 +51,6 @@ class WriteViewingPartyViewModel @Inject constructor(
             _writeViewingPartyEvent.value = UiState.Loading
             naverRepository.fetchGeocoding(query).onSuccess { response ->
                 Timber.d("fetchGeocoding", response.toString())
-                if (!response.adminAddress.contains("동")){
-                    _writeViewingPartyEvent.value = UiState.Failure(GEOCODING_FAIL)
-                    return@launch
-                }
                 _writeViewingPartyEvent.value =
                     UiState.Success(WriteViewingPartyEvent.Geocoding(response))
             }.onFailure {

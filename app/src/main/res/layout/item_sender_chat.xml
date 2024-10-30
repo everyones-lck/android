@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginBottom="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.LCK.Bold.Detail_10sp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/iv_sender_profile"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        tools:src="@drawable/ic_t1"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_date"
+        tools:src="@drawable/ic_t1" />
 
     <TextView
         android:id="@+id/tv_senderer_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="뷰잉파티 현재 참여 인원이 어떻게 되나요??"
-        android:textAppearance="@style/TextAppearance.LCK.Light.Level_12sp"
-        android:textColor="@color/black"
-        android:background="@drawable/shape_rect_sender_chat_bg"
-        android:clipToOutline="true"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="24dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_rect_sender_chat_bg"
+        android:breakStrategy="simple"
+        android:clipToOutline="true"
+        android:maxWidth="280dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:textAppearance="@style/TextAppearance.LCK.Light.Level_12sp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@id/iv_sender_profile"
         app:layout_constraintTop_toTopOf="@id/iv_sender_profile"
-        app:layout_constraintEnd_toStartOf="@id/iv_sender_profile"/>
+        app:layout_wrapBehaviorInParent="vertical_only"
+        tools:text="뷰잉파티 현재 참여 인원이 어떻게 되나요??" />
+
+    <TextView
+        android:id="@+id/tv_time_stamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="22:00"
+        android:textAppearance="@style/TextAppearance.LCK.Light.Detail_10sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/tv_senderer_chat"
+        app:layout_constraintEnd_toStartOf="@id/tv_senderer_chat"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
