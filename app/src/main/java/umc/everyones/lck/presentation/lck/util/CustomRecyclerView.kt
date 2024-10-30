@@ -12,6 +12,12 @@ class CustomRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
+    init {
+        // 스크롤바가 항상 보이도록 설정
+        isVerticalScrollBarEnabled = true
+        overScrollMode = OVER_SCROLL_NEVER  // 필요에 따라 NEVER로 설정
+    }
+
     override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
         when (e?.action) {
             MotionEvent.ACTION_DOWN -> {

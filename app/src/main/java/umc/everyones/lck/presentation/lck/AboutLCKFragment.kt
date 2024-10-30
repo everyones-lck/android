@@ -1,18 +1,14 @@
 package umc.everyones.lck.presentation.lck
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import org.threeten.bp.LocalDate
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentAboutLckBinding
 import umc.everyones.lck.domain.model.about_lck.AboutLckMatchDetailsModel
@@ -20,18 +16,18 @@ import umc.everyones.lck.domain.model.about_lck.AboutLckRankingDetailsModel
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.lck.adapter.MatchVPAdapter
 import umc.everyones.lck.presentation.lck.adapter.RankingAdapter
-import umc.everyones.lck.presentation.lck.data.MatchData
 import umc.everyones.lck.presentation.lck.data.RankingData
 import umc.everyones.lck.presentation.lck.util.CustomDatePickerDialog
 import umc.everyones.lck.presentation.lck.util.OnTeamClickListener
 import umc.everyones.lck.presentation.lck.util.VerticalSpaceItemDecoration
 import umc.everyones.lck.presentation.mypage.MyPageActivity
+import umc.everyones.lck.util.extension.getFormattedDate
+import umc.everyones.lck.util.extension.getFormattedNextDay
+import umc.everyones.lck.util.extension.getFormattedPreviousDay
 import umc.everyones.lck.util.extension.repeatOnStarted
 import umc.everyones.lck.util.extension.setOnSingleClickListener
-import umc.everyones.lck.util.extension.showCustomSnackBar
-import java.text.SimpleDateFormat
+import umc.everyones.lck.util.extension.toCalendar
 import java.util.Calendar
-import java.util.Date
 
 @AndroidEntryPoint
 class AboutLCKFragment : BaseFragment<FragmentAboutLckBinding>(R.layout.fragment_about_lck),
@@ -48,34 +44,32 @@ class AboutLCKFragment : BaseFragment<FragmentAboutLckBinding>(R.layout.fragment
     private val viewModel: AboutLckViewModel by viewModels()
 
     private var selectedDate: Calendar = Calendar.getInstance()
-    @SuppressLint("SimpleDateFormat")
+    private var isSelectedByCalendar = false
+
     override fun initObserver() {
+
         viewLifecycleOwner.repeatOnStarted {
-            viewModel.matchDetails.collect { result ->
-                Log.d("AboutLCKFragment", "Collect")
-                handleMatchDetailsResult(result)
-            }
-        }
-        viewLifecycleOwner.repeatOnStarted {
-            viewModel.rankingDetails.collect { result ->
-                handleRankingDetailsResult(result)
+            viewModel.matchDetails.collect { matchDetails ->
+                if (matchDetails != null) {
+                    updateMatchDetails(matchDetails)
+                } else {
+                    Timber.tag("initObserver").e("Failed to fetch match details")
+                }
             }
         }
 
         viewLifecycleOwner.repeatOnStarted {
-            viewModel.temp.collect{
-                val temp = it.matchDetailList.groupBy { it.matchDate }
-                val temp1 = temp.map {Test(it.key, it.value)
-                }.sortedBy { it.date }
-                Log.d("temp1", temp1.toString())
-                matchVPAdapter.submitList(temp1)
-                scrollWithDate("")
+            viewModel.rankingDetails.collect { rankingDetails ->
+                if (rankingDetails != null) {
+                    updateRankingDetails(rankingDetails)
+                } else {
+                    Timber.tag("initObserver").e("Failed to fetch ranking details")
+                }
             }
         }
     }
 
     override fun initView() {
-        viewModel.fetch()
         initMatchViewPager()
         initRankingRecyclerView()
         initBackButton()
@@ -83,123 +77,120 @@ class AboutLCKFragment : BaseFragment<FragmentAboutLckBinding>(R.layout.fragment
         goMyPage()
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun scrollWithDate(inputDate: String){
-        Log.d("inputDate", inputDate)
-        if(matchVPAdapter.currentList.isEmpty()){
-            return
-        }
-        val date = inputDate.replace(".","-").ifEmpty {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-            val currentDate = Date(System.currentTimeMillis())
-            dateFormat.format(currentDate)
-        }
-        val index = matchVPAdapter.currentList.indexOfFirst { it.date == date }
-        if(index == -1){
-            showCustomSnackBar(binding.root, "해당 날짜에 예정된 경기가 없습니다")
-        } else {
-            binding.vpAboutLckMatch.setCurrentItem(matchVPAdapter.currentList.indexOfFirst { it.date == date }, false)
-            binding.tvAboutLckDate.text = date.replace("-",".")
+    private fun updateMatchDetails(matchDetailsModel: AboutLckMatchDetailsModel) {
+        val matchDetailList = matchDetailsModel.matchByDateList.sortedBy { it.matchDate }
+
+        // Set을 통해 기존 ViewPager List와 API Response List 간의 중복 제거
+        val tempSet = matchVPAdapter.currentList.toHashSet()
+        tempSet.addAll(matchDetailList)
+
+        matchVPAdapter.submitList(tempSet.toList().sortedBy { it.matchDate }) {
+            scrollToSelectedDate(selectedDate.getFormattedDate())
         }
     }
 
-    private fun handleMatchDetailsResult(result: Result<AboutLckMatchDetailsModel>?) {
-        result?.onSuccess { data ->
-            val matchDataList = matchVPAdapter.getMatchDataList().toMutableList()
+    private fun scrollToSelectedDate(selectedDate: String) {
+        val currentIndex = matchVPAdapter.currentList.indexOfFirst { it.matchDate == selectedDate }
 
-            val mappedMatches = data.matchDetailList.map { match ->
-                val matchData = createMatchData(match)
-                matchData
-            }
-            matchDataList.addAll(mappedMatches)
-            //updateMatchViewPager(matchDataList)
-        }?.onFailure { throwable ->
-            Log.e("AboutLCKFragment", "Failed to fetch match details: ${throwable.message}", throwable)
-        }
+        // 선택된 날짜로 ViewPager 이동
+        binding.vpAboutLckMatch.setCurrentItem(currentIndex, false)
+        binding.tvAboutLckDate.text = selectedDate.replace("-", ".")
     }
 
-    private fun createMatchData(match: AboutLckMatchDetailsModel.AboutLckMatchDetailsElementModel): MatchData {
-        val matchDate = match.matchDate
-        val matchTime = if (match.matchFinished) {
-            "Win | ${viewModel.getWinningTeamName(match)}"
-        } else {
-            match.matchTime.substring(0, 5)
-        }
-
-        Log.d("AboutLCKFragment", "Team1 Logo URL: ${match.team1.teamLogoUrl}")
-        Log.d("AboutLCKFragment", "Team2 Logo URL: ${match.team2.teamLogoUrl}")
-
-        return MatchData(
-            matchDate = matchDate,
-            matchTitle = viewModel.formatMatchTitle(match.season, match.matchNumber),
-            matchTime = matchTime,
-            teamLogoUrl1 = match.team1.teamLogoUrl,
-            teamLogoUrl2 = match.team2.teamLogoUrl,
-            isTeam1Winner = match.team1.winner,
-            isTeam2Winner = match.team2.winner,
-            isMatchFinished = match.matchFinished
-        )
-    }
-
-    @SuppressLint("SimpleDateFormat")
     private fun initMatchViewPager() {
-        val viewPager: ViewPager2 = binding.vpAboutLckMatch
         matchVPAdapter = MatchVPAdapter()
-        viewPager.adapter = matchVPAdapter
+        binding.vpAboutLckMatch.apply {
+            adapter = matchVPAdapter
 
-        binding.vpAboutLckMatch.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-            override fun onPageSelected(position: Int) {
-                binding.tvAboutLckDate.text = matchVPAdapter.currentList[position].date.replace("-",".")
-                Log.d("selected dates vp", matchVPAdapter.currentList[position].date)
+            // ViewPager 양 옆에 여백 추가
+            offscreenPageLimit = 2
+            val pageMarginPx = 16 * resources.displayMetrics.densityDpi / 160
+            val offsetPx = 40 * resources.displayMetrics.densityDpi / 160
+
+            setPageTransformer { page, position ->
+                page.translationX = -offsetPx * position
             }
-        })
 
-        val pageMarginPx = 16 * resources.displayMetrics.densityDpi / 160
-        val offsetPx = 40 * resources.displayMetrics.densityDpi / 160
+            val recyclerViewMatches = getChildAt(0) as RecyclerView
+            recyclerViewMatches.setPadding(pageMarginPx, 0, pageMarginPx, 0)
+            recyclerViewMatches.clipToPadding = false
 
-        viewPager.setPageTransformer { page, position ->
-            page.translationX = -offsetPx * position
+            // ViewPager의 page가 Scroll/Calendar에 의해 선택되었을 떄  API 호출 제어
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    val currentVpDate = matchVPAdapter.currentList[position].matchDate
+
+                    if (isSelectedByCalendar) {
+                        onPageSelectedByCalendar(currentVpDate)
+                    } else {
+                       onPageSelectedByScroll(currentVpDate)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun onPageSelectedByCalendar(currentVpDate: String) {
+        if (selectedDate.getFormattedDate() != currentVpDate) {
+            val index =
+                matchVPAdapter.currentList.indexOfFirst { it.matchDate == selectedDate.getFormattedDate() }
+            binding.vpAboutLckMatch.currentItem = index
+            binding.tvAboutLckDate.text =
+                selectedDate.getFormattedDate().replace("-", ".")
+        }
+        isSelectedByCalendar = false
+    }
+
+    private fun onPageSelectedByScroll(currentVpDate: String) {
+        // 동일 날짜에 대한 API 호출 방지
+        if (selectedDate.getFormattedDate() != currentVpDate) {
+            selectedDate = currentVpDate.toCalendar()
+            binding.tvAboutLckDate.text = currentVpDate.replace("-", ".")
+
+            // API 중복 호출 방지
+            // ViewPager 현재 page 날짜에 대한 이전날짜 혹은 다음 날짜가 없을 떄만 API 호출
+            if (getDuplicateFetchMatchDetailsFlag(selectedDate)) {
+                viewModel.fetchLckMatchDetails(currentVpDate)
+            }
+        }
+    }
+    private fun getDuplicateFetchMatchDetailsFlag(currentVpDate: Calendar) =
+        matchVPAdapter.currentList.none { it.matchDate == getFormattedPreviousDay(currentVpDate) }
+                || matchVPAdapter.currentList.none {
+            it.matchDate == getFormattedNextDay(currentVpDate)
         }
 
-        viewPager.offscreenPageLimit = 3
+    private fun updateRankingDetails(rankingDetails: AboutLckRankingDetailsModel) {
+        val teamDetails = rankingDetails.teamDetailList
 
-        val recyclerViewMatches = viewPager.getChildAt(0) as RecyclerView
-        recyclerViewMatches.setPadding(pageMarginPx, 0, pageMarginPx, 0)
-        recyclerViewMatches.clipToPadding = false
-    }
-    private fun handleRankingDetailsResult(result: Result<AboutLckRankingDetailsModel>?) {
-        result?.onSuccess { rankingDetails ->
-            val teamDetails = rankingDetails.teamDetailList
+        if (teamDetails.isNotEmpty()) {
+            topTeams.clear()
+            topTeams.addAll(teamDetails.take(3).map { teamDetail ->
+                RankingData(
+                    teamId = teamDetail.teamId,
+                    ranking = teamDetail.rating,
+                    teamLogoUrl = teamDetail.teamLogoUrl,
+                    teamName = teamDetail.teamName
+                )
+            })
+            displayTopTeams(topTeams)
 
-            if (teamDetails.isNotEmpty()) {
-                topTeams.clear()
-                topTeams.addAll(teamDetails.take(3).map { teamDetail ->
-                    RankingData(
-                        teamId = teamDetail.teamId,
-                        ranking = teamDetail.rating,
-                        teamLogoUrl = teamDetail.teamLogoUrl,
-                        teamName = teamDetail.teamName
-                    )
-                })
-                displayTopTeams(topTeams)
-                val remainingTeams = teamDetails.drop(3).map { teamDetail ->
-                    RankingData(
-                        teamId = teamDetail.teamId,
-                        ranking = teamDetail.rating,
-                        teamLogoUrl = teamDetail.teamLogoUrl,
-                        teamName = teamDetail.teamName
-                    )
-                }
-                rankingAdapter.updateTeams(remainingTeams)
+            val remainingTeams = teamDetails.drop(3).map { teamDetail ->
+                RankingData(
+                    teamId = teamDetail.teamId,
+                    ranking = teamDetail.rating,
+                    teamLogoUrl = teamDetail.teamLogoUrl,
+                    teamName = teamDetail.teamName
+                )
             }
-        }?.onFailure {
-            Log.e("AboutLCKFragment", "Failed to fetch ranking details")
+            rankingAdapter.updateTeams(remainingTeams)
         }
     }
 
     private fun initRankingRecyclerView() {
         val recyclerView: RecyclerView = binding.rvAboutLckRanking
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         rankingAdapter = RankingAdapter(mutableListOf(), this)
         recyclerView.adapter = rankingAdapter
@@ -230,42 +221,45 @@ class AboutLCKFragment : BaseFragment<FragmentAboutLckBinding>(R.layout.fragment
 
 
     private fun initBackButton() {
-        binding.viewAboutLckRect1.setOnClickListener {
+        binding.viewAboutLckRect1.setOnSingleClickListener {
             topTeams.getOrNull(0)?.let { team ->
-                val action = AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
-                    team.teamId,
-                    team.teamName,
-                    team.teamLogoUrl
-                )
+                val action =
+                    AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
+                        team.teamId,
+                        team.teamName,
+                        team.teamLogoUrl
+                    )
                 navigator.navigate(action)
             }
         }
 
-        binding.viewAboutLckRect2.setOnClickListener {
+        binding.viewAboutLckRect2.setOnSingleClickListener {
             topTeams.getOrNull(1)?.let { team ->
-                val action = AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
-                    team.teamId,
-                    team.teamName,
-                    team.teamLogoUrl
-                )
+                val action =
+                    AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
+                        team.teamId,
+                        team.teamName,
+                        team.teamLogoUrl
+                    )
                 navigator.navigate(action)
             }
         }
 
-        binding.viewAboutLckRect3.setOnClickListener {
+        binding.viewAboutLckRect3.setOnSingleClickListener {
             topTeams.getOrNull(2)?.let { team ->
-                val action = AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
-                    team.teamId,
-                    team.teamName,
-                    team.teamLogoUrl
-                )
+                val action =
+                    AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
+                        team.teamId,
+                        team.teamName,
+                        team.teamLogoUrl
+                    )
                 navigator.navigate(action)
             }
         }
     }
 
     private fun initCalendarButton() {
-        binding.ivAboutLckCalendar.setOnClickListener {
+        binding.ivAboutLckCalendar.setOnSingleClickListener {
             toggleDatePickerDialog()
         }
 
@@ -305,21 +299,22 @@ class AboutLCKFragment : BaseFragment<FragmentAboutLckBinding>(R.layout.fragment
 
     private fun updateSelectedDate(year: Int, month: Int, day: Int) {
         selectedDate.set(year, month, day)
-        val formattedDate = String.format("%d.%02d.%02d", selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH) + 1, selectedDate.get(Calendar.DAY_OF_MONTH))
-        scrollWithDate(formattedDate)
+        val formattedDate = selectedDate.getFormattedDate()
+        Timber.d(formattedDate)
+        isSelectedByCalendar = true
+        viewModel.fetchLckMatchDetails(formattedDate)
     }
 
     override fun onTeamClick(team: RankingData) {
-        val action = AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(team.teamId,team.teamName,team.teamLogoUrl)
+        val action = AboutLCKFragmentDirections.actionAboutLCKFragmentToAboutLckTeamFragment(
+            team.teamId,
+            team.teamName,
+            team.teamLogoUrl
+        )
         navigator.navigate(action)
     }
 
-    data class Test(
-        val date: String,
-        val list: List<AboutLckMatchDetailsModel.AboutLckMatchDetailsElementModel>
-    )
-
-    private fun goMyPage(){
+    private fun goMyPage() {
         binding.ivMyPage.setOnSingleClickListener {
             startActivity(MyPageActivity.newIntent(requireContext()))
         }

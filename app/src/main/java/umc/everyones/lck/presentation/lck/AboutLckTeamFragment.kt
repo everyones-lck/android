@@ -1,15 +1,8 @@
 package umc.everyones.lck.presentation.lck
 
 import androidx.fragment.app.viewModels
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -22,8 +15,8 @@ import umc.everyones.lck.presentation.lck.adapter.TeamVPAdapter
 import umc.everyones.lck.presentation.lck.data.PlayerData
 import umc.everyones.lck.presentation.lck.util.OnPlayerItemClickListener
 import com.google.android.material.tabs.TabLayoutMediator
+import timber.log.Timber
 import umc.everyones.lck.data.dto.response.about_lck.LckPlayerDetailsResponseDto
-import umc.everyones.lck.domain.model.about_lck.AboutLckPlayerDetailsModel
 import umc.everyones.lck.presentation.mypage.MyPageActivity
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
@@ -51,20 +44,18 @@ class AboutLckTeamFragment : BaseFragment<FragmentAboutLckTeamBinding>(R.layout.
             setupButtons()
             setupTeamInfo()
         } else {
-            Log.e("AboutLckTeamFragment", "teamId is null during initView, cannot setup views properly")
+            Timber.e("teamId is null during initView, cannot setup views properly")
         }
     }
 
     private fun receiveSafeArgs() {
         val receivedTeamId = arguments?.let { AboutLckTeamFragmentArgs.fromBundle(it).teamId }
-        val teamName = arguments?.let { AboutLckTeamFragmentArgs.fromBundle(it).teamName }
         teamLogoUrl = arguments?.let { AboutLckTeamFragmentArgs.fromBundle(it).teamLogoUrl }
-
 
         receivedTeamId?.let {
             teamId = it
             viewModel.setTeamId(it)
-        } ?: Log.e("AboutLckTeamFragment", "Failed to receive teamId from arguments")
+        } ?: Timber.e("Failed to receive teamId from arguments")
     }
 
     private fun setupViewPagerAndTabs() {
@@ -94,7 +85,7 @@ class AboutLckTeamFragment : BaseFragment<FragmentAboutLckTeamBinding>(R.layout.
                         else -> throw IllegalArgumentException("Invalid tab position")
                     }
                     viewModel.fetchLckPlayerDetails(it, "2024 Summer", playerRole)
-                } ?: Log.e("AboutLckTeamFragment", "teamId is null during onPageSelected")
+                } ?: Timber.e("teamId is null during onPageSelected")
             }
         })
     }
@@ -102,9 +93,8 @@ class AboutLckTeamFragment : BaseFragment<FragmentAboutLckTeamBinding>(R.layout.
         val backButton: ImageView = binding.ivAboutLckTeamPre
         val nextButton: ImageView = binding.ivAboutLckTeamNext
 
-        backButton.setOnClickListener { navigator.popBackStack() }
-
-        nextButton.setOnClickListener {
+        backButton.setOnSingleClickListener { navigator.popBackStack() }
+        nextButton.setOnSingleClickListener {
             val teamId = arguments?.let { AboutLckTeamFragmentArgs.fromBundle(it).teamId }
             teamId?.let {
                 val action = AboutLckTeamFragmentDirections
@@ -114,15 +104,13 @@ class AboutLckTeamFragment : BaseFragment<FragmentAboutLckTeamBinding>(R.layout.
                         teamLogoUrl = teamLogoUrl ?: ""
                     )
                 navigator.navigate(action)
-            } ?: Log.e("AboutLckTeamFragment", "teamId is null, cannot navigate")
+            } ?: Timber.e("teamId is null, cannot navigate")
         }
     }
-
 
     private fun setupTeamInfo() {
         val teamTitleTextView: TextView = binding.tvAboutLckTeamTitle
         val teamLogoImageView: ImageView = binding.ivAboutLckTeamLogo
-
         val teamName = arguments?.let { AboutLckTeamFragmentArgs.fromBundle(it).teamName }
 
         teamName?.let {

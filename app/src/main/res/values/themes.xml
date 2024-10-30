@@ -42,7 +42,8 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AppTheme.NumberPicker" parent="Base.Theme.EveryonesLCK">
-
+    <style name="Widget.LCK.DatePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorControlActivated">@color/green</item>
+        <item name="colorControlHighlight">@color/green</item>
     </style>
 </resources>

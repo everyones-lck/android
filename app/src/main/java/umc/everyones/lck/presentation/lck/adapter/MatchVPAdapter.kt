@@ -18,9 +18,10 @@ import umc.everyones.lck.presentation.lck.AboutLCKFragment
 import umc.everyones.lck.presentation.lck.data.MatchData
 
 
-class MatchVPAdapter : ListAdapter<AboutLCKFragment.Test, MatchVPAdapter.MatchViewHolder>(DiffCallback()) {
-
-    private val matchDetailsList: MutableList<List<MatchData>> = mutableListOf()
+class MatchVPAdapter :
+    ListAdapter<AboutLckMatchDetailsModel.AboutLckMatchByDateModel, MatchVPAdapter.MatchViewHolder>(
+        DiffCallback()
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
         return MatchViewHolder(
@@ -36,38 +37,36 @@ class MatchVPAdapter : ListAdapter<AboutLCKFragment.Test, MatchVPAdapter.MatchVi
         holder.bind(currentList[position])
     }
 
-
-    fun addMatchDetails(details: List<MatchData>) {
-        matchDetailsList.add(details)
-        notifyDataSetChanged()
-    }
-
-    fun getMatchDataList(): List<MatchData> {
-        return matchDetailsList.flatten() // 모든 데이터를 리스트로 반환
-    }
-
-    fun clearMatchDetails() {
-        matchDetailsList.clear()
-        notifyDataSetChanged()  // 데이터가 변경되었음을 어댑터에 알림
-    }
-
-    inner class MatchViewHolder(private val binding: ItemAboutLckMatchesBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val recyclerView: RecyclerView = itemView.findViewById(R.id.rv_about_lck_match_details)
-
-        fun bind(matchDetails: AboutLCKFragment.Test) {
+    inner class MatchViewHolder(private val binding: ItemAboutLckMatchesBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(matchDetails: AboutLckMatchDetailsModel.AboutLckMatchByDateModel) {
             binding.rvAboutLckMatchDetails.layoutManager = LinearLayoutManager(itemView.context)
+
             val adapter = MatchDetailsAdapter()
             binding.rvAboutLckMatchDetails.adapter = adapter
-            adapter.submitList(matchDetails.list)
+
+            if (matchDetails.matchDetailList.isEmpty()) {
+                adapter.submitList(listOf(null))
+            } else {
+                adapter.submitList(matchDetails.matchDetailList)
+            }
+
             binding.rvAboutLckMatchDetails.isNestedScrollingEnabled = false // 스크롤 비활성화
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<AboutLCKFragment.Test>() {
-        override fun areItemsTheSame(oldItem: AboutLCKFragment.Test, newItem: AboutLCKFragment.Test) =
-            oldItem === newItem
+    class DiffCallback :
+        DiffUtil.ItemCallback<AboutLckMatchDetailsModel.AboutLckMatchByDateModel>() {
+        override fun areItemsTheSame(
+            oldItem: AboutLckMatchDetailsModel.AboutLckMatchByDateModel,
+            newItem: AboutLckMatchDetailsModel.AboutLckMatchByDateModel
+        ) =
+            oldItem.matchDate == newItem.matchDate
 
-        override fun areContentsTheSame(oldItem: AboutLCKFragment.Test, newItem: AboutLCKFragment.Test) =
+        override fun areContentsTheSame(
+            oldItem: AboutLckMatchDetailsModel.AboutLckMatchByDateModel,
+            newItem: AboutLckMatchDetailsModel.AboutLckMatchByDateModel
+        ) =
             oldItem == newItem
     }
 }
