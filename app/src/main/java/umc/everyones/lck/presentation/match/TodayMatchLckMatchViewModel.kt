@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.domain.model.response.match.MatchTodayMatchModel
 import umc.everyones.lck.domain.model.response.match.TodayMatchInformationModel
 import umc.everyones.lck.domain.repository.match.TodayMatchRepository
@@ -21,10 +22,10 @@ class TodayMatchLckMatchViewModel @Inject constructor(
     fun fetchTodayMatchInformation(){
         viewModelScope.launch {
             repository.fetchTodayMatchInformation().onSuccess {response ->
-                Log.d("fetchTodayMatchInformation", response.toString())
+                Timber.d("fetchTodayMatchInformation: %s", response.toString())
                 _matchData.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchInformation", it.stackTraceToString())
+                Timber.d("fetchTodayMatchInformation", it.stackTraceToString())
                 _matchData.value = null // 실패 시 null 처리
             }
         }

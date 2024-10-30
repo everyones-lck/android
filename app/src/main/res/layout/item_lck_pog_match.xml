@@ -12,7 +12,8 @@
         android:paddingVertical="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:id="@+id/tv_today_match_lck_pog_match_title"
@@ -66,6 +67,18 @@
             app:layout_constraintStart_toStartOf="@id/tab_today_match_lck_pog"
             app:layout_constraintEnd_toEndOf="@id/tab_today_match_lck_pog"
             app:layout_constraintTop_toBottomOf="@id/tab_today_match_lck_pog"/>
+        
+        <TextView
+            android:id="@+id/tv_today_match_lck_pog_playing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            style="@style/TextAppearance.LCK.Light"
+            android:text="During the game"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/tab_today_match_lck_pog"
+            app:layout_constraintEnd_toEndOf="@id/tab_today_match_lck_pog"
+            app:layout_constraintTop_toBottomOf="@id/tab_today_match_lck_pog"/>
 
         <TextView
             android:layout_width="0dp"
@@ -74,10 +87,10 @@
             android:background="#BBBBBB"
             android:alpha="0.4"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="150dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_today_match_lck_pog_player"/>
+            app:layout_constraintTop_toBottomOf="@id/tab_today_match_lck_pog"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -22,7 +22,6 @@ class TodayMatchPredictionFragment : BaseFragment<FragmentTodayMatchPredictionBi
     private lateinit var matchPredictionRVA: MatchPredictionRVA
     private var selectedTeam: Int? = null // 사용자가 선택한 팀 ID를 저장할 변수
 
-
     override fun initObserver() {
         viewModel.matchData.observe(viewLifecycleOwner, Observer { matchData ->
             matchData?.let {
@@ -44,7 +43,7 @@ class TodayMatchPredictionFragment : BaseFragment<FragmentTodayMatchPredictionBi
     }
 
     private fun goBackButton() {
-        binding.ivTodayMatchPredictionBack.setOnClickListener {
+        binding.ivTodayMatchPredictionBack.setOnSingleClickListener {
             findNavController().navigateUp()
         }
     }

@@ -56,25 +56,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun goMatchResult() {
-        binding.layoutHomeMatchResult.setOnClickListener {
+        binding.layoutHomeMatchResult.setOnSingleClickListener {
             viewModel.setNavigateEvent(R.id.about_lck_graph)
         }
     }
 
     private fun goAboutLck() {
-        binding.ivHomeAboutLckBox.setOnClickListener {
+        binding.ivHomeAboutLckBox.setOnSingleClickListener {
             viewModel.setNavigateEvent(R.id.about_lck_graph)
         }
     }
 
     private fun goCommunity() {
-        binding.ivHomeCommunityBox.setOnClickListener {
+        binding.ivHomeCommunityBox.setOnSingleClickListener {
             viewModel.setNavigateEvent(R.id.communityFragment)
         }
     }
 
     private fun goViewingParty() {
-        binding.ivHomeViewingPartyBox.setOnClickListener {
+        binding.ivHomeViewingPartyBox.setOnSingleClickListener {
             viewModel.setNavigateEvent(R.id.viewingPartyTab)
         }
     }

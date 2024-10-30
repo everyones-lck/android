@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentTodayMatchLckMatchBinding
 import umc.everyones.lck.domain.model.response.match.TodayMatchInformationModel
@@ -37,7 +38,7 @@ class TodayMatchLckMatchFragment : BaseFragment<FragmentTodayMatchLckMatchBindin
     }
 
     override fun initView() {
-        Log.d("TodayMatchLckMatchFragment", "initView called")
+        Timber.d("TodayMatchLckMatchFragment initView called")
         viewModel.fetchTodayMatchInformation()
     }
     private fun updateMatchContent(matchResponses: List<TodayMatchInformationModel.MatchResponsesModel>) {

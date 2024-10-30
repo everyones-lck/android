@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.data.dto.response.home.HomeTodayMatchResponseDto
 import umc.everyones.lck.domain.model.response.home.HomeTodayMatchModel
 import umc.everyones.lck.domain.repository.TestRepository
@@ -33,10 +34,10 @@ class HomeViewModel @Inject constructor( // @Inject : 의존성 주입을 받겠
     fun fetchHomeTodayMatchInformation(){
         viewModelScope.launch {
             repository.fetchHomeTodayMatchInformation().onSuccess {response ->
-                Log.d("fetchHomeTodayMatchInformation", response.toString())
+                Timber.d("fetchHomeTodayMatchInformation %s", response.toString())
                 _matchData.value = response
             }.onFailure {
-                Log.d("fetchHomeTodayMatchInformation", it.stackTraceToString())
+                Timber.d("fetchHomeTodayMatchInformation %s", it.stackTraceToString())
                 _matchData.value = null // 실패시 null 처리
             }
         }

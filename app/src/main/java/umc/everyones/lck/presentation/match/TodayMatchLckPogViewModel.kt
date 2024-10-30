@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.domain.model.request.match.CommonPogModel
 import umc.everyones.lck.domain.model.response.match.CommonTodayMatchPogModel
 import umc.everyones.lck.domain.model.response.match.TodayMatchSetCountModel
@@ -17,43 +18,20 @@ import javax.inject.Inject
 class TodayMatchLckPogViewModel @Inject constructor(
     private val repository: TodayMatchRepository
 ): ViewModel() {
-    private val _setPogData = MutableLiveData<CommonTodayMatchPogModel>()
-    val setPogData: LiveData<CommonTodayMatchPogModel> get() = _setPogData
+    private val _pogData = MutableLiveData<CommonTodayMatchPogModel>()
+    val pogData: LiveData<CommonTodayMatchPogModel> get() = _pogData
 
-    private val _matchPogData = MutableLiveData<CommonTodayMatchPogModel>()
-    val matchPogData: LiveData<CommonTodayMatchPogModel> get() = _matchPogData
-
-    private val _selectedTabIndex = MutableLiveData<Int>()
-    val selectedTabIndex: LiveData<Int> get() = _selectedTabIndex
-
-    fun updateSelectedTab(tabIndex: Int) {
-        _selectedTabIndex.value = tabIndex
-        Log.d("tabIndex", tabIndex.toString())
-    }
     // 세트 수를 저장하는 LiveData
     private val _setCount = MutableLiveData<TodayMatchSetCountModel>()
     val setCount: LiveData<TodayMatchSetCountModel> get() = _setCount
 
-    // 세트별 POG 데이터를 불러오는 함수
-    fun fetchTodayMatchSetPog(setIndex: Int, matchId: Long) {
+    fun fetchTodayMatchPog(matchId: Long) {
         viewModelScope.launch {
-            repository.fetchTodayMatchSetPog(setIndex, CommonPogModel(matchId)).onSuccess { response ->
-                Log.d("fetchTodayMatchSetPog", response.toString())
-                _setPogData.value = response // 데이터를 LiveData에 저장
+            repository.fetchTodayMatchPog(CommonPogModel(matchId)).onSuccess { response ->
+                Timber.d("fetchTodayMatchPog %s", response.toString())
+                _pogData.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchSetPog", it.stackTraceToString())
-            }
-        }
-    }
-
-    // 매치별 POG 데이터를 불러오는 함수
-    fun fetchTodayMatchMatchPog(matchId: Long) {
-        viewModelScope.launch {
-            repository.fetchTodayMatchMatchPog(CommonPogModel(matchId)).onSuccess { response ->
-                Log.d("fetchTodayMatchMatchPog", response.toString())
-                _matchPogData.value = response // 데이터를 LiveData에 저장
-            }.onFailure {
-                Log.d("fetchTodayMatchMatchPog", it.stackTraceToString())
+                Timber.d("fetchTodayMatchPog %s", it.stackTraceToString())
             }
         }
     }
@@ -62,10 +40,10 @@ class TodayMatchLckPogViewModel @Inject constructor(
     fun fetchTodayMatchSetCount(matchId: Long) {
         viewModelScope.launch {
             repository.fetchTodayMatchSetCount(matchId).onSuccess { response ->
-                Log.d("fetchTodayMatchSetCount", response.toString())
+                Timber.d("fetchTodayMatchSetCount %s", response.toString())
                 _setCount.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchSetCount", it.stackTraceToString())
+                Timber.d("fetchTodayMatchSetCount %s", it.stackTraceToString())
             }
         }
     }

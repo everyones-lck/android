@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.HttpException
+import timber.log.Timber
 import umc.everyones.lck.domain.model.request.match.VoteMatchPogModel
 import umc.everyones.lck.domain.model.request.match.VoteSetPogModel
 import umc.everyones.lck.domain.model.response.match.PogPlayerTodayMatchModel
@@ -21,11 +22,6 @@ import javax.inject.Inject
 class TodayMatchTodayPogViewModel @Inject constructor(
     private val repository: TodayMatchRepository
 ): ViewModel() {
-    // 특정 setIndex에 해당하는 POG 데이터를 저장하고, Fragment에 알림
-    private val _pogDataMapLiveData = MutableLiveData<Map<Int, PogPlayerTodayMatchModel>>()
-    private val pogDataMap = mutableMapOf<Int, PogPlayerTodayMatchModel>()
-    val pogDataMapLiveData: LiveData<Map<Int, PogPlayerTodayMatchModel>> get() = _pogDataMapLiveData
-
     // Match POG 데이터를 저장하는 LiveData
     private val _matchPogData = MutableLiveData<PogPlayerTodayMatchModel>()
     val matchPogData: LiveData<PogPlayerTodayMatchModel> get() = _matchPogData
@@ -48,14 +44,6 @@ class TodayMatchTodayPogViewModel @Inject constructor(
     // 모든 아이템이 선택되었는지 여부를 저장하는 LiveData
     private val _allItemsSelected = MutableLiveData<Boolean>()
     val allItemsSelected: LiveData<Boolean> get() = _allItemsSelected
-
-    // 에러 메시지를 저장하는 LiveData
-    private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> get() = _errorMessage
-    fun clearErrorMessage() {
-        _errorMessage.value = null
-    }
-
 
     // 세트 POG의 플레이어를 선택하는 함수
     fun selectSetPlayer(setIndex: Int, playerId: Int) {
@@ -100,37 +88,26 @@ class TodayMatchTodayPogViewModel @Inject constructor(
         }
     }
 
-    // 세트별 POG 데이터를 불러오는 함수
-    fun fetchTodayMatchVoteSetPog(matchId: Long, setIndex: Int) {
+    // POG Player 데이터를 불러오는 함수
+    fun fetchTodayMatchPogPlayer(matchId: Long) {
         viewModelScope.launch {
-            repository.fetchTodayMatchVoteSetPog(matchId, setIndex).onSuccess { response ->
-                pogDataMap[setIndex] = response
-                // Map을 LiveData로 업데이트
-                _pogDataMapLiveData.value = pogDataMap.toMap()
-            }.onFailure {
-                Log.d("fetchTodayMatchVoteSetPog", it.stackTraceToString())
-            }
-        }
-    }
-    // 매치별 POG 데이터를 불러오는 함수
-    fun fetchTodayMatchVoteMatchPog(matchId: Long) {
-        viewModelScope.launch {
-            repository.fetchTodayMatchVoteMatchPog(matchId).onSuccess { response ->
-                Log.d("fetchTodayMatchVoteMatchPog", response.toString())
+            repository.fetchTodayMatchPogPlayer(matchId).onSuccess { response ->
+                Timber.d("fetchTodayMatchPogPlayer %s", response.toString())
                 _matchPogData.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchVoteMatchPog", it.stackTraceToString())
+                Timber.d("fetchTodayMatchPogPlayer %s", it.stackTraceToString())
             }
         }
     }
+
     // 세트 POG에 투표하는 함수
     fun voteSetPog(matchId: Long, setIndex: Int, playerId: Int) {
         viewModelScope.launch {
             repository.voteSetPog(VoteSetPogModel(matchId, setIndex, playerId)).onSuccess { response ->
-                Log.d("voteSetPog", response.toString())
+                Timber.d("voteSetPog %s", response.toString())
                 _voteResponse.value = "투표 되었습니다!"
             }.onFailure { exception ->
-                Log.d("voteSetPog", exception.stackTraceToString())
+                Timber.d("voteSetPog %s", exception.stackTraceToString())
                 _voteResponse.value = getErrorMessageFromException(exception)
             }
         }
@@ -139,10 +116,10 @@ class TodayMatchTodayPogViewModel @Inject constructor(
     fun voteMatchPog(matchId: Long, playerId: Int) {
         viewModelScope.launch {
             repository.voteMatchPog(VoteMatchPogModel(matchId, playerId)).onSuccess { response ->
-                Log.d("voteMatchPog", response.toString())
+                Timber.d("voteMatchPog %s", response.toString())
                 _voteResponse.value = "투표 되었습니다!"
             }.onFailure { exception ->
-                Log.d("voteMatchPog", exception.stackTraceToString())
+                Timber.d("voteMatchPog %s", exception.stackTraceToString())
                 _voteResponse.value = getErrorMessageFromException(exception)
             }
         }
@@ -151,10 +128,10 @@ class TodayMatchTodayPogViewModel @Inject constructor(
     fun fetchTodayMatchSetCount(matchId: Long) {
         viewModelScope.launch {
             repository.fetchTodayMatchSetCount(matchId).onSuccess { response ->
-                Log.d("fetchTodayMatchSetCount", response.toString())
+                Timber.d("fetchTodayMatchSetCount %s", response.toString())
                 _setCount.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchSetCount", it.stackTraceToString())
+                Timber.d("fetchTodayMatchSetCount %s", it.stackTraceToString())
             }
         }
     }
