@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageCommunityCommentBinding
-import umc.everyones.lck.domain.model.mypage.MyPost
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.presentation.base.BaseFragment
 
 @AndroidEntryPoint

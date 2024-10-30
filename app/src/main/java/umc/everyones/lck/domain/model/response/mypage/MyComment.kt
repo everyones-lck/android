@@ -1,4 +1,4 @@
-package umc.everyones.lck.domain.model.mypage
+package umc.everyones.lck.domain.model.response.mypage
 
 data class MyComment(
     val id: Int,

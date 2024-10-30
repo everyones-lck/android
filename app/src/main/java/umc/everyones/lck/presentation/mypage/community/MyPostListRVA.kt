@@ -11,7 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import umc.everyones.lck.databinding.ItemCommunityPostBinding
 import umc.everyones.lck.databinding.ItemMypageCommunityBinding
 import umc.everyones.lck.domain.model.community.CommunityListModel
-import umc.everyones.lck.domain.model.mypage.MyPost
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 

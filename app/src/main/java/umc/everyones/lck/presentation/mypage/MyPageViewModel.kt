@@ -119,22 +119,18 @@ class MyPageViewModel @Inject constructor(
 
     fun updateProfile(nickName: String?, profileImageUri: Uri?) {
         viewModelScope.launch {
-            // SharedPreferences에서 현재 프로필 이미지와 닉네임 가져오기
             val currentProfileImageUri = _profileUri.value
                 ?: Uri.parse("android.resource://${getApplication<Application>().packageName}/${R.drawable.img_signup_profile}") // 기본 이미지 URI
             val currentNickName = _nickName.value ?: ""
 
-            // 프로필 이미지 변경 여부 확인
             val isProfileImageChanged = profileImageUri != null && profileImageUri != currentProfileImageUri
 
-            // 프로필 이미지 파트 생성
             val profileImagePart: MultipartBody.Part = if (isProfileImageChanged) {
                 createProfileImagePart(profileImageUri!!) // !! 연산자를 사용하여 null이 아님을 보장
             } else {
                 createProfileImagePart(currentProfileImageUri) // 기존 이미지를 사용
             }
 
-            // UpdateProfileRequestModel 생성
             val updateProfileRequestModel = UpdateProfilesRequestModel(
                 profileImage = profileImagePart,
                 updateProfileRequest = UpdateProfilesRequestModel.UpdateProfileRequestElementModel(
@@ -144,38 +140,27 @@ class MyPageViewModel @Inject constructor(
             )
 
             // 프로필 업데이트 호출 및 결과 처리
-            val result = runCatching {
-                repository.updateProfiles(updateProfileRequestModel.profileImage, updateProfileRequestModel)
-            }
-
-            result.onSuccess { response ->
-                // 성공적으로 업데이트된 경우 처리
-                Timber.d("Profile updated successfully: $response")
-
-                // 수정된 정보를 SharedPreferences에 저장
-                spf.edit().apply {
-                    putString("nickName", updateProfileRequestModel.updateProfileRequest.nickname)
-
-                    // profileImageUri가 null 또는 빈 경우 기존 값 저장
-                    val imageToSave = if (profileImageUri != null && profileImageUri.toString().isNotEmpty()) {
-                        profileImageUri.toString()
-                    } else {
-                        currentProfileImageUri.toString() // 기존 URI 저장
+            repository.updateProfiles(updateProfileRequestModel.profileImage, updateProfileRequestModel)
+                .onSuccess { response ->
+                    Timber.d("Profile updated successfully: $response")
+                    spf.edit().apply {
+                        putString("nickName", updateProfileRequestModel.updateProfileRequest.nickname)
+                        val imageToSave = if (profileImageUri != null && profileImageUri.toString().isNotEmpty()) {
+                            profileImageUri.toString()
+                        } else {
+                            currentProfileImageUri.toString() // 기존 URI 저장
+                        }
+                        putString("profileImage", imageToSave)
+                        apply()
                     }
-                    putString("profileImage", imageToSave)
-                    apply()
-                }
             }.onFailure { error ->
-                // 실패한 경우 처리
                 Timber.e("Error updating profile: ${error.message}")
             }
         }
     }
-
-    // Uri를 사용하여 MultipartBody.Part 생성
     private fun createProfileImagePart(uri: Uri): MultipartBody.Part {
-        val inputStream = getApplication<Application>().contentResolver.openInputStream(uri) // URI에서 입력 스트림 열기
-        val selectedImageBitmap = BitmapFactory.decodeStream(inputStream) // 비트맵으로 변환
+        val inputStream = getApplication<Application>().contentResolver.openInputStream(uri)
+        val selectedImageBitmap = BitmapFactory.decodeStream(inputStream)
         val byteArrayOutputStream = ByteArrayOutputStream().apply {
             selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
         }
@@ -189,18 +174,11 @@ class MyPageViewModel @Inject constructor(
 
     fun updateTeam(teamId: Int) {
         viewModelScope.launch {
-            // UpdateTeamModel 객체 생성
-            val updateTeamModel = UpdateTeamModel(teamId) // 필요한 경우 추가 필드 설정
-
-            runCatching {
-                repository.updateTeam(updateTeamModel).onSuccess { response ->
-                    Timber.d("팀 변경 성공: $response")
-                    _teamId.value = teamId
-                }.onFailure { error ->
-                    Timber.d("팀 변경 실패: $error")
-                }
+            repository.updateTeam(UpdateTeamModel(teamId)).onSuccess { response ->
+                Timber.d("팀 변경 성공: $response")
+                _teamId.value = teamId
             }.onFailure { error ->
-                Timber.e("Error during update: ${error.message}")
+                Timber.d("팀 변경 실패: $error")
             }
         }
     }

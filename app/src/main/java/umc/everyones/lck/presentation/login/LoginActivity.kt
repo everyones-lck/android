@@ -17,8 +17,4 @@ class LoginActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fcv_login) as? NavHostFragment
         val navController = navHostFragment?.navController
     }
-
-    override fun onBackPressed() {
-        // super.onBackPressed()
-    }
 }

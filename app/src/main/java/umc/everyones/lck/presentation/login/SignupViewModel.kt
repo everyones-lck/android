@@ -50,6 +50,7 @@ class SignupViewModel @Inject constructor(
     val teamId: LiveData<Int> get() = _teamId
 
     private val _signupResponse = MutableLiveData<Result<LoginResponseModel>?>()
+
     val signupResponse: LiveData<Result<LoginResponseModel>?> get() = _signupResponse
 
     private val _loginResult = MutableLiveData<LoginResponseModel?>()
@@ -120,7 +121,6 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-
     fun sendSignupData() {
         viewModelScope.launch {
             val signupRequest = prepareSignupRequest()
@@ -149,18 +149,16 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun prepareSignupRequest(): SignupAuthUserRequestDto {
-        // Mock data, replace with actual data
         val kakaoUserId = _kakaoUserId.value ?: throw IllegalArgumentException("Kakao User ID is required.")
         val nickName = _nickName.value ?: throw IllegalArgumentException("Nickname is required.")
-        val role = "ROLE_USER" // 하드코딩된 역할
-        val teamId = _teamId.value ?: 1 // 기본값 설정
-        val tier = "Silver" // 기본 티어, 실제 티어로 대체할 수 있음
+        val role = "ROLE_USER"
+        val teamId = _teamId.value ?: 1
+        val tier = "Silver"
 
-        // 프로필 이미지 URI를 사용하여 MultipartBody.Part로 변환
         val profileImagePart = try {
             val profileImageUri = _profileUri.value ?: throw IllegalArgumentException("Profile image URI is required.")
-            val inputStream = context.contentResolver.openInputStream(profileImageUri) // URI에서 입력 스트림 열기
-            val selectedImageBitmap = BitmapFactory.decodeStream(inputStream) // 비트맵으로 변환
+            val inputStream = context.contentResolver.openInputStream(profileImageUri)
+            val selectedImageBitmap = BitmapFactory.decodeStream(inputStream)
             val defaultImageStream = ByteArrayOutputStream().apply {
                 selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
             }

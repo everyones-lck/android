@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageCommunityPostBinding
 import umc.everyones.lck.domain.model.community.Post
-import umc.everyones.lck.domain.model.mypage.MyPost
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.community.adapter.PostListRVA
 import umc.everyones.lck.presentation.community.read.ReadPostActivity

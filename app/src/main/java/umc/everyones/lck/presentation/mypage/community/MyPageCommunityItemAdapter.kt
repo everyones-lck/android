@@ -9,8 +9,8 @@ import umc.everyones.lck.databinding.ItemCommentBinding
 import umc.everyones.lck.databinding.ItemMypageCommunityBinding
 import umc.everyones.lck.domain.model.community.Comment
 import umc.everyones.lck.domain.model.community.Post
-import umc.everyones.lck.domain.model.mypage.MyComment
-import umc.everyones.lck.domain.model.mypage.MyPost
+import umc.everyones.lck.domain.model.response.mypage.MyComment
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 
 sealed class CommunityItem {
     data class PostItem(val post: MyPost) : CommunityItem()
