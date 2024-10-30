@@ -1,40 +1,30 @@
 package umc.everyones.lck.presentation.lck
 
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentAboutLckClRoasterBinding
+import umc.everyones.lck.domain.model.about_lck.AboutLckPlayerDetailsModel
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.lck.adapter.PlayerAdapter
 import umc.everyones.lck.presentation.lck.data.PlayerData
-import umc.everyones.lck.presentation.lck.util.OnPlayerItemClickListener
+import umc.everyones.lck.util.extension.repeatOnStarted
+
 @AndroidEntryPoint
 class AboutLckClRoasterFragment : BaseFragment<FragmentAboutLckClRoasterBinding>(R.layout.fragment_about_lck_cl_roaster) {
 
     private val viewModel: AboutLckTeamViewModel by viewModels({requireParentFragment()})
 
     override fun initObserver() {
-        lifecycleScope.launch {
-            viewModel.playerDetails.collect { result ->
-                result?.onSuccess { playerDetails ->
-                    val playerDataList = playerDetails.playerDetails.map { player ->
-                        PlayerData(
-                            playerId = player.playerId,
-                            playerImg = player.profileImageUrl,
-                            teamColor = getTeamColorResource(viewModel.teamId.value ?: 0),
-                            name = player.playerName,
-                            teamLogo = getTeamLogoResource(viewModel.teamId.value ?: 0),
-                            isCaptain = player.isCaptain,
-                            position = player.position
-                        )
-                    }
-                    binding.rvAboutLckClRoaster.adapter = PlayerAdapter(playerDataList, null)
-                }?.onFailure {
-
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel.playerDetails.collect { playerDetails ->
+                if (playerDetails != null) {
+                    setPlayerData(playerDetails)
+                } else {
+                    Timber.e("Failed to fetch player details")
                 }
             }
         }
@@ -48,6 +38,21 @@ class AboutLckClRoasterFragment : BaseFragment<FragmentAboutLckClRoasterBinding>
         val recyclerView: RecyclerView = binding.rvAboutLckClRoaster
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.isNestedScrollingEnabled = false
+    }
+
+    private fun setPlayerData(playerDetails: AboutLckPlayerDetailsModel) {
+        val playerDataList = playerDetails.playerDetails.map { player ->
+            PlayerData(
+                playerId = player.playerId,
+                playerImg = player.profileImageUrl,
+                teamColor = getTeamColorResource(viewModel.teamId.value ?: 0),
+                name = player.playerName,
+                teamLogo = getTeamLogoResource(viewModel.teamId.value ?: 0),
+                isCaptain = player.isCaptain,
+                position = player.position
+            )
+        }
+        binding.rvAboutLckClRoaster.adapter = PlayerAdapter(playerDataList, null)
     }
 
 

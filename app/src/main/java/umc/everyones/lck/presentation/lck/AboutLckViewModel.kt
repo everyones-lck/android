@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.domain.model.about_lck.AboutLckMatchDetailsModel
 import umc.everyones.lck.domain.model.about_lck.AboutLckRankingDetailsModel
 import umc.everyones.lck.domain.repository.about_lck.AboutLckRepository
@@ -23,56 +24,34 @@ class AboutLckViewModel @Inject constructor(
     private val repository: AboutLckRepository
 ) : ViewModel() {
 
-    private val _matchDetails = MutableStateFlow<Result<AboutLckMatchDetailsModel>?>(null)
-    val matchDetails: StateFlow<Result<AboutLckMatchDetailsModel>?> get() = _matchDetails
-    private val _title = MutableStateFlow<String>("")
-    val title: StateFlow<String> get() = _title
+    private val _matchDetails = MutableStateFlow<AboutLckMatchDetailsModel?>(null)
+    val matchDetails: StateFlow<AboutLckMatchDetailsModel?> get() = _matchDetails
 
-    private val _rankingDetails = MutableStateFlow<Result<AboutLckRankingDetailsModel>?>(null)
-    val rankingDetails: StateFlow<Result<AboutLckRankingDetailsModel>?> get() = _rankingDetails
+    private val _rankingDetails = MutableStateFlow<AboutLckRankingDetailsModel?>(null)
+    val rankingDetails: StateFlow<AboutLckRankingDetailsModel?> get() = _rankingDetails
 
-    val temp = MutableSharedFlow<AboutLckMatchDetailsModel>()
+    fun fetchLckMatchDetails(searchDate: String){
+        viewModelScope.launch{
+            val result = repository.fetchLckMatchDetails(searchDate)
 
-    fun fetch(){
-        viewModelScope.launch {
-            repository.fetchLckMatchDetails("2024-08-21").onSuccess {
-                temp.emit(it)
-            }.onFailure {
-
+            result.onSuccess { response ->
+                _matchDetails.value = response
+            }.onFailure { exception ->
+                Timber.e(exception, "fetchLckMatchDetails API 호출 실패")
             }
         }
     }
-
 
     fun fetchLckRanking(seasonName: String, page: Int, size: Int) {
         viewModelScope.launch {
             val result = repository.fetchLckRanking(seasonName, page, size)
 
             result.onSuccess { response ->
-                _rankingDetails.value = Result.success(response)
+                _rankingDetails.value = response
             }.onFailure { exception ->
-                _rankingDetails.value = Result.failure(exception)
-                Log.e("AboutLckViewModel", "fetchLckRanking API 호출 실패: ${exception.message}")
+                _rankingDetails.value = null
+                Timber.e(exception, "fetchLckRanking API 호출 실패")
             }
-        }
-    }
-
-
-    fun formatMatchTitle(season: String, matchNumber: Int): String {
-        val suffix = when (matchNumber % 10) {
-            1 -> "st"
-            2 -> "nd"
-            3 -> "rd"
-            else -> "th"
-        }
-        return "$season LCK ${matchNumber}${suffix} Match"
-    }
-
-    fun getWinningTeamName(match: AboutLckMatchDetailsModel.AboutLckMatchDetailsElementModel): String {
-        return if (match.team1.winner) {
-            match.team1.teamName
-        } else {
-            match.team2.teamName
         }
     }
 }

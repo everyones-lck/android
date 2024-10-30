@@ -1,19 +1,19 @@
 package umc.everyones.lck.presentation.lck
 
-import android.util.Log
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentAboutLckTeamHistoryBinding
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.lck.adapter.HistoryAdapter
 import umc.everyones.lck.presentation.lck.data.HistoryData
 import umc.everyones.lck.presentation.mypage.MyPageActivity
+import umc.everyones.lck.util.extension.repeatOnStarted
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
@@ -22,17 +22,17 @@ class AboutLckTeamHistoryFragment : BaseFragment<FragmentAboutLckTeamHistoryBind
     private val viewModel: AboutLckTeamHistoryViewModel by viewModels()
     private lateinit var adapter: HistoryAdapter
     override fun initObserver() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.repeatOnStarted {
             viewModel.winningHistory.collect { seasonNameList ->
                 updateWinningHistory(seasonNameList)
             }
         }
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.repeatOnStarted {
             viewModel.recentPerformances.collect { recentPerformances ->
                 updateRecentPerformances(recentPerformances)
             }
         }
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.repeatOnStarted {
             viewModel.historyOfRoaster.collect { historyOfRoaster ->
                 updateHistoryOfRoaster(historyOfRoaster)
             }
@@ -77,7 +77,6 @@ class AboutLckTeamHistoryFragment : BaseFragment<FragmentAboutLckTeamHistoryBind
 
     private fun fetchTeamData() {
         val teamId = arguments?.let { AboutLckTeamHistoryFragmentArgs.fromBundle(it).teamId }
-
         val page = 0
         val size = 10
 
@@ -86,7 +85,7 @@ class AboutLckTeamHistoryFragment : BaseFragment<FragmentAboutLckTeamHistoryBind
             viewModel.fetchLckRecentPerformances(it, page, size)
             viewModel.fetchLckHistoryOfRoaster(it, page, size)
         } ?: run {
-            Log.e("AboutLckTeamHistoryFragment", "Error: teamId is null")
+            Timber.e("Error: teamId is null")
         }
     }
 
@@ -120,7 +119,7 @@ class AboutLckTeamHistoryFragment : BaseFragment<FragmentAboutLckTeamHistoryBind
 
     private fun initBackButton() {
         val backButton = binding.ivAboutLckTeamHistoryPre
-        backButton.setOnClickListener {
+        backButton.setOnSingleClickListener{
             findNavController().popBackStack()
         }
     }
