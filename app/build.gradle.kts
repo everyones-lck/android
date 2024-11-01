@@ -143,4 +143,6 @@ dependencies {
 
     implementation ("com.jakewharton.timber:timber:5.0.1")
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    implementation ("com.auth0.android:jwtdecode:2.0.0")
 }

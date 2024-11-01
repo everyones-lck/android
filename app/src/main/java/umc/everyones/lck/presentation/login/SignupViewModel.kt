@@ -6,8 +6,6 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.net.http.HttpException
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,18 +13,14 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import umc.everyones.lck.R
-import umc.everyones.lck.data.SignupUserData
+import timber.log.Timber
+import umc.everyones.lck.data.dto.request.login.RefreshAuthUserRequestDto
 import umc.everyones.lck.data.dto.request.login.SignupAuthUserRequestDto
-import umc.everyones.lck.data.service.LoginService
 import umc.everyones.lck.domain.model.request.login.CommonLoginRequestModel
 import umc.everyones.lck.domain.model.request.login.NicknameAuthUserRequestModel
-import umc.everyones.lck.domain.model.response.login.CommonLoginResponseModel
 import umc.everyones.lck.domain.model.response.login.LoginResponseModel
 import umc.everyones.lck.domain.repository.login.LoginRepository
 import java.io.ByteArrayOutputStream
@@ -55,8 +49,9 @@ class SignupViewModel @Inject constructor(
     private val _teamId = MutableLiveData<Int>()
     val teamId: LiveData<Int> get() = _teamId
 
-    private val _signupResponse = MutableLiveData<Result<CommonLoginResponseModel>?>()
-    val signupResponse: LiveData<Result<CommonLoginResponseModel>?> get() = _signupResponse
+    private val _signupResponse = MutableLiveData<Result<LoginResponseModel>?>()
+
+    val signupResponse: LiveData<Result<LoginResponseModel>?> get() = _signupResponse
 
     private val _loginResult = MutableLiveData<LoginResponseModel?>()
     val loginResult: LiveData<LoginResponseModel?> get() = _loginResult
@@ -81,37 +76,35 @@ class SignupViewModel @Inject constructor(
 
     fun checkNicknameAvailability(nickName: String) {
         viewModelScope.launch {
-            // API 호출
-            val result = try {
-                repository.nickname(NicknameAuthUserRequestModel(nickName))
-            } catch (e: Exception) {
-                Log.e("SignupViewModel", "Error checking nickname availability: ${e.message}")
-                Result.failure(e) // 예외 발생 시
-            }
-
-            // 결과를 _isNicknameAvailable에 저장
-            _isNicknameAvailable.value = result.getOrDefault(false) // 기본값 false 설정
-
-            // 성공 여부에 따라 처리
-            result.onSuccess { isAvailable ->
-                _nickName.value = if (isAvailable) {
-                    "Nickname is available"
-                } else {
-                    "Nickname is already taken"
+            _isNicknameAvailable.value = false
+            repository.nickname(NicknameAuthUserRequestModel(nickName))
+                .onSuccess { isAvailable ->
+                    _isNicknameAvailable.value = isAvailable // 가용성 결과 업데이트
+                    _nickName.value = if (isAvailable) {
+                        "Nickname is available"
+                    } else {
+                        "Nickname is already taken"
+                    }
+                }.onFailure { error ->
+                    Timber.e(error) // 오류 로그
+                    _nickName.value = "Failed to check nickname availability"
                 }
-            }.onFailure {
-                _nickName.value = "Failed to check nickname availability"
-            }
         }
     }
 
+
     fun loginWithKakao(kakaoUserId: String) {
         viewModelScope.launch {
+            if (kakaoUserId.isNullOrEmpty()) {
+                Timber.d("Kakao User ID is missing, proceeding to signup.")
+                sendSignupData() // 회원가입 로직으로 진행
+                return@launch
+            }
+
             _kakaoUserId.value = kakaoUserId
             val requestModel = CommonLoginRequestModel(kakaoUserId)
-
             repository.login(requestModel).onSuccess { response ->
-                Log.d("loginWithKakao", response.toString())
+                Timber.d(response.toString())
                 spf.edit().apply {
                     putString("jwt", response.accessToken)
                     putString("refreshToken", response.refreshToken)
@@ -119,10 +112,10 @@ class SignupViewModel @Inject constructor(
                     putString("nickName", response.nickName)
                     apply()
                 }
-                _loginResult.value = response // 로그인 결과를 LiveData에 저장
+                _loginResult.value = response
             }.onFailure { error ->
-                Log.d("loginWithKakao Error", error.message.toString())
-                Log.d("LoginWithKakao", "$requestModel")
+                Timber.d(error.message.toString())
+                Timber.d("$requestModel")
                 _loginResult.value = null // 실패 시 null 설정
             }
         }
@@ -132,7 +125,7 @@ class SignupViewModel @Inject constructor(
         viewModelScope.launch {
             val signupRequest = prepareSignupRequest()
 
-            Log.d("SignupViewModel", "Sending API request with data: ${signupRequest.signupUserData}")
+            Timber.d("Sending API request with data: ${signupRequest.signupUserData}")
 
             val gson = Gson()
             val signupUserDataJson = gson.toJson(signupRequest.signupUserData)
@@ -150,24 +143,22 @@ class SignupViewModel @Inject constructor(
                     apply()
                 }
             }.onFailure {
-                Log.e("SignupViewModel", "API call failed: ${it.message}")
+                Timber.e("API call failed: ${it.message}")
             }
         }
     }
 
     private fun prepareSignupRequest(): SignupAuthUserRequestDto {
-        // Mock data, replace with actual data
         val kakaoUserId = _kakaoUserId.value ?: throw IllegalArgumentException("Kakao User ID is required.")
         val nickName = _nickName.value ?: throw IllegalArgumentException("Nickname is required.")
-        val role = "ROLE_USER" // 하드코딩된 역할
-        val teamId = _teamId.value ?: 1 // 기본값 설정
-        val tier = "Silver" // 기본 티어, 실제 티어로 대체할 수 있음
+        val role = "ROLE_USER"
+        val teamId = _teamId.value ?: 1
+        val tier = "Silver"
 
-        // 프로필 이미지 URI를 사용하여 MultipartBody.Part로 변환
         val profileImagePart = try {
             val profileImageUri = _profileUri.value ?: throw IllegalArgumentException("Profile image URI is required.")
-            val inputStream = context.contentResolver.openInputStream(profileImageUri) // URI에서 입력 스트림 열기
-            val selectedImageBitmap = BitmapFactory.decodeStream(inputStream) // 비트맵으로 변환
+            val inputStream = context.contentResolver.openInputStream(profileImageUri)
+            val selectedImageBitmap = BitmapFactory.decodeStream(inputStream)
             val defaultImageStream = ByteArrayOutputStream().apply {
                 selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
             }
@@ -178,7 +169,7 @@ class SignupViewModel @Inject constructor(
                 "profileImage", "profile_image.png", requestBody
             )
         } catch (e: Exception) {
-            Log.e("SignupViewModel", "Error creating MultipartBody.Part for profile image: ${e.message}")
+            Timber.e("Error creating MultipartBody.Part for profile image: ${e.message}")
             val emptyImageRequestBody = ByteArray(0).toRequestBody("image/png".toMediaTypeOrNull()) // 빈 이미지 요청
             MultipartBody.Part.createFormData(
                 "profileImage", "profile_image.png", emptyImageRequestBody
@@ -196,5 +187,4 @@ class SignupViewModel @Inject constructor(
             )
         )
     }
-
 }

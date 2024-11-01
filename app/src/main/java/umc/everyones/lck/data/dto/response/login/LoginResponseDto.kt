@@ -12,4 +12,3 @@ data class LoginResponseDto(
     fun toLoginResponseDto() =
         LoginResponseModel(accessToken, refreshToken, accessTokenExpirationTime, refreshTokenExpirationTime, nickName)
 }
-

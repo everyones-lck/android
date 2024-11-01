@@ -3,32 +3,53 @@ package umc.everyones.lck.presentation.mypage
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import umc.everyones.lck.R
+import umc.everyones.lck.databinding.DialogMypageProfileLogoutBinding
+import umc.everyones.lck.databinding.DialogNicknameConfirmBinding
+import umc.everyones.lck.databinding.DialogProfileEditConfirmBinding
 import umc.everyones.lck.databinding.FragmentMypageProfileEditBinding
 import umc.everyones.lck.presentation.MainActivity
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.home.HomeFragment
 import umc.everyones.lck.presentation.login.LoginActivity
 import umc.everyones.lck.presentation.login.SignupViewModel
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
 class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>(R.layout.fragment_mypage_profile_edit){
 
-    private val myPageViewModel: MyPageViewModel by activityViewModels()
+    private val viewModel: MyPageViewModel by activityViewModels()
     private val signupViewModel: SignupViewModel by activityViewModels()
     private val navigator by lazy { findNavController() }
+    private var profileImageUri: Uri? = null
+
+    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                profileImageUri = uri
+                binding.ivMypageProfileEditProfile.setImageURI(uri) // 선택한 이미지 미리보기
+                viewModel.setProfileImageUri(uri) // ViewModel에 URI 저장
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -45,20 +66,23 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
                 binding.tvMypageNicknameDuplication.setTextColor(requireContext().getColor(R.color.success))
                 binding.tvMypageNicknameDuplication.setBackgroundResource(R.drawable.shape_rect_12_green_line)
                 binding.layoutMypageProfileEditValid.visibility = View.VISIBLE
+                binding.layoutMypageProfileEditWarning4.visibility = View.GONE
             } else {
                 binding.layoutMypageProfileEditWarning4.visibility = View.VISIBLE // 중복
-                binding.viewMypageProfileEditNicknameBar.setBackgroundResource(R.drawable.shape_rect_4_red_line) // 실패 색상
+                binding.viewMypageProfileEditNicknameBar.setBackgroundResource(R.drawable.shape_rect_4_red_line)
+                binding.tvMypageNicknameDuplication.setTextColor(requireContext().getColor(R.color.warning))
+                binding.tvMypageNicknameDuplication.setBackgroundResource(R.drawable.shape_rect_12_red_line)
             }
         }
 
-        myPageViewModel.updateProfileResult.observe(viewLifecycleOwner) { result ->
+        viewModel.updateProfileResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
-                Log.d(TAG,"프로필 수정 성공")
+                Timber.d("프로필 수정 성공")
             } else {
-                Log.e(TAG, "프로필 수정 실패")
+                Timber.e("프로필 수정 실패")
             }
         }
-        myPageViewModel.profileData.observe(viewLifecycleOwner) { profile ->
+        viewModel.profileData.observe(viewLifecycleOwner) { profile ->
             profile?.let {
                 loadProfileImage(it.profileImageUrl)
             }
@@ -69,24 +93,23 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
         setInitialState() // 초기 상태 설정
 
         // 기존 닉네임을 가져와 hint로 설정
-        myPageViewModel.nickName.observe(viewLifecycleOwner) { nickName ->
+        viewModel.nickName.observe(viewLifecycleOwner) { nickName ->
             binding.etMypageProfileEditNicknameName.hint = nickName
         }
 
         // 뒤로가기 버튼 클릭 시 이동
-        binding.ivMypageProfileEditBack.setOnClickListener {
+        binding.ivMypageProfileEditBack.setOnSingleClickListener {
             findNavController().navigateUp()
         }
 
         // 기본 이미지 사용 클릭 시
-        binding.tvMypageProfileEditBasic.setOnClickListener {
+        binding.tvMypageProfileEditBasic.setOnSingleClickListener {
             binding.ivMypageProfileEditProfile.setImageResource(R.drawable.img_signup_profile)
-            myPageViewModel.setProfileImageUri(Uri.parse("android.resource://${requireContext().packageName}/${R.drawable.img_signup_profile}")) // 기본 이미지 URI 설정
+            viewModel.setProfileImageUri(Uri.parse("android.resource://${requireContext().packageName}/${R.drawable.img_signup_profile}")) // 기본 이미지 URI 설정
         }
 
-        // 갤러리에서 이미지 선택 클릭 시
-        binding.ivMypageProfileEditProfile.setOnClickListener {
-            openGallery() // 갤러리 열기
+        binding.ivMypageProfileEditProfile.setOnSingleClickListener {
+            openPhotoPicker() // 갤러리 열기
         }
 
         binding.etMypageProfileEditNicknameName.doOnTextChanged { text, _, _, _ ->
@@ -116,39 +139,48 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
             }
         }
 
-        binding.tvMypageProfileEditTopbarEdit.setOnClickListener {
+        // 프로필 수정 완료 클릭 리스너
+        binding.tvMypageProfileEditTopbarEdit.setOnSingleClickListener {
             val nicknameInput = binding.etMypageProfileEditNicknameName.text.toString().trim()
+            val currentProfileImageUri = viewModel.profileUri.value
 
-            // 현재 프로필 이미지 URI 가져오기
-            val currentProfileImageUri = myPageViewModel.profileUri.value
-            val currentNickname = myPageViewModel.nickName.value
-
-            // 업데이트할 닉네임과 이미지 결정
             val finalNickname = if (nicknameInput.isNotEmpty()) {
-                nicknameInput // 닉네임이 비어있지 않으면 입력값 사용
+                nicknameInput
             } else {
-                currentNickname // 닉네임이 비어있으면 현재 닉네임 사용
+                null
             }
 
-            val finalProfileImageUri = if (nicknameInput.isNotEmpty()) {
-                // 닉네임이 변경된 경우, 현재 프로필 이미지를 사용
-                currentProfileImageUri
-            } else {
-                // 닉네임이 변경되지 않은 경우, 프로필 이미지가 변경된 경우에만 새 이미지 사용
-                currentProfileImageUri // 현재 프로필 이미지를 유지
-            }
+            val finalProfileImageUri = profileImageUri ?: currentProfileImageUri // 선택된 이미지가 없으면 현재 이미지 유지
 
+            viewModel.updateProfile(finalNickname, finalProfileImageUri)
 
-                // 업데이트할 데이터가 유효할 경우 ViewModel 호출
-            myPageViewModel.updateProfile(finalNickname, finalProfileImageUri)
-
-                // 프로필 업데이트 결과를 관찰하여 성공 여부에 따라 화면 전환
-            myPageViewModel.updateProfileResult.observe(viewLifecycleOwner) { result ->
-                navigator.navigate(R.id.action_myPageProfileEditFragment_to_myPageProfileFragment)
-            }
+            showConfirmDialog()
         }
-
     }
+
+    private fun showConfirmDialog() {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_profile_edit_confirm, null)
+        val dialogBinding = DialogProfileEditConfirmBinding.bind(dialogView)
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+        val layoutParams = dialog.window?.attributes
+        layoutParams?.dimAmount = 0.8f
+        dialog.window?.attributes = layoutParams
+
+        dialogBinding.btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            navigator.navigate(R.id.action_myPageProfileEditFragment_to_myPageProfileFragment)
+        }
+    }
+
 
     private fun setInitialState() {
         binding.tvMypageNicknameDuplication.setTextColor(requireContext().getColor(R.color.nickname_gray)) // 회색
@@ -196,26 +228,10 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
         }
     }
 
-    private fun openGallery() {
-        // 갤러리에서 이미지 선택하기 위한 Intent
+    private fun openPhotoPicker() {
         val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
+            type = "image/*" // 모든 이미지 타입 선택
         }
-        startActivityForResult(intent, GALLERY_REQUEST_CODE) // GALLERY_REQUEST_CODE는 상수로 정의해야 합니다.
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
-            data?.data?.let { uri ->
-                binding.ivMypageProfileEditProfile.setImageURI(uri) // 선택한 이미지 미리보기
-                myPageViewModel.setProfileImageUri(uri) // ViewModel에 URI 저장
-            }
-        }
-    }
-
-    companion object {
-        private const val GALLERY_REQUEST_CODE = 1001
+        photoPickerLauncher.launch(intent) // 갤러리 열기
     }
 }

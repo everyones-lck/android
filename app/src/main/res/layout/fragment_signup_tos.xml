@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gradient_color">
+
+        <LinearLayout
+            android:id="@+id/layout_signup_tos_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="4dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="76dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_signup_tos_topbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="회원가입"
+                style="@style/TextAppearance.LCK.Bold.Title1_22sp"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:id="@+id/tv_signup_tos_topbar_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="서비스 이용약관"
+                style="@style/TextAppearance.LCK.Light.Body_14sp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_signup_tos_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_next_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/layout_signup_tos_topbar"
+            app:layout_constraintBottom_toBottomOf="@id/layout_signup_tos_topbar"
+            android:layout_marginEnd="30dp"
+            android:onClick="onNextButtonClick"/>
+
+        <TextView
+            android:id="@+id/tv_signup_tos_agree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="모두 동의"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="80dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_signup_tos_topbar"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="60dp"/>
+
+        <TextView
+            android:id="@+id/tv_signup_tos_agree_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개인정보 처리방침에 동의 ( 필수 )"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_signup_tos_agree"
+            app:layout_constraintStart_toStartOf="@id/tv_signup_tos_agree"/>
+
+        <TextView
+            android:id="@+id/tv_signup_tos_details_agree_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="세부 정보 보기 >"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_signup_tos_agree_1"
+            app:layout_constraintStart_toStartOf="@id/tv_signup_tos_agree_1"/>
+
+        <TextView
+            android:id="@+id/tv_signup_tos_agree_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="서비스 이용약관에 동의 ( 필수 )"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_signup_tos_details_agree_1"
+            app:layout_constraintStart_toStartOf="@id/tv_signup_tos_details_agree_1"/>
+
+        <TextView
+            android:id="@+id/tv_signup_tos_details_agree_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="세부 정보 보기 >"
+            style="@style/TextAppearance.LCK.Light.Body_14sp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_signup_tos_agree_2"
+            app:layout_constraintStart_toStartOf="@id/tv_signup_tos_agree_2"/>
+
+        <View
+            android:id="@+id/view_signup_tos_agree_all_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/shape_oval"
+            app:layout_constraintTop_toTopOf="@id/tv_signup_tos_agree"
+            app:layout_constraintBottom_toBottomOf="@id/tv_signup_tos_agree"
+            android:layout_marginEnd="60dp"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/view_signup_tos_agree_1_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/shape_oval"
+            app:layout_constraintTop_toTopOf="@id/tv_signup_tos_agree_1"
+            app:layout_constraintBottom_toBottomOf="@id/tv_signup_tos_agree_1"
+            app:layout_constraintEnd_toEndOf="@id/view_signup_tos_agree_all_circle"/>
+
+        <View
+            android:id="@+id/view_signup_tos_agree_2_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/shape_oval"
+            app:layout_constraintTop_toTopOf="@id/tv_signup_tos_agree_2"
+            app:layout_constraintBottom_toBottomOf="@id/tv_signup_tos_agree_2"
+            app:layout_constraintEnd_toEndOf="@id/view_signup_tos_agree_all_circle"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

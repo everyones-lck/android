@@ -17,6 +17,24 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"/>
+            android:padding="16dp"
+            android:visibility="gone"/> <!-- 기본적으로 숨김 -->
+
+        <LinearLayout
+            android:id="@+id/noPostsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"> <!-- 기본적으로 숨김 -->
+
+            <TextView
+                android:id="@+id/noPostsMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="작성한 댓글이 없습니다."
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"/>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

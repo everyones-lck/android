@@ -13,6 +13,7 @@ import umc.everyones.lck.databinding.FragmentMypageProfileBinding
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.login.LoginActivity
 import umc.everyones.lck.util.TeamData
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
 class MyPageProfileFragment : BaseFragment<FragmentMypageProfileBinding>(R.layout.fragment_mypage_profile) {
@@ -43,19 +44,19 @@ class MyPageProfileFragment : BaseFragment<FragmentMypageProfileBinding>(R.layou
 
     override fun initView() {
 
-        binding.tvMypageProfileEditText.setOnClickListener {
+        binding.tvMypageProfileEditText.setOnSingleClickListener {
             navigator.navigate(R.id.action_myPageProfileFragment_to_myPageProfileEditFragment)
         }
 
-        binding.tvMypageProfileWithdrawText.setOnClickListener {
+        binding.tvMypageProfileWithdrawText.setOnSingleClickListener {
             navigator.navigate(R.id.action_myPageProfileFragment_to_myPageProfileWithdrawFragment)
         }
 
-        binding.tvMypageProfileLogoutText.setOnClickListener {
+        binding.tvMypageProfileLogoutText.setOnSingleClickListener {
             showProfileDialog()
         }
-        binding.ivMypageProfileBack.setOnClickListener {
-            navigator.navigateUp()
+        binding.ivMypageProfileBack.setOnSingleClickListener {
+            navigator.navigate(R.id.action_myPageProfileFramgnet_to_myPageFragment)
         }
     }
 
@@ -103,12 +104,12 @@ class MyPageProfileFragment : BaseFragment<FragmentMypageProfileBinding>(R.layou
         dialog.window?.attributes = layoutParams
 
         // Cancel button
-        dialogBinding.btnCancel.setOnClickListener {
+        dialogBinding.btnCancel.setOnSingleClickListener {
             dialog.dismiss()
         }
 
         // Logout button
-        dialogBinding.btnConfirm.setOnClickListener {
+        dialogBinding.btnConfirm.setOnSingleClickListener {
             dialog.dismiss()
             myPageViewModel.logout()
 

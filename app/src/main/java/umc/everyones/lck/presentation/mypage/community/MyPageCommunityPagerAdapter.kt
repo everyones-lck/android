@@ -13,5 +13,8 @@ class MyPageCommunityPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fra
             1 -> MyPageCommunityCommentFragment()  // 두 번째 탭에 표시할 Fragment
             else -> throw IllegalStateException("Invalid position: $position")
         }
+
     }
+
+
 }
