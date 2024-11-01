@@ -84,8 +84,15 @@ class ViewingPartyFragment : BaseFragment<FragmentViewingPartyBinding>(R.layout.
 
         viewingPartyRVA?.addLoadStateListener { combinedLoadStates ->
             with(binding){
-                ivViewingPartyLoadingImg.isVisible = combinedLoadStates.source.refresh is LoadState.Loading
+                layoutShimmer.isVisible = combinedLoadStates.source.refresh is LoadState.Loading
                 rvViewingParty.isVisible = combinedLoadStates.source.refresh is LoadState.NotLoading
+                if(combinedLoadStates.source.refresh is LoadState.Loading){
+                    layoutShimmer.startShimmer()
+                }
+
+                if(combinedLoadStates.source.refresh is LoadState.NotLoading){
+                    layoutShimmer.stopShimmer()
+                }
             }
         }
 

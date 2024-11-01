@@ -1,6 +1,7 @@
 package umc.everyones.lck.presentation.party.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import timber.log.Timber
 import umc.everyones.lck.databinding.ItemParticipantBinding
 import umc.everyones.lck.databinding.ItemViewingPartyBinding
 import umc.everyones.lck.domain.model.party.ParticipantItem
@@ -39,6 +41,13 @@ class ParticipantsRVA(val goToChat: (String) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(participantItem: ViewingPartyParticipantsModel.ParticipantsModel) {
             with(binding){
+                Timber.d("participant $participantItem")
+                if(participantItem.isParticipating){
+                    ivParticipantsViewingPartyMark.visibility = View.VISIBLE
+                } else {
+                    ivParticipantsChatMark.visibility = View.VISIBLE
+                }
+
                 Glide.with(ivParticipantProfileImage.context)
                     .load(participantItem.image)
                     .into(ivParticipantProfileImage)
@@ -46,6 +55,7 @@ class ParticipantsRVA(val goToChat: (String) -> Unit) :
                 tvParticipantName.text = participantItem.name
                 if (participantItem.team == "empty"){
                     tvParticipantDivider.isVisible = false
+                    tvParticipantFavoriteTeam.isVisible = false
                 } else {
                     tvParticipantFavoriteTeam.text = participantItem.team
                 }

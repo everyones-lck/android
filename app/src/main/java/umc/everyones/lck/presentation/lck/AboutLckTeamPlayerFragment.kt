@@ -1,21 +1,20 @@
 package umc.everyones.lck.presentation.lck
 
-import android.util.Log
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentAboutLckTeamPlayerBinding
 import umc.everyones.lck.domain.model.about_lck.AboutLckPlayerModel
 import umc.everyones.lck.presentation.base.BaseFragment
-import umc.everyones.lck.presentation.lck.adapter.HistoryAdapter
 import umc.everyones.lck.presentation.lck.adapter.PlayerCareerAdapter
 import umc.everyones.lck.presentation.lck.data.PlayerCareerData
 import umc.everyones.lck.presentation.mypage.MyPageActivity
+import umc.everyones.lck.util.extension.repeatOnStarted
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
@@ -23,22 +22,22 @@ class AboutLckTeamPlayerFragment : BaseFragment<FragmentAboutLckTeamPlayerBindin
     private val viewModel: AboutLckPlayerCareerViewModel by viewModels()
     private lateinit var adapter: PlayerCareerAdapter
     override fun initObserver() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.repeatOnStarted {
             viewModel.winningCareer.collect { seasonNames ->
                 updateWinningCareer(seasonNames)
             }
         }
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.repeatOnStarted {
             viewModel.history.collect { seasonTeamDetails ->
                 updateHistory(seasonTeamDetails)
             }
         }
-        lifecycleScope.launchWhenStarted {
-            viewModel.player.collect { result ->
-                result?.onSuccess { player ->
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel.player.collect { player ->
+                if (player != null) {
                     updatePlayerUI(player)
-                }?.onFailure {
-                    Log.e("AboutLckTeamPlayerFragment", "Failed to fetch player data: ${it.message}")
+                } else {
+                    Timber.e("Player data is null")
                 }
             }
         }
@@ -58,7 +57,7 @@ class AboutLckTeamPlayerFragment : BaseFragment<FragmentAboutLckTeamPlayerBindin
             viewModel.fetchLckHistory(it, page, size)
             viewModel.fetchLckPlayer(it)
         } ?: run {
-            Log.e("AboutLckTeamHistoryFragment", "Error: teamId is null")
+            Timber.e("Error: teamId is null")
         }
     }
     private fun initRecyclerView() {
@@ -88,9 +87,9 @@ class AboutLckTeamPlayerFragment : BaseFragment<FragmentAboutLckTeamPlayerBindin
     private fun updateHistory(seasonTeamDetails: List<String>) {
         val items = adapter.getItems().toMutableList()
 
-        val HistoryIndex = items.indexOfFirst { it.title == "History" }
-        if ( HistoryIndex != -1) {
-            items[ HistoryIndex] = items [HistoryIndex].copy(details = seasonTeamDetails)
+        val historyIndex = items.indexOfFirst { it.title == "History" }
+        if ( historyIndex != -1) {
+            items[historyIndex] = items [historyIndex].copy(details = seasonTeamDetails)
             adapter.updateItems(items)
         }
     }
@@ -101,7 +100,7 @@ class AboutLckTeamPlayerFragment : BaseFragment<FragmentAboutLckTeamPlayerBindin
         teamLogoUrl?.let {
             Glide.with(this)
                 .load(it)
-                .into(binding.ivAboutLckTeamPlayerLogo) // 적절한 ImageView에 teamLogoUrl 로드
+                .into(binding.ivAboutLckTeamPlayerLogo)
         }
 
         Glide.with(this)
@@ -132,7 +131,7 @@ class AboutLckTeamPlayerFragment : BaseFragment<FragmentAboutLckTeamPlayerBindin
 
     private fun initBackButton() {
         val backButton = binding.ivAboutLckTeamPlayerPre
-        backButton.setOnClickListener {
+        backButton.setOnSingleClickListener {
             findNavController().popBackStack()
         }
     }

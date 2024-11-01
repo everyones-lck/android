@@ -18,7 +18,7 @@ class CustomDatePickerDialog(
     private val month: Int,
     private val dayOfMonth: Int,
     private val dateSelectedCallback: (Int, Int, Int) -> Unit // 콜백 함수 추가
-) : DatePickerDialog(context, null, year, month, dayOfMonth) {
+) : DatePickerDialog(context, R.style.Widget_LCK_DatePicker, null, year, month, dayOfMonth) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,18 +31,8 @@ class CustomDatePickerDialog(
             val headerView = datePicker.findViewById<View>(
                 Resources.getSystem().getIdentifier("date_picker_header", "id", "android")
             )
-            headerView.visibility = View.GONE
-
-            // 다이얼로그 위치 설정
-            window?.let {
-                val layoutParams = it.attributes
-                layoutParams.gravity = Gravity.END
-                layoutParams.x = 60
-                layoutParams.y = -330
-                it.attributes = layoutParams
-
-                it.setBackgroundDrawableResource(android.R.color.transparent)
-            }
+            val container = headerView.parent as ViewGroup
+            container.removeView(headerView)
 
             val buttonsLayout = findViewById<View>(
                 Resources.getSystem().getIdentifier("android:id/buttonPanel", null, null)
@@ -57,35 +47,6 @@ class CustomDatePickerDialog(
                 dateSelectedCallback(selectedYear, selectedMonth, selectedDay) // 콜백 호출
                 dismiss()
             }
-            customizeDatePicker(datePicker)
-
-            // 데이터 피커(배경 제외) 마진으로 위치 이동
-            val parent = datePicker.parent as ViewGroup
-            parent.removeView(datePicker)
-            val wrapper = FrameLayout(context)
-            wrapper.addView(datePicker)
-
-            val balloonBackground: Drawable = context.getDrawable(R.drawable.bg_calendar_balloon)!!
-            wrapper.background = balloonBackground
-
-            val layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
-            layoutParams.topMargin = 100
-            datePicker.layoutParams = layoutParams
-
-            parent.addView(wrapper)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun customizeDatePicker(datePicker: DatePicker) {
-        try {
-            datePicker.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            val balloonBackground: Drawable = context.getDrawable(R.drawable.bg_calendar_balloon)!!
-            datePicker.background = balloonBackground
         } catch (e: Exception) {
             e.printStackTrace()
         }

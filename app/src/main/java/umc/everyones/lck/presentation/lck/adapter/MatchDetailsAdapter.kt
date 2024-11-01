@@ -48,33 +48,50 @@ class MatchDetailsAdapter() :
     }
 
     inner class MatchDetailViewHolder(private val binding: ItemAboutLckMatchesDetailBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val ivTeam1: ImageView = itemView.findViewById(R.id.iv_about_lck_team1)
-        private val ivTeam2: ImageView = itemView.findViewById(R.id.iv_about_lck_team2)
-        private val tvMatchTitle: TextView = itemView.findViewById(R.id.tv_match_title)
-        private val tvMatchTime: TextView = itemView.findViewById(R.id.tv_match_time)
+
 
         @SuppressLint("SetTextI18n")
-        fun bind(detail: AboutLckMatchDetailsModel.AboutLckMatchDetailsElementModel) {
-            Log.d("detail", detail.toString())
-            tvMatchTitle.text = formatMatchTitle(detail.season, detail.matchNumber)
+        fun bind(detail: AboutLckMatchDetailsModel.AboutLckMatchDetailsElementModel?) {
+            with(binding) {
+                if (detail == null) {
+                    tvMatchTitle.text = "-"
+                    tvMatchTime.text = "No Match"
+                    ivAboutLckTeam1.visibility = View.INVISIBLE
+                    ivAboutLckTeam2.visibility = View.INVISIBLE
+                    return
+                }
 
-            if (detail.matchFinished) {
-                val winningTeamName = if (detail.team1.winner) {
-                    detail.team1.teamName
+                tvMatchTitle.text = formatMatchTitle(detail.season, detail.matchNumber)
+
+                if (detail.matchFinished) {
+                    val winningTeamName = if (detail.team1.winner) {
+                        detail.team1.teamName
+                    } else {
+                        detail.team2.teamName
+                    }
+                    tvMatchTime.text = "WIN | $winningTeamName"
                 } else {
-                    detail.team2.teamName }
-                tvMatchTime.text = "WIN | $winningTeamName"
-            } else {
-                tvMatchTime.text = detail.matchTime.dropLast(3)
-            }
+                    tvMatchTime.text = detail.matchTime.dropLast(3)
+                }
 
-            loadTeamLogo(detail.team1.teamLogoUrl, ivTeam1, detail.team1.winner, detail.matchFinished)
-            loadTeamLogo(detail.team2.teamLogoUrl, ivTeam2, detail.team2.winner, detail.matchFinished)
+                loadTeamLogo(
+                    detail.team1.teamLogoUrl,
+                    ivAboutLckTeam1,
+                    detail.team1.winner,
+                    detail.matchFinished
+                )
+                loadTeamLogo(
+                    detail.team2.teamLogoUrl,
+                    ivAboutLckTeam2,
+                    detail.team2.winner,
+                    detail.matchFinished
+                )
+            }
         }
 
         private fun loadTeamLogo(url: String?, imageView: ImageView, isWinner: Boolean, isMatchFinished: Boolean) {
             if (url.isNullOrEmpty()) {
-                imageView.visibility = View.GONE
+                imageView.visibility = View.INVISIBLE
                 return
             }
 
@@ -99,7 +116,7 @@ class MatchDetailsAdapter() :
 
                     override fun onLoadFailed(errorDrawable: Drawable?) {
                         Log.e("MatchDetailsAdapter", "Failed to load image: $url")
-                        imageView.visibility = View.GONE
+                        imageView.visibility = View.INVISIBLE
                     }
                 })
         }

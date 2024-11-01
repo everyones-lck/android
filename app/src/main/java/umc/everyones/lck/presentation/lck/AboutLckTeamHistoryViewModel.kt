@@ -1,6 +1,5 @@
 package umc.everyones.lck.presentation.lck
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.domain.repository.about_lck.AboutLckRepository
 import javax.inject.Inject
 
@@ -30,11 +30,11 @@ class AboutLckTeamHistoryViewModel @Inject constructor(
             val result = repository.fetchLckWinningHistory(teamId, page, size)
 
             result.onSuccess { response ->
-                Log.d("AboutLckTeamHistoryViewModel", "fetchLckWinningHistory API 호출 성공")
+                Timber.d("fetchLckWinningHistory API 호출 성공")
                 val seasonNameList = response.seasonNameList
                 _winningHistory.update { seasonNameList }
             }.onFailure {
-                Log.e("AboutLckTeamHistoryViewModel", "fetchLckWinningHistory API 호출 실패: ${it.message}")
+                Timber.e(it, "fetchLckWinningHistory API 호출 실패")
             }
         }
     }
@@ -43,13 +43,13 @@ class AboutLckTeamHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             val result = repository.fetchLckRecentPerformances(teamId, page, size)
             result.onSuccess { response ->
-                Log.d("AboutLckTeamHistoryViewModel", "fetchLckRecentPerformances API 호출 성공")
+                Timber.d("fetchLckRecentPerformances API 호출 성공")
                 val formattedPerformances = response.seasonDetailList.map { detail ->
                     "${detail.seasonName} - ${formatRanking(detail.rating)}"
                 }
                 _recentPerformances.update { formattedPerformances }
             }.onFailure {
-                Log.e("AboutLckTeamHistoryViewModel", "fetchLckRecentPerformances API 호출 실패: ${it.message}")
+                Timber.e(it, "fetchLckRecentPerformances API 호출 실패")
             }
         }
     }
@@ -59,7 +59,7 @@ class AboutLckTeamHistoryViewModel @Inject constructor(
             val result = repository.fetchLckHistoryOfRoaster(teamId, page, size)
 
             result.onSuccess { response ->
-                Log.d("AboutLckTeamHistoryViewModel", "fetchLckHistoryOfRoaster API 호출 성공")
+                Timber.d("fetchLckHistoryOfRoaster API 호출 성공")
                 val historyOfRoaster = response.seasonDetails
                     .filter { it.players.isNotEmpty() }
                     .map { seasonDetail ->
@@ -70,7 +70,7 @@ class AboutLckTeamHistoryViewModel @Inject constructor(
                     }
                 _historyOfRoaster.update { historyOfRoaster }
             }.onFailure {
-                Log.e("AboutLckTeamHistoryViewModel", "fetchLckHistoryOfRoaster API 호출 실패: ${it.message}")
+                Timber.e(it, "fetchLckHistoryOfRoaster API 호출 실패")
             }
         }
     }

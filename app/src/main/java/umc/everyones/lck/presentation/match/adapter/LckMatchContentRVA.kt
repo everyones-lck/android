@@ -72,10 +72,6 @@ class LckMatchContentRVA(private val items: List<TodayMatchInformationModel.Matc
             binding.tvTodayMatchTeam1Bar.backgroundTintList = ColorStateList.valueOf(team1Color)
             binding.tvTodayMatchTeam2Bar.backgroundTintList = ColorStateList.valueOf(team2Color)
 
-            // "POG 투표하기" 버튼 클릭 시 TodayMatchTodayPogFragment로 이동
-//            binding.tvTodayMatch1Pog.setOnClickListener {
-//                it.findNavController().navigate(R.id.todayMatchTodayPogFragment)
-//            }
             // 팀 승률에 따라 승률 바의 비율을 설정
             val team1WinRate = item.team1VoteRate / 100f
             val team2WinRate = item.team2VoteRate / 100f

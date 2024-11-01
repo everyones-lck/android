@@ -1,5 +1,6 @@
 package umc.everyones.lck.presentation.community.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -34,25 +35,27 @@ class SpinnerAdapter(context: Context, private val list: List<String>?) :
     }
 
     // 화면에 들어왔을 때 보여지는 텍스트뷰 설정
+    @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         val binding = SpinnerOuterViewBinding.inflate(inflater, parent, false)
         if (convertView == null) convertView = binding.root
         if (list != null) {
             item = list[position]
-            binding.tv.text = item
+            binding.tv.text = "$item "
         }
         return convertView
     }
 
     // 클릭 후 나타나는 텍스트뷰 설정
+    @SuppressLint("SetTextI18n")
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         val binding = SpinnerInnerViewBinding.inflate(inflater, parent, false)
         if (convertView == null) convertView = binding.root
         if (list != null) {
             item = list[position]
-            binding.spinnerInnerTv.text = item
+            binding.spinnerInnerTv.text = "$item "
         }
         return convertView
     }

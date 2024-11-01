@@ -1,12 +1,14 @@
 package umc.everyones.lck.domain.model.about_lck
 
-
-import java.time.LocalDate
-
 data class AboutLckMatchDetailsModel(
-    val matchDetailList: List<AboutLckMatchDetailsElementModel>,
-    val listSize: Int
+    val matchByDateList: List<AboutLckMatchByDateModel>
 ) {
+    data class AboutLckMatchByDateModel(
+        val matchDate: String,
+        val matchDetailList: List<AboutLckMatchDetailsElementModel>,
+        val matchDetailSize: Int
+    )
+
     data class AboutLckMatchDetailsElementModel(
         val team1: TeamElementModel,
         val team2: TeamElementModel,

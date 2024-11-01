@@ -1,7 +1,10 @@
 package umc.everyones.lck.util.extension
 
+import android.annotation.SuppressLint
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 // 카테고리 -> 포지션 확장함수
 fun String.toCategoryPosition(): Int{
@@ -54,4 +57,23 @@ fun formatMatchTitle(season: String, matchNumber: Int): String {
         else -> "th"
     }
     return "$season LCK ${matchNumber}${suffix} Match"
+}
+
+
+fun String.toTimeFormat(): String{
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+
+    val partyDateFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    return LocalDateTime.parse(this, formatter).format(partyDateFormatter).toString()
+}
+
+
+@SuppressLint("SimpleDateFormat")
+fun String.toCalendar(): Calendar {
+    val sdf = SimpleDateFormat("yyyy-MM-dd")
+    val date = sdf.parse(this)
+    return Calendar.getInstance().apply {
+        time = date!!
+    }
 }

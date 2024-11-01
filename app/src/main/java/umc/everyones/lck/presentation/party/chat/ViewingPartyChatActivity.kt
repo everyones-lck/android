@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.ActivityViewingPartyChatBinding
 import umc.everyones.lck.domain.model.party.ChatItem
@@ -178,6 +179,7 @@ class ViewingPartyChatActivity : AppCompatActivity() {
 
         repeatOnStarted {
             viewModel.roomId.collect{
+                it.ifEmpty { return@collect }
                 initWsClient()
                 viewModel.fetchViewingPartyChatLog()
             }
@@ -208,27 +210,30 @@ class ViewingPartyChatActivity : AppCompatActivity() {
                 }
             }
             is ViewingPartyChatViewModel.ViewingPartyChatEvent.FetchChatLog -> {
+                Timber.tag("chat_log").d(event.chatLog.chatMessageList.toString())
                 binding.tvChatWriter.text = event.chatLog.receiverName.combineNicknameAndTeam(event.chatLog.receiverTeam)
+                val prevLastIndex = chatRVA.currentList.lastIndex
                 chatRVA.submitList(event.chatLog.chatMessageList){
                     if(isFirst) {
                         binding.rvChat.scrollToPosition(0)
                         isFirst = false
                     }
+                    chatRVA.notifyItemChanged(prevLastIndex)
                 }
             }
 
             is ViewingPartyChatViewModel.ViewingPartyChatEvent.RefreshChatLog -> {
-                chatRVA.submitList(event.chatLog.chatMessageList)
+                val prevLastIndex = chatRVA.currentList.lastIndex
+                chatRVA.submitList(event.chatLog.chatMessageList){
+                    chatRVA.notifyItemChanged(prevLastIndex)
+                }
             }
         }
     }
 
     private fun initWsClient() {
         wsClient = WsClient(viewModel, okHttpClient, request, spf)
-        wsClient.apply {
-            connectWebSocket()
-            enterChatRoom("되나")
-        }
+        wsClient.connectWebSocket()
     }
 
     companion object {

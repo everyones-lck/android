@@ -17,8 +17,9 @@ class ViewingPartyListPagingSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ViewingPartyListModel.ViewingPartyElementModel> {
         val page = params.key ?: 0
-        if(page != 0) delay(100)
+        if(page != 0) delay(100L)
         runCatching {
+            delay(300L)
             viewingPartyService.fetchViewingPartyList(page, 10).data.toViewingPartyListModel()
         }.fold(
             onSuccess = { response ->

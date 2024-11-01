@@ -3,9 +3,11 @@ package umc.everyones.lck.presentation.community.list
 import android.app.Activity
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -59,6 +61,20 @@ class ReviewListFragment  : BaseFragment<FragmentPostListBinding>(R.layout.fragm
             readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), postId))
         }
         binding.rvPostList.adapter = postListRVA
+
+        _postListRVA?.addLoadStateListener { combinedLoadStates ->
+            with(binding){
+                layoutShimmer.isVisible = combinedLoadStates.source.refresh is LoadState.Loading
+                rvPostList.isVisible = combinedLoadStates.source.refresh is LoadState.NotLoading
+                if(combinedLoadStates.source.refresh is LoadState.Loading){
+                    layoutShimmer.startShimmer()
+                }
+
+                if(combinedLoadStates.source.refresh is LoadState.NotLoading){
+                    layoutShimmer.stopShimmer()
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

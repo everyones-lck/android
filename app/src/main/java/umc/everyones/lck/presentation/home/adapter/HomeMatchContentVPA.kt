@@ -12,6 +12,7 @@ import umc.everyones.lck.R
 import umc.everyones.lck.databinding.ItemHomeMatchContentBinding
 import umc.everyones.lck.domain.model.response.home.HomeTodayMatchModel
 import umc.everyones.lck.domain.model.todayMatch.LckMatch
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 import umc.everyones.lck.util.extension.toOrdinal
 
 class HomeMatchContentVPA(private val items: List<HomeTodayMatchModel.TodayMatchesModel>,
@@ -67,7 +68,7 @@ class HomeMatchContentVPA(private val items: List<HomeTodayMatchModel.TodayMatch
             binding.ivHomeTodayMatchBar1.backgroundTintList = ColorStateList.valueOf(team1Color)
             binding.ivHomeTodayMatchBar2.backgroundTintList = ColorStateList.valueOf(team2Color)
 
-            itemView.setOnClickListener {
+            itemView.setOnSingleClickListener {
                 onClick()
             }
         }
@@ -76,7 +77,7 @@ class HomeMatchContentVPA(private val items: List<HomeTodayMatchModel.TodayMatch
             binding.layoutHomeNoMatch.visibility = View.VISIBLE
             binding.layoutHomeMatchContainer.visibility = View.GONE
 
-            itemView.setOnClickListener {
+            itemView.setOnSingleClickListener {
                 onClick()
             }
         }

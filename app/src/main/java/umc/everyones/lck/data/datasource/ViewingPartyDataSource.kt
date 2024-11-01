@@ -27,7 +27,7 @@ interface ViewingPartyDataSource {
 
     suspend fun createViewingPartyChatRoom(viewingPartyId: Long, participantsId: String): BaseResponse<ViewingPartyChatRoomResponseDto>
 
-    suspend fun fetchViewingPartyChatLog(roomId: Long, page: Int, size: Int): BaseResponse<ViewingPartyChatLogResponseDto>
+    suspend fun fetchViewingPartyChatLog(roomId: String, page: Int, size: Int): BaseResponse<ViewingPartyChatLogResponseDto>
 
     suspend fun createViewingPartyChatRoomAsParticipant(viewingPartyId: Long): BaseResponse<ViewingPartyChatRoomResponseDto>
 }

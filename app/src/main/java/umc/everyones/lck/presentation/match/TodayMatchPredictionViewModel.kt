@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.HttpException
+import timber.log.Timber
 import umc.everyones.lck.domain.model.request.match.VoteMatchModel
 import umc.everyones.lck.domain.model.request.match.VoteMatchPogModel
 import umc.everyones.lck.domain.model.response.match.CommonVotePogModel
@@ -32,10 +33,10 @@ class TodayMatchPredictionViewModel @Inject constructor(
     fun fetchTodayMatchVoteMatch(matchId: Long) {
         viewModelScope.launch {
             repository.fetchTodayMatchVoteMatch(matchId).onSuccess { response ->
-                Log.d("fetchTodayMatchVoteMatch", response.toString())
+                Timber.d("fetchTodayMatchVoteMatch %s", response.toString())
                 _matchData.value = response
             }.onFailure {
-                Log.d("fetchTodayMatchVoteMatch", it.stackTraceToString())
+                Timber.d("fetchTodayMatchVoteMatch %s", it.stackTraceToString())
             }
         }
     }
@@ -43,10 +44,10 @@ class TodayMatchPredictionViewModel @Inject constructor(
     fun voteMatch(matchId: Long, teamId: Int) {
         viewModelScope.launch {
             repository.voteMatch(VoteMatchModel(matchId, teamId)).onSuccess { response ->
-                Log.d("voteMatch", response.toString())
+                Timber.d("voteMatch %s", response.toString())
                 _voteResponse.value = response.message // API에서 전달된 메시지를 ViewModel에 저장
             }.onFailure { exception ->
-                Log.d("voteMatch", exception.stackTraceToString())
+                Timber.d("voteMatch %s", exception.stackTraceToString())
                 _voteResponse.value = getErrorMessageFromException(exception) // 예외 메시지 처리
             }
         }

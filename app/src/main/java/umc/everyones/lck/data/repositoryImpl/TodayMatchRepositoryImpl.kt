@@ -21,36 +21,16 @@ class TodayMatchRepositoryImpl @Inject constructor(
         todayMatchDataSource.fetchTodayMatchInformation().data.toTodayMatchInformationModel()
     }
 
-    override suspend fun fetchTodayMatchVoteSetPog(
-        matchId: Long,
-        setIndex: Int,
-    ): Result<PogPlayerTodayMatchModel> = runCatching {
-        todayMatchDataSource.fetchTodayMatchVoteSetPog(
-            matchId,
-            setIndex
-        ).data.toPogPlayerTodayMatchModel()
-    }
-
     override suspend fun fetchTodayMatchVoteMatch(matchId: Long): Result<MatchTodayMatchModel> = runCatching {
         todayMatchDataSource.fetchTodayMatchVoteMatch(matchId).data.toMatchTodayMatchModel()
     }
 
-    override suspend fun fetchTodayMatchVoteMatchPog(matchId: Long): Result<PogPlayerTodayMatchModel> = runCatching {
-        todayMatchDataSource.fetchTodayMatchVoteMatchPog(matchId).data.toPogPlayerTodayMatchModel()
+    override suspend fun fetchTodayMatchPogPlayer(matchId: Long): Result<PogPlayerTodayMatchModel> = runCatching {
+        todayMatchDataSource.fetchTodayMatchPogPlayer(matchId).data.toPogPlayerTodayMatchModel()
     }
 
-    override suspend fun fetchTodayMatchSetPog(
-        setIndex: Int,
-        request: CommonPogModel,
-    ): Result<CommonTodayMatchPogModel> = runCatching {
-        todayMatchDataSource.fetchTodayMatchSetPog(
-            setIndex,
-            request.toCommonPogRequestDto()
-        ).data.toCommonTodayMatchPogModel()
-    }
-
-    override suspend fun fetchTodayMatchMatchPog(request: CommonPogModel): Result<CommonTodayMatchPogModel> = runCatching {
-        todayMatchDataSource.fetchTodayMatchMatchPog(request.toCommonPogRequestDto()).data.toCommonTodayMatchPogModel()
+    override suspend fun fetchTodayMatchPog(request: CommonPogModel): Result<CommonTodayMatchPogModel> = runCatching {
+        todayMatchDataSource.fetchTodayMatchPog(request.toCommonPogRequestDto()).data.toCommonTodayMatchPogModel()
     }
 
     override suspend fun voteSetPog(request: VoteSetPogModel): Result<CommonVotePogModel> = runCatching {

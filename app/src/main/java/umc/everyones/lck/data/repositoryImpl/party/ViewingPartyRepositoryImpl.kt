@@ -67,7 +67,7 @@ class ViewingPartyRepositoryImpl @Inject constructor(
         runCatching { viewingPartyDataSource.createViewingPartyChatRoom(viewingPartyId, participantsId).data.toViewingPartyChatRoomModel() }
 
     override suspend fun fetchViewingPartyChatLog(
-        roomId: Long,
+        roomId: String,
         page: Int,
         size: Int
     ): Result<ViewingPartyChatLogModel> =
@@ -97,7 +97,7 @@ class ViewingPartyRepositoryImpl @Inject constructor(
             pagingSourceFactory = { ViewingPartyParticipantsPagingSource(viewingPartyService, viewingPartyId) }
         ).flow
 
-    override fun fetchChatLogPagingSource(roomId: Long): Flow<PagingData<ViewingPartyChatLogModel.ChatLogModel>> =
+    override fun fetchChatLogPagingSource(roomId: String): Flow<PagingData<ViewingPartyChatLogModel.ChatLogModel>> =
         Pager(
             config = PagingConfig(
                 pageSize = 10,

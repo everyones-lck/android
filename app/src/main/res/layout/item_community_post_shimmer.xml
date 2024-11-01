@@ -18,10 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:background="@drawable/shape_rect_4_gray_shimmer"
+            android:textColor="@color/gray_shimmer"
             app:layout_constraintStart_toStartOf="@id/line"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="2dp"
-            tools:text="1경기 전력 어떻게 봐?" />
+            android:text="1경기 전력 어떻게 봐?" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_profile_image"
@@ -29,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             app:cardCornerRadius="4dp"
+            android:background="@color/gray_shimmer"
             app:layout_constraintStart_toStartOf="@id/tv_post_title"
             app:layout_constraintBottom_toBottomOf="@id/cv_post_image">
 
@@ -37,6 +40,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:scaleType="centerCrop"
+                android:background="@color/gray_shimmer"
                 tools:src="@drawable/ic_hanhwa" />
         </androidx.cardview.widget.CardView>
 
@@ -48,8 +52,9 @@
             android:layout_marginEnd="28dp"
             app:layout_constraintEnd_toEndOf="@id/line"
             app:layout_constraintTop_toTopOf="@id/tv_post_title"
-            android:textColor="@color/gray_detail"
-            tools:text="2024.03.08" />
+            android:background="@drawable/shape_rect_4_gray_shimmer"
+            android:textColor="@color/gray_shimmer"
+            android:text="2024.03.08" />
 
         <TextView
             android:id="@+id/tv_post_nickname"
@@ -57,10 +62,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:textColor="@color/gray_detail"
+            android:background="@drawable/shape_rect_4_gray_shimmer"
+            android:textColor="@color/gray_shimmer"
             app:layout_constraintStart_toEndOf="@id/cv_profile_image"
             app:layout_constraintBottom_toBottomOf="@id/cv_post_image"
-            tools:text="Perfect 조아" />
+            android:text="Perfect 조아" />
 
         <TextView
             android:id="@+id/tv_post_favorite_team"
@@ -68,19 +74,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:textColor="@color/gray_detail"
+            android:background="@drawable/shape_rect_4_gray_shimmer"
+            android:textColor="@color/gray_shimmer"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_post_nickname"
             app:layout_constraintStart_toEndOf="@id/tv_post_nickname"
-            tools:text="T1" />
+            android:text="T1" />
 
         <ImageView
             android:id="@+id/iv_post_comment"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:src="@drawable/ic_comment"
             android:layout_marginTop="6dp"
             android:layout_marginStart="9dp"
-            app:tint="@color/gray_detail"
+            android:background="@color/gray_shimmer"
             app:layout_constraintBottom_toBottomOf="@id/cv_post_image"
             app:layout_constraintStart_toEndOf="@id/tv_post_favorite_team"
             />
@@ -91,11 +97,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:textAppearance="@style/TextAppearance.LCK.Light.Comment_8sp"
-            android:textColor="@color/gray_detail"
+            android:background="@drawable/shape_rect_4_gray_shimmer"
+            android:textColor="@color/gray_shimmer"
             app:layout_constraintTop_toTopOf="@id/iv_post_comment"
             app:layout_constraintBottom_toBottomOf="@id/iv_post_comment"
             app:layout_constraintStart_toEndOf="@id/iv_post_comment"
-            tools:text="38" />
+            android:text="38" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_post_image"
@@ -112,6 +119,7 @@
                 android:id="@+id/iv_post_image"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:background="@color/gray_shimmer"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/ic_hanhwa" />
         </androidx.cardview.widget.CardView>

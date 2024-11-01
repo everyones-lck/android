@@ -23,8 +23,9 @@ class CommunityListPagingSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommunityListModel.CommunityListElementModel> {
         val page = params.key ?: 0
-        if(page != 0) delay(300) else delay(150)
+        if(page != 0) delay(100L)
         runCatching {
+            delay(300L)
             communityService.fetchCommunityList(category, page, 10).data.toCommunityListModel()
         }.fold(
             onSuccess = { response ->

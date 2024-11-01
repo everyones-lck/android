@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class ViewingPartyChatLogPagingSource @Inject constructor(
     private val viewingPartyService: ViewingPartyService,
-    private val roomId: Long,
+    private val roomId: String,
     private val spf: SharedPreferences
 ) : PagingSource<Int, ViewingPartyChatLogModel.ChatLogModel>() {
     override fun getRefreshKey(state: PagingState<Int, ViewingPartyChatLogModel.ChatLogModel>): Int? {

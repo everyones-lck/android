@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import umc.everyones.lck.databinding.ItemTodayPogPlayerBinding
 import umc.everyones.lck.domain.model.response.match.PogPlayerTodayMatchModel
 import umc.everyones.lck.domain.model.todayMatch.TodayPog
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 class TodayPogPlayerRVA(
     private val onPlayerSelected: (Int) -> Unit // playerId를 전달하는 람다 함수
@@ -54,7 +55,7 @@ class TodayPogPlayerRVA(
                 binding.ivTodayPogPlayer.colorFilter = ColorMatrixColorFilter(matrix)
             }
             // 아이템 클릭 시 실행할 리스너 설정
-            binding.root.setOnClickListener {
+            binding.root.setOnSingleClickListener {
                 onItemClick()
             }
         }

@@ -28,7 +28,7 @@ interface ViewingPartyRepository {
 
     suspend fun createViewingPartyChatRoom(viewingPartyId: Long, participantsId: String): Result<ViewingPartyChatRoomModel>
 
-    suspend fun fetchViewingPartyChatLog(roomId: Long, page: Int, size: Int): Result<ViewingPartyChatLogModel>
+    suspend fun fetchViewingPartyChatLog(roomId: String, page: Int, size: Int): Result<ViewingPartyChatLogModel>
 
     suspend fun createViewingPartyChatRoomAsParticipant(viewingPartyId: Long): Result<ViewingPartyChatRoomModel>
 
@@ -36,5 +36,5 @@ interface ViewingPartyRepository {
 
     fun fetchViewingPartyParticipantsPagingSource(viewingPartyId: Long): Flow<PagingData<ViewingPartyParticipantsModel.ParticipantsModel>>
 
-    fun fetchChatLogPagingSource(roomId: Long): Flow<PagingData<ViewingPartyChatLogModel.ChatLogModel>>
+    fun fetchChatLogPagingSource(roomId: String): Flow<PagingData<ViewingPartyChatLogModel.ChatLogModel>>
 }

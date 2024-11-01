@@ -65,7 +65,7 @@ interface ViewingPartyService {
 
     @GET("viewing/chat_log/{room_id}")
     suspend fun fetchViewingPartyChatLog(
-        @Path("room_id") roomId: Long,
+        @Path("room_id") roomId: String,
         @Query("page") page: Int,
         @Query("size") size: Int
     ): BaseResponse<ViewingPartyChatLogResponseDto>

@@ -1,6 +1,7 @@
 package umc.everyones.lck.presentation.match.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.get
@@ -16,7 +17,7 @@ import umc.everyones.lck.util.extension.toOrdinal
 
 class LckPogMatchRVA(
     private var setCount: Int,  // 세트 수를 받아서 탭을 동적으로 추가
-    private val onTabSelected: (Int) -> Unit  // 탭 선택 시 호출할 함수
+    private val onTabSelected: Int // 탭 선택 시 호출할 함수
 ) : ListAdapter<CommonTodayMatchPogModel, LckPogMatchRVA.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,14 +29,10 @@ class LckPogMatchRVA(
         holder.bind(getItem(position))
     }
 
-    fun updateSetCount(newSetCount: Int) {
-        setCount = newSetCount
-        notifyDataSetChanged() // 세트 수 변경 시 UI 업데이트
-    }
-
     inner class ViewHolder(private val binding: ItemLckPogMatchBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val playerAdapter = LckPogPlayerRVA()
+        private lateinit var currentItem: CommonTodayMatchPogModel // 현재 item을 저장하는 변수
 
         init {
             binding.rvTodayMatchLckPogPlayer.adapter = playerAdapter
@@ -58,11 +55,29 @@ class LckPogMatchRVA(
                 }
             }
 
-            // 탭 선택 시 리스너 설정
+            // 탭 선택 리스너
             binding.tabTodayMatchLckPog.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     tab?.position?.let { position ->
-                        onTabSelected(position)  // 선택된 탭의 인덱스를 전달
+                        val playerList: List<CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel> = when {
+                            position < currentItem.setPogResponses.size -> {
+                                // 현재 탭 위치에 따라 setIndex를 결정
+                                currentItem.setPogResponses.filter { it.setIndex == (position + 1) }.take(1) // index 조정
+                            }
+                            // byMatch 탭의 선수
+                            position == currentItem.setPogResponses.size -> currentItem.matchPogResponse?.let { matchPogResponse ->
+                                listOf(
+                                    CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel(
+                                        matchPogResponse.name,
+                                        matchPogResponse.profileImageUrl,
+                                        matchPogResponse.playerId,
+                                        0 // setIndex는 필요 없으므로 0으로 설정
+                                    )
+                                )
+                            } ?: emptyList() // matchPogResponse가 null일 경우 빈 리스트 반환
+                            else -> emptyList()
+                        }
+                        playerAdapter.submitList(playerList)
                     }
                 }
 
@@ -71,11 +86,23 @@ class LckPogMatchRVA(
             })
         }
 
+
         fun bind(item: CommonTodayMatchPogModel) {
-            binding.tabTodayMatchLckPog.getTabAt(item.tabIndex)?.select()
+            currentItem = item
             binding.tvTodayMatchLckPogMatchTitle.text = "${item.seasonInfo} ${item.matchNumber.toOrdinal()} Match"
             binding.tvTodayMatchLckPogMatchDate.text = item.matchDate
-            playerAdapter.submitList(listOf(item))
+            // 첫 번째 탭을 기본으로 설정 (1st POG tab에 해당하는 플레이어만 표시)
+            val firstTabPlayerList = item.setPogResponses.filter { it.setIndex == 1 }.take(1)
+
+            // setPogResponses와 matchPogResponse를 체크하여 visibility 설정
+            if (firstTabPlayerList.isEmpty() && item.matchPogResponse == null) {
+                binding.tvTodayMatchLckPogPlaying.visibility = View.VISIBLE
+                binding.rvTodayMatchLckPogPlayer.visibility = View.GONE
+            } else {
+                binding.tvTodayMatchLckPogPlaying.visibility = View.GONE
+                binding.rvTodayMatchLckPogPlayer.visibility = View.VISIBLE
+                playerAdapter.submitList(firstTabPlayerList)
+            }
         }
     }
     fun updatePlayers(players: List<CommonTodayMatchPogModel>) {
@@ -84,7 +111,7 @@ class LckPogMatchRVA(
 
     class DiffCallback : DiffUtil.ItemCallback<CommonTodayMatchPogModel>() {
         override fun areItemsTheSame(oldItem: CommonTodayMatchPogModel, newItem: CommonTodayMatchPogModel): Boolean {
-            return oldItem.id == newItem.id // 각 항목의 고유 ID로 비교
+            return oldItem.matchNumber == newItem.matchNumber // 각 항목의 고유 ID로 비교
         }
 
         override fun areContentsTheSame(oldItem: CommonTodayMatchPogModel, newItem: CommonTodayMatchPogModel): Boolean {
