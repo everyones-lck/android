@@ -8,56 +8,56 @@
     </data>
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.MainActivity"
-        android:background="@drawable/bg_gradient_color">
+        android:background="@drawable/bg_gradient_color"
+        tools:context=".presentation.MainActivity">
 
         <ImageView
             android:id="@+id/iv_mypage_information_tos_agree_1_back"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginStart="20dp"
             android:src="@drawable/ic_mypage_back"
-            app:layout_constraintTop_toTopOf="@id/tv_mypage_information_tos_agree_1_topbar_title"
             app:layout_constraintBottom_toBottomOf="@id/tv_mypage_information_tos_agree_1_topbar_title"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"/>
+            app:layout_constraintTop_toTopOf="@id/tv_mypage_information_tos_agree_1_topbar_title" />
 
         <TextView
             android:id="@+id/tv_mypage_information_tos_agree_1_topbar_title"
+            style="@style/TextAppearance.LCK.Bold.Title1_22sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Information"
-            style="@style/TextAppearance.LCK.Bold.Title1_22sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="39dp"
-            android:textColor="@color/LCK_purple"/>
+            android:text="Information"
+            android:textColor="@color/LCK_purple"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_mypage_information_tos_agree_1_title"
+            style="@style/TextAppearance.LCK.Bold.Title2_18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="50dp"
             android:text="개인정보 처리방침"
-            style="@style/TextAppearance.LCK.Bold.Title2_18sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="40dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_mypage_information_tos_agree_1_topbar_title"
-            android:layout_marginTop="50dp"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_mypage_information_tos_agree_1_topbar_title" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_marginHorizontal="30dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_mypage_information_tos_agree_1_title"
             android:layout_marginTop="160dp"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="30dp"
+            android:overScrollMode="never"
+            app:layout_constraintTop_toBottomOf="@id/tv_mypage_information_tos_agree_1_title">
 
             <TextView
                 android:id="@+id/tv_mypage_information_tos_agree_1_detail"

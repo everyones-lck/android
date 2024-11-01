@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import umc.everyones.lck.EveryonesLCKApplication
 import umc.everyones.lck.R
+import umc.everyones.lck.data.datasource.login.LoginDataSource
 import umc.everyones.lck.data.repositoryImpl.mypage.MypageRepositoryImpl
 import umc.everyones.lck.data.service.MypageService
 import umc.everyones.lck.domain.repository.MypageRepository
@@ -62,12 +63,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(
-        sharedPreferences: SharedPreferences,
-        gsonConverterFactory: GsonConverterFactory // GsonConverterFactory를 주입받습니다.
+        authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        val authInterceptor = AuthInterceptor(sharedPreferences) {
-            providesRetrofit(providesOkHttpClient(sharedPreferences, gsonConverterFactory), gsonConverterFactory)
-        }
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -84,10 +81,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        sharedPreferences: SharedPreferences
-    ): AuthInterceptor {
-        return AuthInterceptor(sharedPreferences) { providesRetrofit(providesOkHttpClient(sharedPreferences, providesConverterFactory()), providesConverterFactory()) }
-    }
+        authInterceptor: AuthInterceptor,
+    ): Interceptor = authInterceptor
 
     @Provides
     @Singleton
@@ -109,14 +104,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMypageService(
-        retrofit: Retrofit
-    ): MypageService {
-        return retrofit.create(MypageService::class.java)
-    }
-
-    @Provides
-    @Singleton
     @Named("naver")
     fun providesNaverRetrofit(
         @Named("NaverClient") client: OkHttpClient,
@@ -131,7 +118,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesLoginService(retrofit: Retrofit): LoginService {
-        return retrofit.create(LoginService::class.java)
+    @Named("refresh")
+    fun providesRefreshRetrofit(
+        @Named("NaverClient") client: OkHttpClient,
+    ): Retrofit {
+        return Retrofit.Builder()
+            .client(client)
+            .baseUrl(EveryonesLCKApplication.getString(R.string.base_url))
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }

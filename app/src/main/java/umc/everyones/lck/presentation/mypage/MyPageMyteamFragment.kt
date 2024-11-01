@@ -1,28 +1,18 @@
 package umc.everyones.lck.presentation.mypage
 
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import umc.everyones.lck.R
-import umc.everyones.lck.databinding.DialogMyteamConfirmBinding
 import umc.everyones.lck.databinding.FragmentMypageMyteamBinding
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.util.TeamData
-import umc.everyones.lck.util.TeamData.mypageMyteam
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint

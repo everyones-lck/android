@@ -1,24 +1,15 @@
 package umc.everyones.lck.presentation.mypage
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageMainBinding
 import umc.everyones.lck.presentation.MainActivity
 import umc.everyones.lck.presentation.base.BaseFragment
-import umc.everyones.lck.presentation.login.SignupViewModel
 import umc.everyones.lck.util.TeamData
-import umc.everyones.lck.util.TeamData.teamLogos
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint

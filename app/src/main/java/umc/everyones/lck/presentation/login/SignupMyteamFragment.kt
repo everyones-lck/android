@@ -1,8 +1,5 @@
 package umc.everyones.lck.presentation.login
 
-import android.net.Uri
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.core.content.ContextCompat

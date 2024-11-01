@@ -9,12 +9,14 @@ import timber.log.Timber
 import umc.everyones.lck.data.dto.request.login.RefreshAuthUserRequestDto
 import umc.everyones.lck.data.service.LoginService
 import retrofit2.Retrofit
+import umc.everyones.lck.data.datasource.login.LoginDataSource
+import umc.everyones.lck.domain.repository.login.LoginRepository
 import java.util.Date
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val sharedPreferences: SharedPreferences,
-    private val retrofitProvider: () -> Retrofit // Retrofit을 함수로 주입받습니다.
+    private val loginDataSource: LoginDataSource
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         // 현재 저장된 액세스 토큰을 가져옵니다.
@@ -85,8 +87,9 @@ class AuthInterceptor @Inject constructor(
 
     private suspend fun refreshAccessToken(request: RefreshAuthUserRequestDto): String? {
         // Retrofit을 함수로 통해 LoginService를 생성합니다.
-        val loginService = retrofitProvider().create(LoginService::class.java)
-        val refreshResponse = loginService.refresh(request)
+        //val loginService = retrofitProvider().create(LoginService::class.java)
+        val refreshResponse = loginDataSource.refresh(request)
+        //loginDataSource.refresh(request)
 
         // 성공적으로 리프레시 되었는지 확인하고 액세스 토큰을 반환합니다.
         return if (refreshResponse.success) {
