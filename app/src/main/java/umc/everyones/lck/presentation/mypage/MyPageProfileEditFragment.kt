@@ -36,9 +36,20 @@ import umc.everyones.lck.util.extension.setOnSingleClickListener
 @AndroidEntryPoint
 class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>(R.layout.fragment_mypage_profile_edit){
 
-    private val myPageViewModel: MyPageViewModel by activityViewModels()
+    private val viewModel: MyPageViewModel by activityViewModels()
     private val signupViewModel: SignupViewModel by activityViewModels()
     private val navigator by lazy { findNavController() }
+    private var profileImageUri: Uri? = null
+
+    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                profileImageUri = uri
+                binding.ivMypageProfileEditProfile.setImageURI(uri) // 선택한 이미지 미리보기
+                viewModel.setProfileImageUri(uri) // ViewModel에 URI 저장
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -64,14 +75,14 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
             }
         }
 
-        myPageViewModel.updateProfileResult.observe(viewLifecycleOwner) { result ->
+        viewModel.updateProfileResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 Timber.d("프로필 수정 성공")
             } else {
                 Timber.e("프로필 수정 실패")
             }
         }
-        myPageViewModel.profileData.observe(viewLifecycleOwner) { profile ->
+        viewModel.profileData.observe(viewLifecycleOwner) { profile ->
             profile?.let {
                 loadProfileImage(it.profileImageUrl)
             }
@@ -82,7 +93,7 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
         setInitialState() // 초기 상태 설정
 
         // 기존 닉네임을 가져와 hint로 설정
-        myPageViewModel.nickName.observe(viewLifecycleOwner) { nickName ->
+        viewModel.nickName.observe(viewLifecycleOwner) { nickName ->
             binding.etMypageProfileEditNicknameName.hint = nickName
         }
 
@@ -94,12 +105,11 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
         // 기본 이미지 사용 클릭 시
         binding.tvMypageProfileEditBasic.setOnSingleClickListener {
             binding.ivMypageProfileEditProfile.setImageResource(R.drawable.img_signup_profile)
-            myPageViewModel.setProfileImageUri(Uri.parse("android.resource://${requireContext().packageName}/${R.drawable.img_signup_profile}")) // 기본 이미지 URI 설정
+            viewModel.setProfileImageUri(Uri.parse("android.resource://${requireContext().packageName}/${R.drawable.img_signup_profile}")) // 기본 이미지 URI 설정
         }
 
-        // 갤러리에서 이미지 선택 클릭 시
         binding.ivMypageProfileEditProfile.setOnSingleClickListener {
-            openGallery() // 갤러리 열기
+            openPhotoPicker() // 갤러리 열기
         }
 
         binding.etMypageProfileEditNicknameName.doOnTextChanged { text, _, _, _ ->
@@ -129,32 +139,20 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
             }
         }
 
+        // 프로필 수정 완료 클릭 리스너
         binding.tvMypageProfileEditTopbarEdit.setOnSingleClickListener {
             val nicknameInput = binding.etMypageProfileEditNicknameName.text.toString().trim()
+            val currentProfileImageUri = viewModel.profileUri.value
 
-            // 현재 프로필 이미지 URI 가져오기
-            val currentProfileImageUri = myPageViewModel.profileUri.value
-
-            // 업데이트할 닉네임 결정 (닉네임이 비어있으면 null로 설정)
             val finalNickname = if (nicknameInput.isNotEmpty()) {
-                nicknameInput // 닉네임이 비어있지 않으면 입력값 사용
+                nicknameInput
             } else {
-                null // 닉네임이 비어있으면 null로 설정
+                null
             }
 
-            // 프로필 이미지 결정
-            val finalProfileImageUri = if (binding.ivMypageProfileEditProfile.drawable != null) {
-                // 프로필 이미지가 변경된 경우
-                val bitmap = (binding.ivMypageProfileEditProfile.drawable as BitmapDrawable).bitmap // Bitmap으로 변환
-                val path = MediaStore.Images.Media.insertImage(requireContext().contentResolver, bitmap, "ProfileImage", null) // URI로 변환
-                Uri.parse(path) // URI로 변환하여 반환
-            } else {
-                // 프로필 이미지가 변경되지 않은 경우 현재 프로필 이미지를 유지
-                currentProfileImageUri
-            }
+            val finalProfileImageUri = profileImageUri ?: currentProfileImageUri // 선택된 이미지가 없으면 현재 이미지 유지
 
-            // 업데이트할 데이터가 유효할 경우 ViewModel 호출
-            myPageViewModel.updateProfile(finalNickname, finalProfileImageUri)
+            viewModel.updateProfile(finalNickname, finalProfileImageUri)
 
             showConfirmDialog()
         }
@@ -230,26 +228,10 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
         }
     }
 
-    private fun openGallery() {
-        // 갤러리에서 이미지 선택하기 위한 Intent
+    private fun openPhotoPicker() {
         val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
+            type = "image/*" // 모든 이미지 타입 선택
         }
-        startActivityForResult(intent, GALLERY_REQUEST_CODE) // GALLERY_REQUEST_CODE는 상수로 정의해야 합니다.
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
-            data?.data?.let { uri ->
-                binding.ivMypageProfileEditProfile.setImageURI(uri) // 선택한 이미지 미리보기
-                myPageViewModel.setProfileImageUri(uri) // ViewModel에 URI 저장
-            }
-        }
-    }
-
-    companion object {
-        private const val GALLERY_REQUEST_CODE = 1001
+        photoPickerLauncher.launch(intent) // 갤러리 열기
     }
 }

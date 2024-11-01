@@ -90,18 +90,6 @@ class SignupProfileFragment : BaseFragment<FragmentSignupProfileBinding>(R.layou
         photoPickerLauncher.launch(intent) // 갤러리 열기
     }
 
-
-    // 선택한 이미지 URI를 처리하는 메서드
-    private fun handleMediaUris(uris: List<Uri>) {
-        // 첫 번째 이미지를 프로필 이미지로 설정
-        val selectedUri = uris.firstOrNull()
-        if (selectedUri != null) {
-            profileImageUri = selectedUri // URI를 저장
-            binding.ivSignupProfilePicture.setImageURI(selectedUri) // ImageView에 선택한 이미지 설정
-            viewModel.setProfileImageUri(selectedUri) // ViewModel에 URI 저장
-        }
-    }
-
     private fun showProfileConfirmDialog() {
         val dialogView =
             LayoutInflater.from(requireContext()).inflate(R.layout.dialog_profile_confirm, null)
