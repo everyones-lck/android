@@ -11,8 +11,18 @@
         android:label="Login"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_signupNicknameFragment"
-            app:destination="@id/signupNicknameFragment" />
+            android:id="@+id/action_loginFragment_to_signupTosFragment"
+            app:destination="@id/signupTosFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupTosFragment"
+        android:name="umc.everyones.lck.presentation.login.SignupTosFragment"
+        android:label="SignupTosFragment"
+        tools:layout="@layout/fragment_signup_tos">
+        <action
+            android:id="@+id/action_signupTosFragment_to_signupNicknameFragment"
+            app:destination="@id/signupNicknameFragment"/>
     </fragment>
 
     <!-- Signup Nickname Fragment -->

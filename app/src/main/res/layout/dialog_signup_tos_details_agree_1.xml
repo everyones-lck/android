@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000CC"
+        android:padding="16dp">
+
+        <!-- 중앙에 위치할 사각형 레이아웃 -->
+        <RelativeLayout
+            android:layout_width="350dp"
+            android:layout_height="640dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/shape_rect_12_white_fill">
+
+            <TextView
+                android:id="@+id/tv_dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="개인정보 처리방침 ( 필수 )"
+                style="@style/TextAppearance.LCK.Bold.List_14sp"
+                android:textColor="@color/gray"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="37dp"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="80dp"
+                android:layout_marginBottom="80dp"
+                android:layout_marginHorizontal="20dp">
+
+                <TextView
+                    android:id="@+id/tv_dialog_text"
+                    style="@style/TextAppearance.LCK.Light.Detail_10sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/tos_details_agree_1"
+                    android:textColor="@color/black" />
+            </ScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <android.widget.Button
+                    android:id="@+id/btn_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/shape_dialog_button_confirm2_background"
+                    android:text="확인"
+                    style="@style/TextAppearance.LCK.Light.Body_14sp"
+                    android:textColor="@color/gray"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

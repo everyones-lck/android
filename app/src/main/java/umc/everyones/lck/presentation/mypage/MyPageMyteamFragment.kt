@@ -1,27 +1,19 @@
 package umc.everyones.lck.presentation.mypage
 
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.R
-import umc.everyones.lck.databinding.DialogMyteamConfirmBinding
 import umc.everyones.lck.databinding.FragmentMypageMyteamBinding
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.util.TeamData
-import umc.everyones.lck.util.TeamData.mypageMyteam
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
 class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.fragment_mypage_myteam) {
@@ -33,7 +25,7 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
     override fun initObserver() {
         myPageViewModel.inquiryProfile()
         myPageViewModel.teamId.observe(viewLifecycleOwner) { teamId ->
-            Log.d("MyPageMyteamFragment", "Observed teamId: $teamId") // teamId 로그 추가
+            Timber.d("Observed teamId: $teamId") // teamId 로그 추가
 
             // 기존 팀 로고와 이름을 반영 (처음 로딩 시)
             val teamLogoResId = TeamData.mypageMyteam[teamId] ?: R.drawable.ic_mypage_myteam_empty // 기본 로고 설정
@@ -59,7 +51,7 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
             }
         }
 
-        binding.tvMypageMyteamTopbarEdit.setOnClickListener {
+        binding.tvMypageMyteamTopbarEdit.setOnSingleClickListener {
             // 선택된 팀이 없을 경우 기본 팀 ID(1)로 설정
             val teamIdToUpdate = selectedTeamId ?: 1
 
@@ -70,7 +62,7 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
 
                     // 팀 ID 관찰 (한 번만 등록)
                     myPageViewModel.teamId.observe(viewLifecycleOwner) { teamId ->
-                        Log.d("MyPageMyteamFragment", "Observed teamId: $teamId") // teamId 로그 추가
+                        Timber.d("Observed teamId: $teamId") // teamId 로그 추가
 
                         // 기존 팀 로고를 반영 (처음 로딩 시)
                         val teamLogoResId = TeamData.mypageMyteam[teamId]
@@ -90,10 +82,10 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
                     // 프로필 조회 (팀 업데이트 후)
                     myPageViewModel.inquiryProfile()
 
-                    Log.d("MyPageMyteamFragment", "Navigated to next fragment with team ID: $teamIdToUpdate")
+                    Timber.d( "Navigated to next fragment with team ID: $teamIdToUpdate")
 
                 } catch (e: Exception) {
-                    Log.e("MyPageMyteamFragment", "Error navigating", e)
+                    Timber.e("Error navigating", e)
                 }
             }
         }
@@ -103,11 +95,11 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
         binding.layoutMypageMyteamList.visibility = View.GONE
         binding.btnMypageMyteamArrow.setImageResource(R.drawable.ic_arrow_down)
 
-        binding.btnMypageMyteamArrow.setOnClickListener {
+        binding.btnMypageMyteamArrow.setOnSingleClickListener {
             toggleScrollView()
         }
 
-        binding.ivMypageMyteamBack.setOnClickListener {
+        binding.ivMypageMyteamBack.setOnSingleClickListener {
             findNavController().navigateUp()
         }
     }
@@ -118,7 +110,7 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
             val imageView = binding.root.findViewById<ImageView>(imageViewId)
 
             if (imageView != null) { // null 체크
-                imageView.setOnClickListener {
+                imageView.setOnSingleClickListener {
                     // 선택한 팀 ID가 이미 선택된 ID와 같으면 기본 팀 ID로 설정
                     selectedTeamId = if (selectedTeamId == teamId) {
                         1 // 기본 팀 ID
@@ -130,14 +122,14 @@ class MyPageMyteamFragment : BaseFragment<FragmentMypageMyteamBinding>(R.layout.
                     updateTeamSelectionUI()
 
                     // 로그 찍기: 현재 선택된 팀 ID와 보낼 팀 ID 확인
-                    Log.d("MyPageMyteamFragment", "보내고자 하는 팀 ID: $teamId, 현재 선택된 팀 ID: $selectedTeamId")
+                    Timber.d("보내고자 하는 팀 ID: $teamId, 현재 선택된 팀 ID: $selectedTeamId")
 
                     // 팀 이름과 ID를 전달
                     val teamName = TeamData.teamNames[selectedTeamId]
                     onTeamSelected(teamName, selectedTeamId!!)
                 }
             } else {
-                Log.e("MyPageMyteamFragment", "ImageView with ID $imageViewId not found.")
+                Timber.e("ImageView with ID $imageViewId not found.")
             }
         }
     }

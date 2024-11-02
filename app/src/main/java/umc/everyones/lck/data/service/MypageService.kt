@@ -14,6 +14,7 @@ import umc.everyones.lck.data.UpdateProfileRequest
 import umc.everyones.lck.data.dto.BaseResponse
 import umc.everyones.lck.data.dto.request.mypage.CancelHostViewingPartyMypageRequestDto
 import umc.everyones.lck.data.dto.request.mypage.CancelParticipateViewingPartyMypageRequestDto
+import umc.everyones.lck.data.dto.request.mypage.UpdateProfilesRequestDto
 import umc.everyones.lck.data.dto.request.mypage.UpdateTeamRequestDto
 import umc.everyones.lck.data.dto.response.NonBaseResponse
 import umc.everyones.lck.data.dto.response.mypage.CommentsMypageResponseDto
@@ -73,8 +74,8 @@ interface MypageService {
     @Multipart
     @PATCH("my-pages/profiles")
     suspend fun updateProfiles(
-        @Part profileImage: MultipartBody.Part?,
-        @Part("updateProfileRequest") updateProfileRequest: RequestBody
+        @Part profileImage: MultipartBody.Part,
+        @Part("updateProfileRequest") request: RequestBody
     ): BaseResponse<UpdateProfilesResponseDto>
 
     @PATCH("my-pages/my-team")

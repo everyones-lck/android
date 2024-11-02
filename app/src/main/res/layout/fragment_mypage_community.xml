@@ -15,6 +15,13 @@
         android:background="@drawable/bg_gradient_color">
 
         <ImageView
+            android:id="@+id/iv_mypage_community_star"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_no_mypage_star"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/iv_mypage_community_back"
             android:layout_width="30dp"
             android:layout_height="30dp"

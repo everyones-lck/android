@@ -5,6 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import umc.everyones.lck.data.service.LoginService
+import umc.everyones.lck.data.service.MypageService
 import umc.everyones.lck.data.service.NaverService
 import umc.everyones.lck.data.service.TestService
 import umc.everyones.lck.data.service.home.HomeService
@@ -62,5 +64,17 @@ object ServiceModule {
     @Singleton
     fun provideAboutLckService(retrofit: Retrofit): AboutLckService{
         return retrofit.buildService()
+    }
+
+    @Provides
+    @Singleton
+    fun providesLoginService(@Named("refresh") retrofit: Retrofit): LoginService {
+        return retrofit.create(LoginService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesMyPageService(retrofit: Retrofit): MypageService {
+        return retrofit.create(MypageService::class.java)
     }
 }

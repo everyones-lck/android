@@ -22,7 +22,35 @@
         <action
             android:id="@+id/action_myPageFragment_to_myPageViewingPartyFragment"
             app:destination="@+id/myPageViewingPartyFragment"/>
+        <action
+            android:id="@+id/action_myPageFragment_to_myPageInformationFragment"
+            app:destination="@+id/myPageInformationFragment"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/myPageInformationFragment"
+        android:name="umc.everyones.lck.presentation.mypage.MyPageInformationFragment"
+        android:label="MyPage Information Fragment"
+        tools:layout="@layout/fragment_mypage_information">
+        <action
+            android:id="@+id/action_myPageInformationFragment_to_MypageInformationTosAgree1Fragment"
+            app:destination="@id/MyPageInformationTosAgree1Fragment"/>
+        <action
+            android:id="@+id/action_myPageInformationFragment_to_MypageInformationTosAgree2Fragment"
+            app:destination="@id/MyPageInformationTosAgree2Fragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/MyPageInformationTosAgree1Fragment"
+        android:name="umc.everyones.lck.presentation.mypage.MyPageInformationTosAgree1Fragment"
+        android:label="MyPage Information Tos Agree 1 Fragment"
+        tools:layout="@layout/fragment_mypage_information_tos_agree_1"/>
+
+    <fragment
+        android:id="@+id/MyPageInformationTosAgree2Fragment"
+        android:name="umc.everyones.lck.presentation.mypage.MyPageInformationTosAgree2Fragment"
+        android:label="MyPage Information Tos Agree 2 Fragment"
+        tools:layout="@layout/fragment_mypage_information_tos_agree_2"/>
 
     <fragment
         android:id="@+id/myPageProfileFragment"
@@ -35,6 +63,9 @@
         <action
             android:id="@+id/action_myPageProfileFragment_to_myPageProfileWithdrawFragment"
             app:destination="@id/myPageProfileWithdrawFragment"/>
+        <action
+            android:id="@+id/action_myPageProfileFramgnet_to_myPageFragment"
+            app:destination="@id/myPageFragment"/>
     </fragment>
 
     <fragment

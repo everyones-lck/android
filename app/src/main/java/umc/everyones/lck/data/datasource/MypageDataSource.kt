@@ -5,6 +5,7 @@ import okhttp3.RequestBody
 import umc.everyones.lck.data.dto.BaseResponse
 import umc.everyones.lck.data.dto.request.mypage.CancelHostViewingPartyMypageRequestDto
 import umc.everyones.lck.data.dto.request.mypage.CancelParticipateViewingPartyMypageRequestDto
+import umc.everyones.lck.data.dto.request.mypage.UpdateProfilesRequestDto
 import umc.everyones.lck.data.dto.request.mypage.UpdateTeamRequestDto
 import umc.everyones.lck.data.dto.response.NonBaseResponse
 import umc.everyones.lck.data.dto.response.mypage.CommentsMypageResponseDto
@@ -33,7 +34,7 @@ interface MypageDataSource {
 
     suspend fun withdraw(): NonBaseResponse
 
-    suspend fun updateProfiles(profileImage: MultipartBody.Part?, updateProfileRequest: RequestBody): BaseResponse<UpdateProfilesResponseDto>
+    suspend fun updateProfiles(profileImage: MultipartBody.Part, request: UpdateProfilesRequestDto): BaseResponse<UpdateProfilesResponseDto>
 
     suspend fun updateTeam(requestDto: UpdateTeamRequestDto ): BaseResponse<Boolean>
 }

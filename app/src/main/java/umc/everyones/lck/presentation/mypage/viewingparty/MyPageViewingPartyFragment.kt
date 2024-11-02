@@ -6,6 +6,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageViewingPartyBinding
 import umc.everyones.lck.presentation.base.BaseFragment
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 class MyPageViewingPartyFragment : BaseFragment<FragmentMypageViewingPartyBinding>(R.layout.fragment_mypage_viewing_party) {
 
@@ -15,7 +16,7 @@ class MyPageViewingPartyFragment : BaseFragment<FragmentMypageViewingPartyBindin
         setupViewPager()
         setupTabLayout()
 
-        binding.ivMypageViewingPartyBack.setOnClickListener {
+        binding.ivMypageViewingPartyBack.setOnSingleClickListener {
             findNavController().navigateUp()
         }
     }

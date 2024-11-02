@@ -1,71 +1,41 @@
 package umc.everyones.lck.presentation.mypage.community
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.domain.model.community.Comment
 import umc.everyones.lck.domain.model.community.Post
+import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
+import umc.everyones.lck.domain.repository.MypageRepository
+import umc.everyones.lck.domain.repository.community.CommunityRepository
+import umc.everyones.lck.presentation.community.read.ReadPostViewModel
+import umc.everyones.lck.presentation.mypage.MyPageViewModel
+import umc.everyones.lck.util.network.UiState
+import javax.inject.Inject
 import kotlin.random.Random
 
-class MyPageCommunityViewModel : ViewModel() {
+@HiltViewModel
+class MyPageCommunityViewModel @Inject constructor(
+    private val repository: MypageRepository,
+) : ViewModel() {
+    private val _posts = MutableLiveData<List<PostsMypageModel.PostsMypageElementModel>>() // PostsMypageElementModel 타입 리스트
+    val posts: LiveData<List<PostsMypageModel.PostsMypageElementModel>> get() = _posts
 
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>> get() = _posts
-
-    private val _comments = MutableLiveData<List<Comment>>()
-    val comments: LiveData<List<Comment>> get() = _comments
-
-    init {
-        val categories = listOf(
-            "#잡담게시판",
-            "#응원게시판",
-            "#질문게시판",
-            "#FA게시판",
-            "#후기게시판",
-            "#거래게시판"
-        )
-        val postList = listOf(
-            "배고프다",
-            "오늘 LCK 재밌었다",
-            "우와우와우와우",
-            "UMC 6th"
-        )
-        val commentsList = listOf(
-            "가나다라마바사아자차카타파하",
-            "슈슈슈슈퍼노바 사건은 다가와 ah oh ay",
-            "그대 나의 작은 심장에 귀 기울일 때에 입을 꼭 맞추어 내 숨을 가져가도 돼요",
-            "나 그대의 품에 안겨서 입을 맞추고 Rock 'n' roll save my life",
-            "그땐 난 어떤 마음이었길래 내 모든 걸 주고도 웃을 수 있었나",
-            "저 멀리 기다리는 이름 모를 고민들과 언젠가 그리워질 지나간 것들도 안녕"
-        )
-
-        val posts = mutableListOf<Post>()
-        val comments = mutableListOf<Comment>()
-
-        for (index in 0 until 10) {
-            val post = Post(
-                postId = index,
-                writer = "User$index",
-                title = postList[Random.nextInt(postList.size)],
-                body = "Post body $index",
-                category = categories[Random.nextInt(categories.size)]
-            )
-            posts.add(post)
+    fun postMypage(page: Int, size: Int) {
+        viewModelScope.launch {
+            repository.postsMypage(page, size).onSuccess { response ->
+                _posts.value = response.posts // API 응답에서 posts 리스트를 가져옴
+                Timber.d("postMypage", response.toString())
+            }.onFailure { error ->
+                Timber.d("postMypage error", error.stackTraceToString())
+            }
         }
-
-        for (commentIndex in 0 until 10) {
-            val comment = Comment(
-                commentId = commentIndex + 100,
-                nickname = "User$commentIndex",
-                favoriteTeam = "Team${Random.nextInt(5)}",
-                body = commentsList[Random.nextInt(commentsList.size)],
-                date = "2024-08-06",
-                profileImageUrl = "https://example.com/profile${commentIndex}.png",
-                category = categories[Random.nextInt(categories.size)]
-            )
-            comments.add(comment)
-        }
-        _posts.value = posts
-        _comments.value = comments
     }
 }

@@ -1,8 +1,5 @@
 package umc.everyones.lck.presentation.login
 
-import android.net.Uri
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -17,6 +14,7 @@ import umc.everyones.lck.databinding.DialogMyteamConfirmBinding
 import umc.everyones.lck.databinding.FragmentSignupMyteamBinding
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.util.TeamData
+import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
 class SignupMyteamFragment : BaseFragment<FragmentSignupMyteamBinding>(R.layout.fragment_signup_myteam) {
@@ -33,7 +31,7 @@ class SignupMyteamFragment : BaseFragment<FragmentSignupMyteamBinding>(R.layout.
 
         setupTeamSelection()
 
-        binding.ivSignupMyteamNext.setOnClickListener {
+        binding.ivSignupMyteamNext.setOnSingleClickListener {
             if (selectedTeamId == null) {
                 showTeamConfirmDialog()
             } else {
@@ -89,11 +87,11 @@ class SignupMyteamFragment : BaseFragment<FragmentSignupMyteamBinding>(R.layout.
         layoutParams?.dimAmount = 0.8f
         dialog.window?.attributes = layoutParams
 
-        dialogBinding.btnChange.setOnClickListener {
+        dialogBinding.btnChange.setOnSingleClickListener {
             dialog.dismiss()
         }
 
-        dialogBinding.btnConfirm.setOnClickListener {
+        dialogBinding.btnConfirm.setOnSingleClickListener {
             dialog.dismiss()
             navigateToSuccessFragment()
         }

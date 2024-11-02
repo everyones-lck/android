@@ -44,62 +44,57 @@ object ApplicationContextModule {
 }
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesTestRepository(
         testService: TestService
     ): TestRepository = TestRepositoryImpl(testService)
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesTodayMatchRepository(
         todayMatchRepositoryImpl: TodayMatchRepositoryImpl
     ): TodayMatchRepository = todayMatchRepositoryImpl
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesHomeRepository(
         homeRepositoryImpl: HomeRepositoryImpl
     ): HomeRepository = homeRepositoryImpl
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun providesNaverRepository(
         naverRepositoryImpl: NaverRepositoryImpl
     ): NaverRepository = naverRepositoryImpl
 
-    @ViewModelScoped
-    @Provides
-    fun providesLoginDataSource(loginService: LoginService): LoginDataSource =
-        LoginDataSourceImpl(loginService)
-
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesLoginRepository(loginDataSource: LoginDataSource): LoginRepository =
         LoginRepositoryImpl(loginDataSource) // LoginDataSource를 주입
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesViewingPartyRepository(
         viewingPartyRepositoryImpl: ViewingPartyRepositoryImpl
     ): ViewingPartyRepository = viewingPartyRepositoryImpl
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun provideMypageRepository(
         mypageRepositoryImpl: MypageRepositoryImpl
     ): MypageRepository = mypageRepositoryImpl
 
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesCommunityRepository(
         communityRepositoryImpl: CommunityRepositoryImpl
     ): CommunityRepository = communityRepositoryImpl
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesAboutLckRepository(
         aboutLckRepositoryImpl: AboutLckRepositoryImpl

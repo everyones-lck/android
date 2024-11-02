@@ -6,29 +6,28 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.data.UpdateProfileRequest
-import umc.everyones.lck.data.dto.BaseResponse
-import umc.everyones.lck.data.dto.response.mypage.UpdateProfilesResponseDto
+import umc.everyones.lck.domain.model.request.mypage.UpdateProfilesRequestModel
 import umc.everyones.lck.domain.model.request.mypage.UpdateTeamModel
 import umc.everyones.lck.domain.model.response.mypage.InquiryProfilesModel
-import umc.everyones.lck.domain.model.response.mypage.UpdateProfilesModel
+import umc.everyones.lck.domain.model.response.mypage.UpdateProfilesResponseModel
 import umc.everyones.lck.domain.repository.MypageRepository
-import umc.everyones.lck.util.TeamData
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,8 +48,8 @@ class MyPageViewModel @Inject constructor(
     private val _logoutResult = MutableLiveData<Boolean>()
     val logoutResult: LiveData<Boolean> get() = _logoutResult
 
-    private val _updateProfileResult = MutableLiveData<UpdateProfilesModel?>()
-    val updateProfileResult: LiveData<UpdateProfilesModel?> get() = _updateProfileResult
+    private val _updateProfileResult = MutableLiveData<UpdateProfilesResponseModel?>()
+    val updateProfileResult: LiveData<UpdateProfilesResponseModel?> get() = _updateProfileResult
 
     private val _nickName = MutableLiveData<String>()
     val nickName: LiveData<String> get() = _nickName
@@ -77,9 +76,9 @@ class MyPageViewModel @Inject constructor(
                 _profileData.value = response
                 _nickName.value = response.nickname // 닉네임을 LiveData에 저장
                 _teamId.value = response.teamId
-                Log.d("inquiryProfile", response.toString())
+                Timber.d(response.toString())
             }.onFailure {
-                Log.d("inquiryProfile", it.stackTraceToString())
+                Timber.d(it.stackTraceToString())
             }
         }
     }
@@ -88,11 +87,11 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             repository.withdraw().onSuccess {response ->
                 _withdrawResult.value = true
-                Log.d("withdraw", "회원 탈퇴 성공: $response")
+                Timber.d("회원 탈퇴 성공: $response")
                 spf.edit().putBoolean("isLoggedIn", false).apply()
                 clearAppCache()
             }.onFailure { error ->
-                Log.e("withdraw", "회원 탈퇴 실패: ${error.message}")
+                Timber.e("회원 탈퇴 실패: ${error.message}")
                 _withdrawResult.value = false
             }
         }
@@ -104,113 +103,85 @@ class MyPageViewModel @Inject constructor(
             viewModelScope.launch {
                 repository.logout(refreshToken).onSuccess { response ->
                     _logoutResult.value = true
-                    Log.d("logout", "로그아웃 성공: $response")
+                    Timber.d("로그아웃 성공: $response")
                     spf.edit().putBoolean("isLoggedIn", false).apply()
                     clearAppCache()
                 }.onFailure { error ->
                     _logoutResult.value = false
-                    Log.e("logout", "로그아웃 실패: ${error.message}")
+                    Timber.e("로그아웃 실패: ${error.message}")
                 }
             }
         } else {
-            Log.e("logout", "refreshToken이 없습니다.")
+            Timber.e("refreshToken이 없습니다.")
             _logoutResult.value = false
         }
     }
 
     fun updateProfile(nickName: String?, profileImageUri: Uri?) {
         viewModelScope.launch {
-            // 현재 프로필 이미지와 닉네임 가져오기
             val currentProfileImageUri = _profileUri.value
                 ?: Uri.parse("android.resource://${getApplication<Application>().packageName}/${R.drawable.img_signup_profile}") // 기본 이미지 URI
             val currentNickName = _nickName.value ?: ""
 
-            // 입력값이 없으면 기존 값 사용
-            val effectiveNickName = nickName?.takeIf { it.isNotEmpty() } ?: currentNickName
+            val isProfileImageChanged = profileImageUri != null && profileImageUri != currentProfileImageUri
 
-            // 프로필 이미지 URI를 조건에 따라 설정
-            val effectiveProfileImageUri = if (profileImageUri != null) {
-                profileImageUri // 새 이미지가 있을 경우 새 이미지 사용
+            val profileImagePart: MultipartBody.Part = if (isProfileImageChanged) {
+                createProfileImagePart(profileImageUri!!) // !! 연산자를 사용하여 null이 아님을 보장
             } else {
-                currentProfileImageUri // 새 이미지가 없을 경우 기존 이미지 사용
+                createProfileImagePart(currentProfileImageUri) // 기존 이미지를 사용
             }
 
-            // 프로필 이미지 부분 생성
-            val profileImagePart = createProfileImagePart(effectiveProfileImageUri)
+            val updateProfileRequestModel = UpdateProfilesRequestModel(
+                profileImage = profileImagePart,
+                updateProfileRequest = UpdateProfilesRequestModel.UpdateProfileRequestElementModel(
+                    nickname = nickName ?: null, // 닉네임이 null이면 null로 보내줌
+                    defaultImage = !isProfileImageChanged // 이미지가 수정되지 않았으면 기본 이미지로 설정
+                )
+            )
 
-            // UpdateProfileRequest 생성
-            val updateProfileRequest =
-                UpdateProfileRequest(effectiveNickName, effectiveProfileImageUri == null)
-
-            // JSON 변환
-            val requestBody = Gson().toJson(updateProfileRequest)
-                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-
-            // 프로필 업데이트 호출
-            runCatching {
-                repository.updateProfiles(profileImagePart, requestBody)
-            }.onSuccess { response ->
-                Log.d("MyPageViewModel", "Response: ${Gson().toJson(response)}") // 응답 전체 로그
-
-                // JSON 응답을 BaseResponse로 파싱
-                val jsonResponse = Gson().toJson(response)
-                Log.d("MyPageViewModel", "JSON Response: $jsonResponse") // JSON 문자열 로그
-
-                // 제네릭 타입을 이용한 BaseResponse 파싱
-                val type = object : TypeToken<BaseResponse<UpdateProfilesResponseDto>>() {}.type
-                val baseResponse: BaseResponse<UpdateProfilesResponseDto> =
-                    Gson().fromJson(jsonResponse, type)
-
-                // baseResponse가 null이 아닌지 확인하고, data가 유효한지 확인
-                if (baseResponse.success) {
-                    val updatedProfile = baseResponse.data // 이 값은 null이 아니어야 함
-                    _updateProfileResult.value = UpdateProfilesModel(
-                        updatedProfileImageUrl = updatedProfile.updatedProfileImageUrl,
-                        updatedNickname = updatedProfile.updatedNickname
-                    )
-                } else {
-                    Log.e("MyPageViewModel", "Error in base response: ${baseResponse.message}")
-                    _updateProfileResult.value = null
-                }
+            // 프로필 업데이트 호출 및 결과 처리
+            repository.updateProfiles(updateProfileRequestModel.profileImage, updateProfileRequestModel)
+                .onSuccess { response ->
+                    Timber.d("Profile updated successfully: $response")
+                    spf.edit().apply {
+                        putString("nickName", updateProfileRequestModel.updateProfileRequest.nickname)
+                        val imageToSave = if (profileImageUri != null && profileImageUri.toString().isNotEmpty()) {
+                            profileImageUri.toString()
+                        } else {
+                            currentProfileImageUri.toString() // 기존 URI 저장
+                        }
+                        putString("profileImage", imageToSave)
+                        apply()
+                    }
             }.onFailure { error ->
-                _updateProfileResult.value = null
-                Log.e("MyPageViewModel", "Error updating profile: ${error.message}")
+                Timber.e("Error updating profile: ${error.message}")
             }
         }
     }
-
-    fun updateTeam(teamId: Int) {
-        viewModelScope.launch {
-            // UpdateTeamModel 객체 생성
-            val updateTeamModel = UpdateTeamModel(teamId) // 필요한 경우 추가 필드 설정
-
-            runCatching {
-                repository.updateTeam(updateTeamModel).onSuccess { response ->
-                    Log.d("updateTeam", "팀 변경 성공: $response")
-                    _teamId.value = teamId
-                }.onFailure { error ->
-                    Log.d("updateTeam", "팀 변경 실패: $error")
-                }
-            }.onFailure { error ->
-                Log.e("updateTeam", "Error during update: ${error.message}")
-            }
-        }
-    }
-
-
     private fun createProfileImagePart(uri: Uri): MultipartBody.Part {
-        val inputStream = getApplication<Application>().contentResolver.openInputStream(uri) // URI에서 입력 스트림 열기
-        val selectedImageBitmap = BitmapFactory.decodeStream(inputStream) // 비트맵으로 변환
+        val inputStream = getApplication<Application>().contentResolver.openInputStream(uri)
+        val selectedImageBitmap = BitmapFactory.decodeStream(inputStream)
         val byteArrayOutputStream = ByteArrayOutputStream().apply {
             selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
         }
         val imageBytes = byteArrayOutputStream.toByteArray()
 
-        val requestBody = imageBytes.toRequestBody("image/png".toMediaTypeOrNull())
+        val requestBody = RequestBody.create(null, imageBytes) // MediaType 필요 없음
         return MultipartBody.Part.createFormData("profileImage", "profile_image.png", requestBody)
     }
 
 
+
+    fun updateTeam(teamId: Int) {
+        viewModelScope.launch {
+            repository.updateTeam(UpdateTeamModel(teamId)).onSuccess { response ->
+                Timber.d("팀 변경 성공: $response")
+                _teamId.value = teamId
+            }.onFailure { error ->
+                Timber.d("팀 변경 실패: $error")
+            }
+        }
+    }
 
     private fun clearAppCache() {
         val cacheDir = context.cacheDir
