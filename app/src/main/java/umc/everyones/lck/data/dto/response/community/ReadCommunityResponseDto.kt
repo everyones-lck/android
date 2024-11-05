@@ -17,7 +17,7 @@ data class ReadCommunityResponseDto(
     val commentList: List<CommentListElementDto>
 ) {
     data class CommentListElementDto(
-        val profileUrl: String,
+        val profileImageUrl: String,
         val nickname: String,
         val supportTeam: String,
         val content: String,
@@ -26,7 +26,7 @@ data class ReadCommunityResponseDto(
     ) {
         fun toCommentListElementModel(userNickname: String) =
             ReadCommunityResponseModel.CommentListElementModel(
-                profileUrl,
+                profileImageUrl,
                 nickname.combineNicknameAndTeam(supportTeam),
                 content,
                 createdAt.slice(0..15).toListViewingPartyDateFormat(),

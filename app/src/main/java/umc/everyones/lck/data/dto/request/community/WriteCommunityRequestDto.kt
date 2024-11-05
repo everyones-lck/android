@@ -6,7 +6,7 @@ import okhttp3.RequestBody
 
 data class WriteCommunityRequestDto(
     val files: List<MultipartBody.Part?>,
-    val writeRequest: RequestBody
+    val request: RequestBody
 ) {
     data class WriteRequestDto(
         val postType: String,
