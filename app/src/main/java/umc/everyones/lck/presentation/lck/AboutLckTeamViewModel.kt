@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.data.dto.response.about_lck.LckPlayerDetailsResponseDto
 import umc.everyones.lck.domain.model.about_lck.AboutLckPlayerDetailsModel
 import umc.everyones.lck.domain.repository.about_lck.AboutLckRepository
@@ -20,30 +21,30 @@ class AboutLckTeamViewModel @Inject constructor(
     private val _teamId = MutableStateFlow<Int?>(null)
     val teamId: StateFlow<Int?> get() = _teamId
 
-    private val _playerDetails = MutableStateFlow<Result<AboutLckPlayerDetailsModel>?>(null)
-    val playerDetails: StateFlow<Result<AboutLckPlayerDetailsModel>?> get() = _playerDetails
+    private val _playerDetails = MutableStateFlow<AboutLckPlayerDetailsModel?>(null)
+    val playerDetails: StateFlow<AboutLckPlayerDetailsModel?> get() = _playerDetails
 
     fun fetchLckPlayerDetails(teamId: Int, seasonName: String, player_role: LckPlayerDetailsResponseDto.PlayerRole) {
         viewModelScope.launch {
             val result = repository.fetchLckPlayerDetails(teamId, seasonName, player_role)
-            _playerDetails.value = result
 
             result.onSuccess { response ->
-                Log.d("AboutLckTeamViewModel", "fetchLckPlayerDetails API 호출 성공")
+                Timber.d("fetchLckPlayerDetails API 호출 성공")
+
                 val filteredPlayerDetails = response.copy(
                     playerDetails = response.playerDetails.map { playerDetail ->
                         playerDetail.copy(playerRole = null)
                     }
                 )
-                _playerDetails.value = Result.success(filteredPlayerDetails)
+                _playerDetails.value = filteredPlayerDetails
             }.onFailure {
-                Log.e("AboutLckTeamViewModel", "fetchLckPlayerDetails API 호출 실패: ${it.message}")
-                _playerDetails.value = Result.failure(it)
+                Timber.e(it, "fetchLckPlayerDetails API 호출 실패")
+                _playerDetails.value = null
             }
         }
     }
+
     fun setTeamId(id: Int) {
         _teamId.value = id
     }
-
 }

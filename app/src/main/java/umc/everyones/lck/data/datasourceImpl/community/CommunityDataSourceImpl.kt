@@ -26,7 +26,7 @@ class CommunityDataSourceImpl @Inject constructor(
     override suspend fun writeCommunityPost(
         request: WriteCommunityRequestDto
     ): BaseResponse<WriteCommunityResponseDto> =
-        communityService.writeCommunityPost(request.files, request.writeRequest)
+        communityService.writeCommunityPost(request.files, request.request)
 
     override suspend fun fetchCommunityPost(postId: Long): BaseResponse<ReadCommunityResponseDto> =
         communityService.fetchCommunityPost(postId)
