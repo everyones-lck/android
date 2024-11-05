@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import umc.everyones.lck.databinding.ItemCommentBinding
 import umc.everyones.lck.databinding.ItemMypageCommunityBinding
-import umc.everyones.lck.domain.model.community.Comment
-import umc.everyones.lck.domain.model.community.Post
 import umc.everyones.lck.domain.model.response.mypage.MyComment
 import umc.everyones.lck.domain.model.response.mypage.MyPost
 

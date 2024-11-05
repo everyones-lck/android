@@ -5,19 +5,24 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageCommunityPostBinding
 import umc.everyones.lck.domain.model.community.Post
 import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.presentation.base.BaseFragment
 import umc.everyones.lck.presentation.community.adapter.PostListRVA
+import umc.everyones.lck.presentation.community.list.FreeAgentListFragment
 import umc.everyones.lck.presentation.community.read.ReadPostActivity
 import umc.everyones.lck.util.extension.repeatOnStarted
 
@@ -26,34 +31,44 @@ class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBind
 
     private val viewModel: MyPageCommunityViewModel by activityViewModels()
     private var _myPostListRVA: MyPostListRVA? = null
-    private val myPostListRVA
-        get() = _myPostListRVA
+    private val myPostListRVA get() = _myPostListRVA
 
     private var readResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             if (result.data?.getBooleanExtra("isReadMenuDone", false) == true) {
                 myPostListRVA?.refresh() // Refresh the list after reading a post
-                binding.recyclerView.scrollToPosition(0) // Scroll to the top
+                binding.rvMypageCommunityPost.scrollToPosition(0) // Scroll to the top
+            }
+        }
+    }
+
+    override fun initObserver() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.fetchPostsMypage.collectLatest { pagingData ->
+                myPostListRVA?.submitData(pagingData) // PagingData를 어댑터에 제출
+            }
+        }
+
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel.categoryNeedsRefresh.collect { categoryNeedsRefresh ->
+                Timber.d("POST", categoryNeedsRefresh)
+                if (categoryNeedsRefresh == CATEGORY) {
+                    myPostListRVA?.refresh()
+                    binding.rvMypageCommunityPost.scrollToPosition(0)
+                }
             }
         }
     }
 
     override fun initView() {
-        initPostListRVAdapter()
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.viewModel = viewModel
+        initPostListRVA()
     }
 
-    private fun initPostListRVAdapter() {
-        // MyPostListRVA에서 PostsMypageElementModel을 사용하도록 수정
-        _myPostListRVA = MyPostListRVA { id ->
-            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), id.toLong()))
+    private fun initPostListRVA() {
+        _myPostListRVA = MyPostListRVA { postId ->
+            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), postId))
         }
-        binding.recyclerView.adapter = myPostListRVA
-    }
-
-    override fun initObserver() {
-
+        binding.rvMypageCommunityPost.adapter = myPostListRVA
     }
 
     override fun onDestroyView() {
@@ -61,8 +76,7 @@ class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBind
         _myPostListRVA = null // Prevent memory leak
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.postMypage(page = 0, size = 10) // Load initial data
+    companion object {
+        private const val CATEGORY = "POST"
     }
 }

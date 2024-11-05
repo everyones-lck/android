@@ -14,11 +14,10 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rv_mypage_community_comment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"
-            android:visibility="gone"/> <!-- 기본적으로 숨김 -->
+            android:padding="16dp"/> <!-- 기본적으로 숨김 -->
 
         <LinearLayout
             android:id="@+id/noPostsLayout"

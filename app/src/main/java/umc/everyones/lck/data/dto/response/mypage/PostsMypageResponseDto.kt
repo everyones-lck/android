@@ -7,7 +7,7 @@ data class PostsMypageResponseDto(
     val isLast: Boolean
 ){
     data class PostsMypageResponseElementDto(
-        val id: Int,
+        val id: Long,
         val title: String,
         val postType: String
     ){

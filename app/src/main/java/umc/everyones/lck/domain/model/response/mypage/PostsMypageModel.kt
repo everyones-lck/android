@@ -5,7 +5,7 @@ data class PostsMypageModel(
     val isLast: Boolean
 ){
     data class PostsMypageElementModel(
-        val id: Int,
+        val id: Long,
         val title: String,
         val postType: String
     )

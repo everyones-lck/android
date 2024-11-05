@@ -3,7 +3,7 @@ package umc.everyones.lck.presentation.mypage.community
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class MyPageCommunityPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class MyPageCommunityVPA(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int = 2  // 총 2개의 탭
 

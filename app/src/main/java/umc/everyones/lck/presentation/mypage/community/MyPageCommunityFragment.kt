@@ -2,9 +2,11 @@ package umc.everyones.lck.presentation.mypage.community
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageCommunityBinding
 import umc.everyones.lck.presentation.base.BaseFragment
@@ -30,7 +32,7 @@ class MyPageCommunityFragment : BaseFragment<FragmentMypageCommunityBinding>(R.l
 
     private fun initViewPager() {
         // 뷰페이저에 어댑터 설정
-        val pagerAdapter = MyPageCommunityPagerAdapter(this)
+        val pagerAdapter = MyPageCommunityVPA(this)
         binding.viewPager.adapter = pagerAdapter
 
         // 탭 레이아웃과 뷰페이저를 연결
@@ -42,9 +44,13 @@ class MyPageCommunityFragment : BaseFragment<FragmentMypageCommunityBinding>(R.l
             }
         }.attach()
 
-        viewModel.posts.observe(viewLifecycleOwner) { posts ->
-            if (posts.isEmpty()) {
-                binding.ivMypageCommunityStar.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            viewModel.posts.collect { posts ->
+                if (posts.isEmpty()) {
+                    binding.ivMypageCommunityStar.visibility = View.VISIBLE
+                } else {
+                    binding.ivMypageCommunityStar.visibility = View.GONE
+                }
             }
         }
     }

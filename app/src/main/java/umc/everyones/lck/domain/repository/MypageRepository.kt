@@ -1,5 +1,9 @@
 package umc.everyones.lck.domain.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import umc.everyones.lck.data.dto.response.NonBaseResponse
 import umc.everyones.lck.domain.model.request.mypage.UpdateProfilesRequestModel
@@ -7,6 +11,7 @@ import umc.everyones.lck.domain.model.request.mypage.UpdateTeamModel
 import umc.everyones.lck.domain.model.response.mypage.CommentsMypageModel
 import umc.everyones.lck.domain.model.response.mypage.HostViewingPartyMypageModel
 import umc.everyones.lck.domain.model.response.mypage.InquiryProfilesModel
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.ParticipateViewingPartyMypageModel
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.domain.model.response.mypage.UpdateProfilesResponseModel
@@ -34,4 +39,5 @@ interface MypageRepository {
 
     suspend fun updateTeam(request: UpdateTeamModel): Result<Boolean>
 
+    fun fetchPagingSource(category: String): Flow<PagingData<PostsMypageModel.PostsMypageElementModel>>
 }

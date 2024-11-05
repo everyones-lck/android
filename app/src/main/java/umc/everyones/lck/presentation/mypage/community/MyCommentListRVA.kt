@@ -15,7 +15,7 @@ import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
-class MyPostListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMypageModel.PostsMypageElementModel, MyPostListRVA.PostViewHolder>(DiffCallback()) {
+class MyCommentListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMypageModel.PostsMypageElementModel, MyCommentListRVA.PostViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return PostViewHolder(

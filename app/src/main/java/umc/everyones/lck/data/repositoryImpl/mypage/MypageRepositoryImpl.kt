@@ -1,15 +1,22 @@
 package umc.everyones.lck.data.repositoryImpl.mypage
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import umc.everyones.lck.data.datasource.MypageDataSource
+import umc.everyones.lck.data.datasourceImpl.mypage.MyPostPagingSource
 import umc.everyones.lck.data.dto.request.mypage.UpdateProfilesRequestDto
 import umc.everyones.lck.data.dto.response.NonBaseResponse
+import umc.everyones.lck.data.service.MypageService
 import umc.everyones.lck.domain.model.request.mypage.UpdateProfilesRequestModel
 import umc.everyones.lck.domain.model.request.mypage.UpdateTeamModel
 import umc.everyones.lck.domain.model.response.mypage.CommentsMypageModel
 import umc.everyones.lck.domain.model.response.mypage.HostViewingPartyMypageModel
 import umc.everyones.lck.domain.model.response.mypage.InquiryProfilesModel
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.ParticipateViewingPartyMypageModel
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.domain.model.response.mypage.UpdateProfilesResponseModel
@@ -17,7 +24,8 @@ import umc.everyones.lck.domain.repository.MypageRepository
 import javax.inject.Inject
 
 class MypageRepositoryImpl  @Inject constructor(
-    private val mypageDataSource: MypageDataSource
+    private val mypageDataSource: MypageDataSource,
+    private val mypageService: MypageService
 ): MypageRepository {
     override suspend fun inquiryProfiles(): Result<InquiryProfilesModel> =
         runCatching { mypageDataSource.inquiryProfiles().data.toInquiryProfilesModel() }
@@ -51,4 +59,13 @@ class MypageRepositoryImpl  @Inject constructor(
 
     override suspend fun updateTeam(request: UpdateTeamModel): Result<Boolean> =
         runCatching { mypageDataSource.updateTeam(request.toUpdateTeamRequestDto()).data }
+
+    override fun fetchPagingSource(category: String): Flow<PagingData<PostsMypageModel.PostsMypageElementModel>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = true
+            ),
+            pagingSourceFactory = { MyPostPagingSource(mypageService, category) }
+        ).flow
 }

@@ -5,13 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import umc.everyones.lck.domain.model.community.Comment
 import umc.everyones.lck.domain.model.community.Post
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.domain.repository.MypageRepository
 import umc.everyones.lck.domain.repository.community.CommunityRepository
@@ -25,17 +30,33 @@ import kotlin.random.Random
 class MyPageCommunityViewModel @Inject constructor(
     private val repository: MypageRepository,
 ) : ViewModel() {
-    private val _posts = MutableLiveData<List<PostsMypageModel.PostsMypageElementModel>>() // PostsMypageElementModel 타입 리스트
-    val posts: LiveData<List<PostsMypageModel.PostsMypageElementModel>> get() = _posts
+    private val _categoryNeedsRefresh = MutableStateFlow<String>("")
+    val categoryNeedsRefresh: StateFlow<String> get() = _categoryNeedsRefresh
 
-    fun postMypage(page: Int, size: Int) {
-        viewModelScope.launch {
-            repository.postsMypage(page, size).onSuccess { response ->
-                _posts.value = response.posts // API 응답에서 posts 리스트를 가져옴
-                Timber.d("postMypage", response.toString())
-            }.onFailure { error ->
-                Timber.d("postMypage error", error.stackTraceToString())
+    private val _posts = MutableStateFlow<List<MyPost>>(emptyList())
+    val posts: StateFlow<List<MyPost>> get() = _posts
+    val fetchPostsMypage = repository.fetchPagingSource("POST").cachedIn(viewModelScope)
+    val fetchCommentMypage = repository.fetchPagingSource("COMMENT").cachedIn(viewModelScope)
+
+    fun postMypage(page: Int, size: Int): Flow<List<MyPost>> = flow {
+        repository.postsMypage(page, size).onSuccess { response ->
+            val postList = response.posts.map { postElement ->
+                MyPost(
+                    id = postElement.id,
+                    title = postElement.title,
+                    postType = postElement.postType,
+                )
             }
+            _posts.value = postList // 변환된 리스트 저장
+            emit(postList) // Flow에 변환된 데이터 발행
+        }.onFailure { error ->
+            Timber.d("postMypage error", error.stackTraceToString())
+            emit(emptyList()) // 실패 시 빈 리스트 발행
         }
+    }
+
+    fun refreshCategoryPage(category: String){
+        _categoryNeedsRefresh.value = ""
+        _categoryNeedsRefresh.value = category
     }
 }
