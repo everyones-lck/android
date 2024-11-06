@@ -35,7 +35,7 @@ class CommunityViewModel @Inject constructor(
             repository.fetchCommunityList(postType, page, size).onSuccess {  response ->
                 Timber.d("fetchCommunityList", response.toString())
             }.onFailure {
-                Timber.d("fetchCommunityList error", it.stackTraceToString())
+                Timber.tag("fetchCommunityList error").d(it.stackTraceToString())
             }
         }
     }
