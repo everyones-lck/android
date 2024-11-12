@@ -50,20 +50,20 @@ class TodayMatchTodayPogViewModel @Inject constructor(
         val updatedSetPlayers = _selectedSetPlayers.value?.toMutableMap() ?: mutableMapOf()
         updatedSetPlayers[setIndex] = playerId
         _selectedSetPlayers.value = updatedSetPlayers
-        checkIfAllItemsSelected()
+//        checkIfAllItemsSelected()
     }
     // 매치 POG의 플레이어를 선택하는 함수
     fun selectMatchPlayer(playerId: Int) {
         _selectedMatchPlayer.value = playerId
-        checkIfAllItemsSelected()
+//        checkIfAllItemsSelected()
     }
 
-    // 모든 세트와 매치 POG에서 플레이어가 선택되었는지 확인하는 함수
-    private fun checkIfAllItemsSelected() {
-        val allSetsSelected = _selectedSetPlayers.value?.size == _setCount.value?.setCount
-        val isMatchSelected = _selectedMatchPlayer.value != null
-        _allItemsSelected.value = allSetsSelected && isMatchSelected
-    }
+//    // 모든 세트와 매치 POG에서 플레이어가 선택되었는지 확인하는 함수
+//    private fun checkIfAllItemsSelected() {
+//        val allSetsSelected = _selectedSetPlayers.value?.size == _setCount.value?.setCount
+//        val isMatchSelected = _selectedMatchPlayer.value != null
+//        _allItemsSelected.value = allSetsSelected && isMatchSelected
+//    }
 
     // 예외로부터 에러 메시지를 추출하는 함수
     private fun getErrorMessageFromException(exception: Throwable): String {

@@ -51,10 +51,10 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
             }
         }
 
-        // 모든 항목이 선택되었을 때 투표 버튼 활성화
-        viewModel.allItemsSelected.observe(viewLifecycleOwner) { allSelected ->
-            binding.tvTodayMatchTodayPogVote.isEnabled = allSelected
-        }
+//        // 모든 항목이 선택되었을 때 투표 버튼 활성화
+//        viewModel.allItemsSelected.observe(viewLifecycleOwner) { allSelected ->
+//            binding.tvTodayMatchTodayPogVote.isEnabled = allSelected
+//        }
         // 투표 결과 메시지 스낵바로 표시
         viewModel.voteResponse.observe(viewLifecycleOwner) { message ->
             showCustomSnackBar(binding.root, message)
