@@ -90,18 +90,32 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     private fun pogVoteButton() {
         binding.tvTodayMatchTodayPogVote.setOnSingleClickListener {
             val matchId = arguments?.getLong("matchId") ?: return@setOnSingleClickListener
+//            // 세트 POG 투표
+//            viewModel.setCount.value?.setCount?.let { setCount ->
+//                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: return@setOnSingleClickListener
+//                for (setIndex in 1..setCount) {
+//                    val playerId = selectedSetPlayers[setIndex] ?: return@setOnSingleClickListener
+//                    viewModel.voteSetPog(matchId, setIndex, playerId)
+//                }
+//            }
+//            // 매치 POG 투표
+//            val selectedMatchPlayer = viewModel.selectedMatchPlayer.value ?: return@setOnSingleClickListener
+//            viewModel.voteMatchPog(matchId, selectedMatchPlayer)
+
             // 세트 POG 투표
             viewModel.setCount.value?.setCount?.let { setCount ->
-                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: return@setOnSingleClickListener
+                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: emptyMap()
                 for (setIndex in 1..setCount) {
-                    val playerId = selectedSetPlayers[setIndex] ?: return@setOnSingleClickListener
-                    viewModel.voteSetPog(matchId, setIndex, playerId)
+                    selectedSetPlayers[setIndex]?.let { playerId ->
+                        viewModel.voteSetPog(matchId, setIndex, playerId)
+                    }
                 }
             }
-            // 매치 POG 투표
-            val selectedMatchPlayer = viewModel.selectedMatchPlayer.value ?: return@setOnSingleClickListener
-            viewModel.voteMatchPog(matchId, selectedMatchPlayer)
 
+            // 매치 POG 투표
+            viewModel.selectedMatchPlayer.value?.let { selectedMatchPlayer ->
+                viewModel.voteMatchPog(matchId, selectedMatchPlayer)
+            }
         }
     }
     // RecyclerView의 아이템을 업데이트하는 함수
