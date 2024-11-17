@@ -32,8 +32,8 @@ class MyPageCommunityViewModel @Inject constructor(
 ) : ViewModel() {
     private val _categoryNeedsRefresh = MutableStateFlow<String>("")
     val categoryNeedsRefresh: StateFlow<String> get() = _categoryNeedsRefresh
-
     private val _posts = MutableStateFlow<List<MyPost>>(emptyList())
+
     val posts: StateFlow<List<MyPost>> get() = _posts
     val fetchPostsMypage = repository.fetchPagingSource("POST").cachedIn(viewModelScope)
     val fetchCommentMypage = repository.fetchPagingSource("COMMENT").cachedIn(viewModelScope)
@@ -47,11 +47,11 @@ class MyPageCommunityViewModel @Inject constructor(
                     postType = postElement.postType,
                 )
             }
-            _posts.value = postList // 변환된 리스트 저장
-            emit(postList) // Flow에 변환된 데이터 발행
+            _posts.value = postList
+            emit(postList)
         }.onFailure { error ->
             Timber.d("postMypage error", error.stackTraceToString())
-            emit(emptyList()) // 실패 시 빈 리스트 발행
+            emit(emptyList())
         }
     }
 
