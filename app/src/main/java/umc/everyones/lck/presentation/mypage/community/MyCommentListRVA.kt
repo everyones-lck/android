@@ -11,14 +11,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import umc.everyones.lck.databinding.ItemCommunityPostBinding
 import umc.everyones.lck.databinding.ItemMypageCommunityBinding
 import umc.everyones.lck.domain.model.community.CommunityListModel
+import umc.everyones.lck.domain.model.response.mypage.CommentsMypageModel
 import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
-class MyCommentListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMypageModel.PostsMypageElementModel, MyCommentListRVA.PostViewHolder>(DiffCallback()) {
+class MyCommentListRVA(val readComment: (Long) -> Unit) : PagingDataAdapter<CommentsMypageModel.CommentsMypageElementModel, MyCommentListRVA.CommentViewHolder>(DiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        return PostViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
+        return CommentViewHolder(
             ItemMypageCommunityBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -27,32 +28,32 @@ class MyCommentListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMy
         )
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = getItem(position)
-        if(post != null) {
-            holder.bind(post)
+    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
+        val comment = getItem(position)
+        if(comment != null) {
+            holder.bind(comment)
         }
     }
 
-    inner class PostViewHolder(private val binding: ItemMypageCommunityBinding) :
+    inner class CommentViewHolder(private val binding: ItemMypageCommunityBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(postListItem: PostsMypageModel.PostsMypageElementModel){
+        fun bind(commentListItem: CommentsMypageModel.CommentsMypageElementModel){
             with(binding){
-                tvMypageCommunityTitle.text = postListItem.title
-                tvMypageCommunityCategory.text = postListItem.postType
+                tvMypageCommunityTitle.text = commentListItem.content
+                tvMypageCommunityCategory.text = "#${commentListItem.postType}"
                 // 게시글 postId 전달
                 root.setOnSingleClickListener {
-                    readPost(postListItem.id)
+                    readComment(commentListItem.id)
                 }
             }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<PostsMypageModel.PostsMypageElementModel>() {
-        override fun areItemsTheSame(oldItem: PostsMypageModel.PostsMypageElementModel, newItem: PostsMypageModel.PostsMypageElementModel) =
+    class DiffCallback : DiffUtil.ItemCallback<CommentsMypageModel.CommentsMypageElementModel>() {
+        override fun areItemsTheSame(oldItem:CommentsMypageModel.CommentsMypageElementModel, newItem: CommentsMypageModel.CommentsMypageElementModel) =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: PostsMypageModel.PostsMypageElementModel, newItem: PostsMypageModel.PostsMypageElementModel) =
+        override fun areContentsTheSame(oldItem:CommentsMypageModel.CommentsMypageElementModel, newItem: CommentsMypageModel.CommentsMypageElementModel) =
             oldItem == newItem
     }
 }

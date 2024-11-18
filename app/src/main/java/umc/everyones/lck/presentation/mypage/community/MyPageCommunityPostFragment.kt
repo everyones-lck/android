@@ -28,7 +28,6 @@ import umc.everyones.lck.util.extension.repeatOnStarted
 
 @AndroidEntryPoint
 class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBinding>(R.layout.fragment_mypage_community_post) {
-
     private val viewModel: MyPageCommunityViewModel by activityViewModels()
     private var _myPostListRVA: MyPostListRVA? = null
     private val myPostListRVA get() = _myPostListRVA
@@ -43,15 +42,15 @@ class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBind
     }
 
     override fun initObserver() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.fetchPostsMypage.collectLatest { pagingData ->
+        viewLifecycleOwner.repeatOnStarted {
+            viewModel.myPostPage.collectLatest { pagingData ->
                 myPostListRVA?.submitData(pagingData) // PagingData를 어댑터에 제출
             }
         }
 
         viewLifecycleOwner.repeatOnStarted {
             viewModel.categoryNeedsRefresh.collect { categoryNeedsRefresh ->
-                Timber.d("POST", categoryNeedsRefresh)
+                Timber.d("MY POST", categoryNeedsRefresh)
                 if (categoryNeedsRefresh == CATEGORY) {
                     myPostListRVA?.refresh()
                     binding.rvMypageCommunityPost.scrollToPosition(0)
@@ -61,14 +60,25 @@ class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBind
     }
 
     override fun initView() {
+        val layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMypageCommunityPost.layoutManager = layoutManager // RecyclerView에 레이아웃 매니저 설정
         initPostListRVA()
     }
 
     private fun initPostListRVA() {
-        _myPostListRVA = MyPostListRVA { postId ->
-            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), postId))
+        _myPostListRVA = MyPostListRVA { id ->
+            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), id))
         }
         binding.rvMypageCommunityPost.adapter = myPostListRVA
+
+        _myPostListRVA?.addLoadStateListener { combinedLoadStates ->
+            with(binding){
+                rvMypageCommunityPost.isVisible = combinedLoadStates.source.refresh is LoadState.NotLoading
+                noPostsLayout.isVisible = combinedLoadStates.source.refresh is LoadState.NotLoading &&
+                        combinedLoadStates.append.endOfPaginationReached &&
+                        myPostListRVA?.itemCount == 0
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -77,6 +87,6 @@ class MyPageCommunityPostFragment : BaseFragment<FragmentMypageCommunityPostBind
     }
 
     companion object {
-        private const val CATEGORY = "POST"
+        private const val CATEGORY = "MY POST"
     }
 }

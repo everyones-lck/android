@@ -39,7 +39,7 @@ class MyPostListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMypag
         fun bind(postListItem: PostsMypageModel.PostsMypageElementModel){
             with(binding){
                 tvMypageCommunityTitle.text = postListItem.title
-                tvMypageCommunityCategory.text = postListItem.postType
+                tvMypageCommunityCategory.text = "#${postListItem.postType}"
                 // 게시글 postId 전달
                 root.setOnSingleClickListener {
                     readPost(postListItem.id)

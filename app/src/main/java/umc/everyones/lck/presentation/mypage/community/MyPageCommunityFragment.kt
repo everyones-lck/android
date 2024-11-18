@@ -4,54 +4,63 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageCommunityBinding
 import umc.everyones.lck.presentation.base.BaseFragment
+import umc.everyones.lck.presentation.community.adapter.PostListVPA
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
 @AndroidEntryPoint
 class MyPageCommunityFragment : BaseFragment<FragmentMypageCommunityBinding>(R.layout.fragment_mypage_community) {
     private val viewModel: MyPageCommunityViewModel by activityViewModels()
-
+    private var _mypagePostListVPA: MyPageCommunityVPA? = null
+    private val mypagePostListVPA get() = _mypagePostListVPA
     override fun initObserver() {
-        // 관찰자가 필요 없으면 여전히 비워둘 수 있습니다.
     }
 
     override fun initView() {
-        // 뒤로가기 버튼 클릭 리스너 설정
         binding.ivMypageCommunityBack.setOnSingleClickListener {
             findNavController().navigateUp()
         }
-
-        // 뷰페이저 및 탭 레이아웃 설정 함수 호출
         initViewPager()
     }
 
     private fun initViewPager() {
-        // 뷰페이저에 어댑터 설정
-        val pagerAdapter = MyPageCommunityVPA(this)
-        binding.viewPager.adapter = pagerAdapter
+        _mypagePostListVPA = MyPageCommunityVPA(this)
+        with(binding) {
+            viewPager.adapter = mypagePostListVPA
 
-        // 탭 레이아웃과 뷰페이저를 연결
-        TabLayoutMediator(binding.tabMypageCommunityPostComment, binding.viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "My Post"
-                1 -> "My Comment"
-                else -> throw IllegalStateException("Invalid position: $position")
-            }
-        }.attach()
+            TabLayoutMediator(tabMypageCommunityPostComment, viewPager) { tab, position ->
+                tab.text = tabTitles[position]
+            }.attach()
 
-        lifecycleScope.launch {
-            viewModel.posts.collect { posts ->
-                if (posts.isEmpty()) {
-                    binding.ivMypageCommunityStar.visibility = View.VISIBLE
-                } else {
-                    binding.ivMypageCommunityStar.visibility = View.GONE
+            tabMypageCommunityPostComment.addOnTabSelectedListener(object :
+                TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    viewModel.refreshCategoryPage(tab?.text?.toString() ?: "MY POST")
                 }
-            }
+
+                override fun onTabUnselected(p0: TabLayout.Tab?) {
+
+                }
+
+                override fun onTabReselected(p0: TabLayout.Tab?) {
+
+                }
+            })
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mypagePostListVPA = null
+    }
+
+    companion object {
+        private val tabTitles = listOf("MY POST", "MY COMMENT")
     }
 }

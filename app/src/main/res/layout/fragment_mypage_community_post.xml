@@ -20,5 +20,26 @@
             android:padding="16dp"
             android:visibility="visible"/>
 
+        <FrameLayout
+            android:id="@+id/noPostsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"> <!-- 기본적으로 보임 -->
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_no_mypage_star"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/noPostsMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Post"
+                style="@style/TextAppearance.LCK.18"
+                android:layout_gravity="center"/> <!-- 가운데 정렬 -->
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

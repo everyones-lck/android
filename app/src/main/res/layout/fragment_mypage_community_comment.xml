@@ -17,23 +17,26 @@
             android:id="@+id/rv_mypage_community_comment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"/> <!-- 기본적으로 숨김 -->
-
-        <LinearLayout
-            android:id="@+id/noPostsLayout"
+            android:padding="16dp"/>
+        <FrameLayout
+            android:id="@+id/noCommentsLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:visibility="gone"> <!-- 기본적으로 숨김 -->
+            android:visibility="visible"> <!-- 기본적으로 보임 -->
 
-            <TextView
-                android:id="@+id/noPostsMessage"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="작성한 댓글이 없습니다."
-                android:textSize="18sp"
-                android:textColor="@android:color/darker_gray"/>
-        </LinearLayout>
+                android:src="@drawable/ic_no_mypage_star"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/noCommentsMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Comment"
+                style="@style/TextAppearance.LCK.18"
+                android:layout_gravity="center"/> <!-- 가운데 정렬 -->
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

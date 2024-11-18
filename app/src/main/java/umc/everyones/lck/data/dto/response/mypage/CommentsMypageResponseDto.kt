@@ -8,7 +8,7 @@ data class CommentsMypageResponseDto(
     val isLast: Boolean
 ) {
     data class CommentsMypageResponseElementDto(
-        val id: Int,
+        val id: Long,
         val content: String,
         val postType: String
     ) {

@@ -30,28 +30,29 @@ import kotlin.random.Random
 class MyPageCommunityViewModel @Inject constructor(
     private val repository: MypageRepository,
 ) : ViewModel() {
-    private val _categoryNeedsRefresh = MutableStateFlow<String>("")
-    val categoryNeedsRefresh: StateFlow<String> get() = _categoryNeedsRefresh
-    private val _posts = MutableStateFlow<List<MyPost>>(emptyList())
+    val myPostPage = repository.fetchPostPagingSource("MY POST").cachedIn(viewModelScope)
+    val myCommentPage = repository.fetchCommentPagingSource("MY COMMENT").cachedIn(viewModelScope)
 
-    val posts: StateFlow<List<MyPost>> get() = _posts
-    val fetchPostsMypage = repository.fetchPagingSource("POST").cachedIn(viewModelScope)
-    val fetchCommentMypage = repository.fetchPagingSource("COMMENT").cachedIn(viewModelScope)
+    private val _categoryNeedsRefresh = MutableStateFlow<String>("MY POST")
+    val categoryNeedsRefresh:StateFlow<String> get() = _categoryNeedsRefresh
 
-    fun postMypage(page: Int, size: Int): Flow<List<MyPost>> = flow {
-        repository.postsMypage(page, size).onSuccess { response ->
-            val postList = response.posts.map { postElement ->
-                MyPost(
-                    id = postElement.id,
-                    title = postElement.title,
-                    postType = postElement.postType,
-                )
+    fun fetchMypageCommunityPostList(page: Int, size: Int){
+        viewModelScope.launch {
+            repository.postsMypage(page,size).onSuccess {response ->
+                Timber.d("fetchMypageCommunityPostList", response.toString())
+            }.onFailure {
+                Timber.tag("fetchMypageCommunityPostList Error").d(it.stackTraceToString())
             }
-            _posts.value = postList
-            emit(postList)
-        }.onFailure { error ->
-            Timber.d("postMypage error", error.stackTraceToString())
-            emit(emptyList())
+        }
+    }
+
+    fun fetchMypageCommunityCommentList(page: Int, size: Int){
+        viewModelScope.launch {
+            repository.commentsMypage(page,size).onSuccess { response->
+                Timber.d("fetchMypageCommunityCommentList", response.toString())
+            }.onFailure {
+                Timber.tag("fetchMypageCommunityCommentList Error").d(it.stackTraceToString())
+            }
         }
     }
 

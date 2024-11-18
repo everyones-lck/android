@@ -39,5 +39,7 @@ interface MypageRepository {
 
     suspend fun updateTeam(request: UpdateTeamModel): Result<Boolean>
 
-    fun fetchPagingSource(category: String): Flow<PagingData<PostsMypageModel.PostsMypageElementModel>>
+    fun fetchPostPagingSource(category: String): Flow<PagingData<PostsMypageModel.PostsMypageElementModel>>
+
+    fun fetchCommentPagingSource(category: String): Flow<PagingData<CommentsMypageModel.CommentsMypageElementModel>>
 }
