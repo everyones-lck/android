@@ -45,6 +45,14 @@ class TodayMatchTodayPogViewModel @Inject constructor(
     private val _allItemsSelected = MutableLiveData<Boolean>()
     val allItemsSelected: LiveData<Boolean> get() = _allItemsSelected
 
+    // 현재 세트 Index를 저장하는 LiveData
+    private val _currentSetIndex = MutableLiveData<Int>()
+    val currentSetIndex: LiveData<Int> get() = _currentSetIndex
+
+    // 매치 POG의 Visibility 여부를 저장하는 LiveData
+    private val _isMatchPogVisible = MutableLiveData<Boolean>()
+    val isMatchPogVisible: LiveData<Boolean> get() = _isMatchPogVisible
+
     // 세트 POG의 플레이어를 선택하는 함수
     fun selectSetPlayer(setIndex: Int, playerId: Int) {
         val updatedSetPlayers = _selectedSetPlayers.value?.toMutableMap() ?: mutableMapOf()
@@ -94,10 +102,24 @@ class TodayMatchTodayPogViewModel @Inject constructor(
             repository.fetchTodayMatchPogPlayer(matchId).onSuccess { response ->
                 Timber.d("fetchTodayMatchPogPlayer %s", response.toString())
                 _matchPogData.value = response
+
+                updateVoteScreenVisibility(response)
             }.onFailure {
                 Timber.d("fetchTodayMatchPogPlayer %s", it.stackTraceToString())
             }
         }
+    }
+
+    // ViewModel에서 화면 Visibility를 업데이트하는 함수
+    private fun updateVoteScreenVisibility(response: PogPlayerTodayMatchModel) {
+        // setIndex 값 계산
+        val currentSetIndex = response.setPogVoteCandidates.size
+        Timber.d("current set %s", currentSetIndex)
+        val matchPogExists = response.matchPogVoteCandidate != null
+
+        // UI 업데이트를 위한 LiveData 설정
+        _currentSetIndex.value = currentSetIndex
+        _isMatchPogVisible.value = matchPogExists
     }
 
     // 세트 POG에 투표하는 함수
