@@ -133,6 +133,7 @@ class SignupViewModel @Inject constructor(
                 signupUserDataJson.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull()),
                 signupRequest.profileImage
             ).onSuccess {
+                loginWithKakao(signupRequest.signupUserData.kakaoUserId)
                 spf.edit().apply {
                     putString("nickName", signupRequest.signupUserData.nickName)
                     putString("profileImage", _profileUri.value?.toString() ?: "") // URI가 null일 경우 빈 문자열로 저장
