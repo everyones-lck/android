@@ -2,9 +2,14 @@
 package umc.everyones.lck.presentation.mypage.viewingparty
 
 import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +18,9 @@ import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import umc.everyones.lck.R
 import umc.everyones.lck.databinding.FragmentMypageViewingPartyHostBinding
+import umc.everyones.lck.presentation.MainActivity
 import umc.everyones.lck.presentation.base.BaseFragment
+import umc.everyones.lck.presentation.party.read.ReadViewingPartyFragment
 import umc.everyones.lck.util.extension.repeatOnStarted
 
 @AndroidEntryPoint

@@ -1,6 +1,7 @@
 package umc.everyones.lck.presentation.mypage.viewingparty
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +12,8 @@ import umc.everyones.lck.databinding.ItemViewingPartyBinding
 import umc.everyones.lck.domain.model.response.mypage.HostViewingPartyMypageModel
 import umc.everyones.lck.domain.model.response.party.ViewingPartyListModel
 import umc.everyones.lck.util.extension.setOnSingleClickListener
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MyViewingPartyHostRVA(val readViewingParty: (Long) -> Unit) :
     PagingDataAdapter<HostViewingPartyMypageModel.HostViewingPartyMypageElementModel, MyViewingPartyHostRVA.ViewingPartyViewHolder>(DiffCallback()) {
@@ -40,6 +43,18 @@ class MyViewingPartyHostRVA(val readViewingParty: (Long) -> Unit) :
                 tvMypageViewingPartyDate.text = viewingPartyItem.date
                 root.setOnSingleClickListener {
                     readViewingParty(viewingPartyItem.id)
+                }
+                val currentDate = LocalDate.now()
+                val eventDate = LocalDate.parse(viewingPartyItem.date, DateTimeFormatter.ofPattern("yyyy.MM.dd")) // 날짜 형식에 맞게 변경
+
+                if (eventDate.isBefore(currentDate)) {
+                    // 날짜가 지나면 수정하기와 개최 취소하기 버튼 숨기기
+                    binding.tvMypageViewingPartyEdit.visibility = View.GONE
+                    binding.tvCancelButton.visibility = View.GONE
+                } else {
+                    // 날짜가 지나지 않았으면 버튼 보이기
+                    binding.tvMypageViewingPartyEdit.visibility = View.VISIBLE
+                    binding.tvCancelButton.visibility = View.VISIBLE
                 }
             }
         }

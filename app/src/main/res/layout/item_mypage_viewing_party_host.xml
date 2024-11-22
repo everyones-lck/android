@@ -52,7 +52,9 @@
                 android:background="@drawable/shape_rect_12_black_line"
                 android:paddingVertical="4dp"
                 android:paddingHorizontal="10dp"
-                android:layout_marginStart="4dp"/>
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <ImageButton
                 android:id="@+id/btn_mypage_viewing_party_shortcuts"
@@ -73,6 +75,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_mypage_viewing_party_shortcuts"
                 android:layout_marginTop="32dp">
                 <TextView
+                    android:id="@+id/tv_mypage_viewing_party_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="수정하기"
