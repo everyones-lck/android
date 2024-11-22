@@ -43,7 +43,7 @@ class MyCommentListRVA(val readComment: (Long) -> Unit) : PagingDataAdapter<Comm
                 tvMypageCommunityCategory.text = "#${commentListItem.postType}"
                 // 게시글 postId 전달
                 root.setOnSingleClickListener {
-                    readComment(commentListItem.id)
+                    readComment(commentListItem.postId)
                 }
             }
         }
@@ -51,7 +51,7 @@ class MyCommentListRVA(val readComment: (Long) -> Unit) : PagingDataAdapter<Comm
 
     class DiffCallback : DiffUtil.ItemCallback<CommentsMypageModel.CommentsMypageElementModel>() {
         override fun areItemsTheSame(oldItem:CommentsMypageModel.CommentsMypageElementModel, newItem: CommentsMypageModel.CommentsMypageElementModel) =
-            oldItem.id == newItem.id
+            oldItem.postId == newItem.postId
 
         override fun areContentsTheSame(oldItem:CommentsMypageModel.CommentsMypageElementModel, newItem: CommentsMypageModel.CommentsMypageElementModel) =
             oldItem == newItem

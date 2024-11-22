@@ -32,7 +32,7 @@ class MyCommentPagingSource @Inject constructor(
         }.fold(
             onSuccess = { response ->
 
-                val sortedComments = response.comments.sortedByDescending { it.id }
+                val sortedComments = response.comments.sortedByDescending { it.postId }
 
 
                 LoadResult.Page(

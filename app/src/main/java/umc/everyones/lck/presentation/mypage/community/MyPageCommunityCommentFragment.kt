@@ -60,8 +60,8 @@ class MyPageCommunityCommentFragment : BaseFragment<FragmentMypageCommunityComme
     }
 
     private fun initPostListRVA() {
-        _myCommentListRVA = MyCommentListRVA { id ->
-            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), id))
+        _myCommentListRVA = MyCommentListRVA { postId ->
+            readResultLauncher.launch(ReadPostActivity.newIntent(requireContext(), postId))
         }
         binding.rvMypageCommunityComment.adapter = myCommentListRVA
 

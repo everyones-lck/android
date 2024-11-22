@@ -5,7 +5,8 @@ data class CommentsMypageModel(
     val isLast: Boolean
 ) {
     data class CommentsMypageElementModel(
-        val id: Long,
+        val postId: Long,
+        val commentId: Long,
         val content: String,
         val postType: String
     )

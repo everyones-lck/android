@@ -8,12 +8,13 @@ data class CommentsMypageResponseDto(
     val isLast: Boolean
 ) {
     data class CommentsMypageResponseElementDto(
-        val id: Long,
+        val postId: Long,
+        val commentId: Long,
         val content: String,
         val postType: String
     ) {
         fun toCommentsMypageElementModel() =
-            CommentsMypageModel.CommentsMypageElementModel(id, content, postType)
+            CommentsMypageModel.CommentsMypageElementModel(postId, commentId, content, postType)
     }
 
     fun toCommentsMypageModel() =
