@@ -61,10 +61,10 @@ class MypageRepositoryImpl  @Inject constructor(
             ).data.toHostViewingPartyMypageModel()
         }
 
-    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Int): Result<Boolean> =
+    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Long): Result<Boolean> =
         runCatching { mypageDataSource.cancelParticipateViewingPartyMypage(viewingPartyId).data }
 
-    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Int): Result<Boolean> =
+    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Long): Result<Boolean> =
         runCatching { mypageDataSource.cancelHostViewingPartyMypage(viewingPartyId).data }
 
     override suspend fun logout(refreshToken: String): Result<NonBaseResponse> =

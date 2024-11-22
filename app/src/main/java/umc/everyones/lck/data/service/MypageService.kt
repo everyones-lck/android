@@ -55,12 +55,12 @@ interface MypageService {
 
     @DELETE("my-pages/viewing-parties/participate")
     suspend fun cancelParticipateViewingPartyMypage(
-        @Query ("viewingPartyId") viewingPartyId: Int
+        @Query ("viewingPartyId") viewingPartyId: Long
     ):BaseResponse<Boolean>
 
     @DELETE("my-pages/viewing-parties/host")
     suspend fun cancelHostViewingPartyMypage(
-        @Query ("viewingPartyId") viewingPartyId: Int
+        @Query ("viewingPartyId") viewingPartyId: Long
     ):BaseResponse<Boolean>
 
     @DELETE("my-pages/logout")

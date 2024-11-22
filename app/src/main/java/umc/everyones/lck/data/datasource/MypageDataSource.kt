@@ -26,9 +26,9 @@ interface MypageDataSource {
 
     suspend fun hostViewingPartyMypage(page: Int, size: Int): BaseResponse<HostViewingPartyMypageResponseDto>
 
-    suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean>
+    suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean>
 
-    suspend fun cancelHostViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean>
+    suspend fun cancelHostViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean>
 
     suspend fun logout(refreshToken: String): NonBaseResponse
 

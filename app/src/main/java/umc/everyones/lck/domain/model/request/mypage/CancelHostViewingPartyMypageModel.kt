@@ -5,7 +5,7 @@ import umc.everyones.lck.data.dto.request.mypage.CancelParticipateViewingPartyMy
 import java.io.Serializable
 
 data class CancelHostViewingPartyMypageModel(
-    val viewingPartyId: Int
+    val viewingPartyId: Long
 ): Serializable {
     fun toCancelHostViewingPartyMypageRequestDto() =
         CancelHostViewingPartyMypageRequestDto(viewingPartyId)

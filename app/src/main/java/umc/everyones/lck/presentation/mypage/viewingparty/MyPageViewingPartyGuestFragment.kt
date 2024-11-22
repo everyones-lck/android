@@ -57,10 +57,15 @@ class MyPageViewingPartyGuestFragment : BaseFragment<FragmentMypageViewingPartyG
     }
 
     private fun initPostListRVA() {
-        _myViewingPartyParticipateRVA = MyViewingPartyParticipateRVA { id ->
-            val action = MyPageViewingPartyFragmentDirections.actionMyPageViewingPartyFragmentToReadViewingPartyFragment(id, "shortLocationValue")
-            findNavController().navigate(action) // NavController를 사용하여 Fragment로 이동
-        }
+        _myViewingPartyParticipateRVA = MyViewingPartyParticipateRVA(
+            readViewingParty = { id ->
+                val action = MyPageViewingPartyFragmentDirections.actionMyPageViewingPartyFragmentToReadViewingPartyFragment(id, "shortLocationValue")
+                findNavController().navigate(action) // Viewing Party 읽기 화면으로 이동
+            },
+            deleteViewingParty = { id ->
+                deleteViewingParty(id) // 삭제 메소드 호출
+            }
+        )
         binding.rvMypageViewingPartyGuest.adapter = myViewingPartyParticipateRVA
 
         _myViewingPartyParticipateRVA?.addLoadStateListener { combinedLoadStates ->
@@ -76,6 +81,10 @@ class MyPageViewingPartyGuestFragment : BaseFragment<FragmentMypageViewingPartyG
     override fun onDestroyView() {
         super.onDestroyView()
         _myViewingPartyParticipateRVA = null // Prevent memory leak
+    }
+
+    private fun deleteViewingParty(id: Long) {
+        viewModel.cancleGuestViewingPartyMypage(id) // ID를 사용하여 삭제 요청
     }
 
     companion object {

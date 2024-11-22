@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import umc.everyones.lck.domain.repository.MypageRepository
+import umc.everyones.lck.presentation.party.read.ReadViewingPartyViewModel
+import umc.everyones.lck.util.network.UiState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +39,26 @@ class MyPageViewingPartyViewModel @Inject constructor(
                 Timber.d("fetchMypageViewingPartyParticipateList", response.toString())
             }.onFailure {
                 Timber.tag("fetchMypageViewingPartyParticipateList Error").d(it.stackTraceToString())
+            }
+        }
+    }
+
+    fun cancleHostViewingPartyMypage(id:Long){
+        viewModelScope.launch {
+            repository.cancelHostViewingPartyMypage(id).onSuccess { response ->
+                Timber.d("deleteViewingParty", response.toString())
+            }.onFailure {
+                Timber.tag("deleteViewingParty error").d(it.stackTraceToString())
+            }
+        }
+    }
+
+    fun cancleGuestViewingPartyMypage(id:Long){
+        viewModelScope.launch {
+            repository.cancelParticipateViewingPartyMypage(id).onSuccess { response->
+                Timber.d("cancleGuestViewingPartyMypage", response.toString())
+            }.onFailure {
+                Timber.tag("cancleGuestViewingPartyMypage error").d(it.stackTraceToString())
             }
         }
     }

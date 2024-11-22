@@ -36,10 +36,10 @@ class MypageDataSourceImpl @Inject constructor(
     override suspend fun hostViewingPartyMypage(page: Int, size: Int): BaseResponse<HostViewingPartyMypageResponseDto> =
         mypageService.hostViewingPartyMypage(page, size)
 
-    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean> =
+    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean> =
         mypageService.cancelParticipateViewingPartyMypage(viewingPartyId)
 
-    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean> =
+    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean> =
         mypageService.cancelHostViewingPartyMypage(viewingPartyId)
 
     override suspend fun logout(refreshToken: String): NonBaseResponse =
