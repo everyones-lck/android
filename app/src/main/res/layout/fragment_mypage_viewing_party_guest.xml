@@ -14,10 +14,31 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rv_mypage_viewing_party_guest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"/>
+
+        <FrameLayout
+            android:id="@+id/noViewingPartyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"> <!-- 기본적으로 보임 -->
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_no_mypage_star"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/noViewingPartyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Viewing Party"
+                style="@style/TextAppearance.LCK.18"
+                android:layout_gravity="center"/> <!-- 가운데 정렬 -->
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

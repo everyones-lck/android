@@ -14,7 +14,7 @@ sealed class CommunityItem {
     data class CommentItem(val comment: MyComment) : CommunityItem()
 }
 
-class MyPageCommunityItemAdapter : ListAdapter<CommunityItem, RecyclerView.ViewHolder>(
+class MyPageCommunityRVA : ListAdapter<CommunityItem, RecyclerView.ViewHolder>(
     CommunityItemDiffCallback()
 ) {
     companion object {
@@ -49,7 +49,6 @@ class MyPageCommunityItemAdapter : ListAdapter<CommunityItem, RecyclerView.ViewH
         fun bind(item: CommunityItem.PostItem) {
             binding.tvMypageCommunityTitle.text = item.post.title
             binding.tvMypageCommunityCategory.text = item.post.postType
-            binding.tvMypageCommunityShortcuts.text = "해당 게시글 바로가기"
             binding.executePendingBindings()
         }
     }

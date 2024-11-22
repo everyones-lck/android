@@ -42,4 +42,8 @@ interface MypageRepository {
     fun fetchPostPagingSource(category: String): Flow<PagingData<PostsMypageModel.PostsMypageElementModel>>
 
     fun fetchCommentPagingSource(category: String): Flow<PagingData<CommentsMypageModel.CommentsMypageElementModel>>
+
+    fun fetchHostPagingSource(category: String): Flow<PagingData<HostViewingPartyMypageModel.HostViewingPartyMypageElementModel>>
+
+    fun fetchParticipatePagingSource(category: String): Flow<PagingData<ParticipateViewingPartyMypageModel.ParticipateViewingPartyMypageElementModel>>
 }

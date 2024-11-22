@@ -18,13 +18,13 @@
             app:destination="@id/myPageMyteamFragment"/>
         <action
             android:id="@+id/action_myPageFragment_to_myPageCommunityFragment"
-            app:destination="@+id/myPageCommunityFragment"/>
+            app:destination="@id/myPageCommunityFragment"/>
         <action
             android:id="@+id/action_myPageFragment_to_myPageViewingPartyFragment"
-            app:destination="@+id/myPageViewingPartyFragment"/>
+            app:destination="@id/myViewingPartyTab"/>
         <action
             android:id="@+id/action_myPageFragment_to_myPageInformationFragment"
-            app:destination="@+id/myPageInformationFragment"/>
+            app:destination="@id/myPageInformationFragment"/>
     </fragment>
 
     <fragment
@@ -103,11 +103,45 @@
         tools:layout="@layout/fragment_mypage_community">
     </fragment>
 
-    <fragment
-        android:id="@+id/myPageViewingPartyFragment"
-        android:name="umc.everyones.lck.presentation.mypage.viewingparty.MyPageViewingPartyFragment"
-        android:label="MyPage Viewing Party Fragment"
-        tools:layout="@layout/fragment_mypage_viewing_party">
-    </fragment>
+    <navigation android:id="@+id/myViewingPartyTab"
+        app:startDestination="@id/myPageViewingPartyFragment">
+        <fragment
+            android:id="@+id/myPageViewingPartyFragment"
+            android:name="umc.everyones.lck.presentation.mypage.viewingparty.MyPageViewingPartyFragment"
+            android:label="My Page Viewing Party Fragment"
+            tools:layout="@layout/fragment_mypage_viewing_party">
+            <action
+                android:id="@+id/action_myPageViewingPartyFragment_to_readViewingPartyFragment"
+                app:destination="@id/readViewingPartyFragment">
+                <argument
+                    android:name="postId"
+                    app:argType="long" />
+                <argument
+                    android:name="shortLocation"
+                    app:argType="string" />
+            </action>
+        </fragment>
+        <fragment
+            android:id="@+id/readViewingPartyFragment"
+            android:name="umc.everyones.lck.presentation.party.read.ReadViewingPartyFragment"
+            android:label="ReadViewingPartyFragment"
+            tools:layout="@layout/fragment_read_viewing_party">
+            <action
+                android:id="@+id/action_readViewingPartyFragment_to_participantsFragment"
+                app:destination="@id/participantsFragment" />
+            <argument
+                android:name="postId"
+                app:argType="long" />
+            <argument
+                android:name="shortLocation"
+                app:argType="string" />
+        </fragment>
+        <fragment
+            android:id="@+id/participantsFragment"
+            android:name="umc.everyones.lck.presentation.party.read.ParticipantsFragment"
+            android:label="ParticipantsFragment"
+            tools:layout="@layout/fragment_participants"/>
+    </navigation>
+
 
 </navigation>

@@ -7,8 +7,10 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import umc.everyones.lck.data.datasource.MypageDataSource
+import umc.everyones.lck.data.datasourceImpl.mypage.HostPagingSource
 import umc.everyones.lck.data.datasourceImpl.mypage.MyCommentPagingSource
 import umc.everyones.lck.data.datasourceImpl.mypage.MyPostPagingSource
+import umc.everyones.lck.data.datasourceImpl.mypage.ParticipatePagingSource
 import umc.everyones.lck.data.dto.request.mypage.UpdateProfilesRequestDto
 import umc.everyones.lck.data.dto.response.NonBaseResponse
 import umc.everyones.lck.data.service.MypageService
@@ -101,5 +103,23 @@ class MypageRepositoryImpl  @Inject constructor(
                 enablePlaceholders = true
             ),
             pagingSourceFactory = { MyCommentPagingSource(mypageService, category) }
+        ).flow
+
+    override fun fetchHostPagingSource(category: String): Flow<PagingData<HostViewingPartyMypageModel.HostViewingPartyMypageElementModel>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = true
+            ),
+            pagingSourceFactory = { HostPagingSource(mypageService, category) }
+        ).flow
+
+    override fun fetchParticipatePagingSource(category: String): Flow<PagingData<ParticipateViewingPartyMypageModel.ParticipateViewingPartyMypageElementModel>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = true
+            ),
+            pagingSourceFactory = {ParticipatePagingSource(mypageService, category)}
         ).flow
 }

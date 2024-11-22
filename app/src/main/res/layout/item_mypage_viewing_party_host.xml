@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/bg_mypage_viewing_party">
+
+        <TextView
+                android:id="@+id/tv_mypage_viewing_party_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sample Title"
+                style="@style/TextAppearance.LCK.Bold.Title2_18sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"/>
+
+            <TextView
+                android:id="@+id/tv_mypage_viewing_party_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XXXX.XX.XX"
+                style="@style/TextAppearance.LCK.Light.Level_12sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@id/tv_mypage_viewing_party_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_mypage_viewing_party_title"
+                android:background="@drawable/shape_rect_12_black_line"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tv_mypage_viewing_party_shortcuts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="해당 뷰잉파티 바로가기    "
+                style="@style/TextAppearance.LCK.Light.Level_12sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toEndOf="@id/tv_mypage_viewing_party_date"
+                app:layout_constraintTop_toTopOf="@id/tv_mypage_viewing_party_date"
+                android:background="@drawable/shape_rect_12_black_line"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="4dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_mypage_viewing_party_shortcuts"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_arrow_right_black"
+                app:layout_constraintEnd_toEndOf="@id/tv_mypage_viewing_party_shortcuts"
+                app:layout_constraintTop_toTopOf="@id/tv_mypage_viewing_party_shortcuts"
+                app:layout_constraintBottom_toBottomOf="@id/tv_mypage_viewing_party_shortcuts"
+                android:layout_marginEnd="5dp"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:gravity="center"
+                style="@style/TextAppearance.LCK.Light.Detail_10sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_mypage_viewing_party_shortcuts"
+                android:layout_marginTop="32dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="수정하기"
+                    android:textColor="@color/white"
+                    style="@style/TextAppearance.LCK.Light.Level_12sp"
+                    android:visibility="visible" />
+
+                <View
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="개최 취소하기"
+                    android:textColor="@color/white"
+                    style="@style/TextAppearance.LCK.Light.Level_12sp"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

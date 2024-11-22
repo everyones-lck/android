@@ -28,7 +28,7 @@ import kotlin.random.Random
 
 @HiltViewModel
 class MyPageCommunityViewModel @Inject constructor(
-    private val repository: MypageRepository,
+    private val repository: MypageRepository
 ) : ViewModel() {
     val myPostPage = repository.fetchPostPagingSource("MY POST").cachedIn(viewModelScope)
     val myCommentPage = repository.fetchCommentPagingSource("MY COMMENT").cachedIn(viewModelScope)

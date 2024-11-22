@@ -9,7 +9,7 @@ data class HostViewingPartyMypageResponseDto(
     val last: Boolean
 ) {
     data class HostViewingPartyMypageResponseElementDto(
-        val id: Int,
+        val id: Long,
         val name: String,
         val date: String
     ){
