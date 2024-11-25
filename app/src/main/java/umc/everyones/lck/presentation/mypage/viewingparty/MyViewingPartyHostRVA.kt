@@ -18,7 +18,8 @@ import java.time.format.DateTimeFormatter
 
 class MyViewingPartyHostRVA(
     val readViewingParty: (Long) -> Unit,
-    val deleteViewingParty: (Long) -> Unit // 삭제 메소드를 위한 콜백 추가
+    val deleteViewingParty: (Long) -> Unit,
+    val onEditViewingParty: (Long) -> Unit // 수정하기 콜백 추가
 ) : PagingDataAdapter<HostViewingPartyMypageModel.HostViewingPartyMypageElementModel, MyViewingPartyHostRVA.ViewingPartyViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewingPartyViewHolder {
@@ -40,6 +41,7 @@ class MyViewingPartyHostRVA(
 
     inner class ViewingPartyViewHolder(private val binding: ItemMypageViewingPartyHostBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(viewingPartyItem: HostViewingPartyMypageModel.HostViewingPartyMypageElementModel) {
             with(binding) {
                 tvMypageViewingPartyTitle.text = viewingPartyItem.name
@@ -49,18 +51,23 @@ class MyViewingPartyHostRVA(
                     readViewingParty(viewingPartyItem.id)
                 }
 
+                // 수정하기 버튼 클릭 리스너 추가
+                tvMypageViewingPartyEdit.setOnSingleClickListener {
+                    onEditViewingParty(viewingPartyItem.id) // 수정하기 콜백 호출
+                }
+
                 // 날짜 비교
                 val currentDate = LocalDate.now()
-                val eventDate = LocalDate.parse(viewingPartyItem.date, java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd")) // java.time 패키지 사용
+                val eventDate = LocalDate.parse(viewingPartyItem.date, DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
                 if (eventDate.isBefore(currentDate)) {
-                    binding.root.setBackgroundResource(R.drawable.bg_mypage_community) // 날짜가 지난 경우 사용할 배경
-                    linearLayout.visibility = View.GONE // LinearLayout 숨기기
+                    binding.root.setBackgroundResource(R.drawable.bg_mypage_community)
+                    linearLayout.visibility = View.GONE
                 } else {
                     binding.root.setBackgroundResource(R.drawable.bg_mypage_viewing_party)
-                    linearLayout.visibility = View.VISIBLE // LinearLayout 보이기
+                    linearLayout.visibility = View.VISIBLE
                     tvCancelButton.setOnSingleClickListener {
-                        deleteViewingParty(viewingPartyItem.id) // 삭제 메소드 호출
+                        deleteViewingParty(viewingPartyItem.id)
                     }
                 }
             }
