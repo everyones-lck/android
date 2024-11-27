@@ -29,6 +29,12 @@ class LckPogMatchRVA(
         holder.bind(getItem(position))
     }
 
+    fun updateSetCount(newSetCount: Int) {
+        this.setCount = newSetCount
+        notifyDataSetChanged() // 내부적으로 세트 수가 변하면 업데이트
+    }
+
+
     inner class ViewHolder(private val binding: ItemLckPogMatchBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val playerAdapter = LckPogPlayerRVA()

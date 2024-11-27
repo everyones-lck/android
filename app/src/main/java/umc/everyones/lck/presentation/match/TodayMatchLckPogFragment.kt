@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.distinctUntilChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -41,7 +42,7 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
         val pogDataList = mutableListOf<CommonTodayMatchPogModel>()
 
         // ViewModel의 pogData를 관찰하여 데이터를 누적
-        viewModel.pogData.observe(viewLifecycleOwner) { response ->
+        viewModel.pogData.distinctUntilChanged().observe(viewLifecycleOwner) { response ->
             response?.let {
                 // 새로운 데이터를 리스트에 추가
                 val newData = CommonTodayMatchPogModel(
@@ -52,11 +53,18 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
                     matchPogResponse = it.matchPogResponse,
                     tabIndex = tabIndex
                 )
-                pogDataList.add(newData)
+                // 중복 확인 후 추가
+                if (pogDataList.none { data -> data.matchNumber == newData.matchNumber }) {
+                    pogDataList.add(newData)
+                }
 
-                // 어댑터에 누적된 리스트를 전달
-                lckPogMatchRVA.submitList(pogDataList.toList())
-                Timber.d("Updated POG Data List: $pogDataList")
+                // matchNumber로 정렬
+                val sortedList = pogDataList.sortedBy { data -> data.matchNumber }
+
+                // 어댑터에 정렬된 리스트 전달
+                lckPogMatchRVA.submitList(sortedList)
+                Timber.d("Updated Sorted POG Data List: $sortedList")
+
             }
         }
 
@@ -81,7 +89,7 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
 //                viewModel.fetchTodayMatchPog(matchId)
 
                 // 모든 matchId 가져오기
-                val matchIds = matchData.matchResponses.mapNotNull { it.matchId }
+                val matchIds = matchData.matchResponses.map { it.matchId }
 
                 // 각 matchId에 대해 작업 수행
                 matchIds.forEach { matchId ->
@@ -97,15 +105,15 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
 
     }
     private fun setupRecyclerView(newSetCount: Int) {
-        // 어댑터 설정 (초기에는 기본 setCount로 설정)
-        lckPogMatchRVA = LckPogMatchRVA(
-            setCount = newSetCount,
-            onTabSelected = tabIndex
-        )
-        binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
-        binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
-        binding.rvTodayMatchLckPogContainer.itemAnimator = null
-
+        if (!::lckPogMatchRVA.isInitialized) {
+            // 어댑터가 초기화되지 않았을 때만 생성
+            lckPogMatchRVA = LckPogMatchRVA(
+                setCount = newSetCount,
+                onTabSelected = tabIndex
+            )
+            binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
+            binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
+            binding.rvTodayMatchLckPogContainer.itemAnimator = null
+        }
     }
-
 }
