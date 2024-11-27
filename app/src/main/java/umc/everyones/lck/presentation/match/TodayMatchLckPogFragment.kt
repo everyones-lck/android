@@ -30,13 +30,35 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
             Timber.d("Set Count: ${setCountModel.setCount}")
         }
 
+//        viewModel.pogData.observe(viewLifecycleOwner) { response ->
+//            response?.let {
+//                lckPogMatchRVA.updatePlayers(listOf(CommonTodayMatchPogModel(it.seasonInfo, it.matchNumber, it.matchDate, it.setPogResponses, it.matchPogResponse, tabIndex)))
+//                Timber.d("POG Data: $response")
+//            }
+//        }
+
+        // pogData를 누적 저장할 리스트
+        val pogDataList = mutableListOf<CommonTodayMatchPogModel>()
+
+        // ViewModel의 pogData를 관찰하여 데이터를 누적
         viewModel.pogData.observe(viewLifecycleOwner) { response ->
             response?.let {
-                lckPogMatchRVA.updatePlayers(listOf(CommonTodayMatchPogModel(it.seasonInfo, it.matchNumber, it.matchDate, it.setPogResponses, it.matchPogResponse, tabIndex)))
-                Timber.d("POG Data: $response")
+                // 새로운 데이터를 리스트에 추가
+                val newData = CommonTodayMatchPogModel(
+                    seasonInfo = it.seasonInfo,
+                    matchNumber = it.matchNumber,
+                    matchDate = it.matchDate,
+                    setPogResponses = it.setPogResponses,
+                    matchPogResponse = it.matchPogResponse,
+                    tabIndex = tabIndex
+                )
+                pogDataList.add(newData)
+
+                // 어댑터에 누적된 리스트를 전달
+                lckPogMatchRVA.submitList(pogDataList.toList())
+                Timber.d("Updated POG Data List: $pogDataList")
             }
         }
-
 
         // ViewModel의 matchData를 관찰하여 matchId를 가져와서 사용
         todayViewModel.matchData.observe(viewLifecycleOwner) { matchData ->
@@ -49,14 +71,24 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
                 binding.layoutTodayMatchPogNoMatch.visibility = View.GONE
                 binding.rvTodayMatchLckPogContainer.visibility = View.VISIBLE
 
-                val matchId = matchData.matchResponses.firstOrNull()?.matchId ?: return@observe
+//                val matchId = matchData.matchResponses.firstOrNull()?.matchId ?: return@observe
+//
+//                // 세트 수를 가져오기 위해 matchId를 사용
+//                viewModel.fetchTodayMatchSetCount(matchId)
+//                Timber.d("Match ID: $matchId")
+//
+//                // 초기 데이터 로드
+//                viewModel.fetchTodayMatchPog(matchId)
 
-                // 세트 수를 가져오기 위해 matchId를 사용
-                viewModel.fetchTodayMatchSetCount(matchId)
-                Timber.d("Match ID: $matchId")
+                // 모든 matchId 가져오기
+                val matchIds = matchData.matchResponses.mapNotNull { it.matchId }
 
-                // 초기 데이터 로드
-                viewModel.fetchTodayMatchPog(matchId)
+                // 각 matchId에 대해 작업 수행
+                matchIds.forEach { matchId ->
+                    viewModel.fetchTodayMatchSetCount(matchId)
+                    viewModel.fetchTodayMatchPog(matchId)
+                    Timber.d("Match ID: $matchId")
+                }
             }
         }
     }
@@ -68,7 +100,7 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
         // 어댑터 설정 (초기에는 기본 setCount로 설정)
         lckPogMatchRVA = LckPogMatchRVA(
             setCount = newSetCount,
-            onTabSelected = 0
+            onTabSelected = tabIndex
         )
         binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
         binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
