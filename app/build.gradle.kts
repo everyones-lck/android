@@ -142,10 +142,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
 
     implementation ("com.jakewharton.timber:timber:5.0.1")
-<<<<<<<<< Temporary merge branch 1
     implementation("com.facebook.shimmer:shimmer:0.5.0")
-=========
 
     implementation ("com.auth0.android:jwtdecode:2.0.0")
->>>>>>>>> Temporary merge branch 2
 }
