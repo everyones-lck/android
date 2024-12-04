@@ -83,7 +83,16 @@ class LckPogMatchRVA(
                             } ?: emptyList() // matchPogResponse가 null일 경우 빈 리스트 반환
                             else -> emptyList()
                         }
-                        playerAdapter.submitList(playerList)
+                        // 데이터가 없는 경우
+                        if (playerList.isEmpty()) {
+                            binding.tvTodayMatchLckPogPlaying.visibility = View.VISIBLE
+                            binding.rvTodayMatchLckPogPlayer.visibility = View.GONE
+                        } else {
+                            // 데이터가 있는 경우
+                            binding.tvTodayMatchLckPogPlaying.visibility = View.GONE
+                            binding.rvTodayMatchLckPogPlayer.visibility = View.VISIBLE
+                            playerAdapter.submitList(playerList)
+                        }
                     }
                 }
 

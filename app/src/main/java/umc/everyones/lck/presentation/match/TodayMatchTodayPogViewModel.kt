@@ -113,7 +113,7 @@ class TodayMatchTodayPogViewModel @Inject constructor(
     // ViewModel에서 화면 Visibility를 업데이트하는 함수
     private fun updateVoteScreenVisibility(response: PogPlayerTodayMatchModel) {
         // setIndex 값 계산
-        val currentSetIndex = response.setPogVoteCandidates.size
+        val currentSetIndex = response.setPogVoteCandidates.maxOfOrNull { it.setIndex } ?: 0
         Timber.d("current set %s", currentSetIndex)
         val matchPogExists = response.matchPogVoteCandidate != null
 
