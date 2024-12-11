@@ -1,4 +1,4 @@
-package umc.everyones.lck.data.datasourceImpl
+package umc.everyones.lck.data.datasourceImpl.mypage
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -24,22 +24,22 @@ class MypageDataSourceImpl @Inject constructor(
     override suspend fun inquiryProfiles(): BaseResponse<InquiryProfilesResponseDto> =
         mypageService.inquiryProfiles()
 
-    override suspend fun postsProfiles(size: Int, page: Int): BaseResponse<PostsMypageResponseDto> =
-        mypageService.postsMypage(size, page)
+    override suspend fun postsProfiles(page: Int, size: Int): BaseResponse<PostsMypageResponseDto> =
+        mypageService.postsMypage(page, size)
 
-    override suspend fun commentsProfiles(size: Int, page: Int): BaseResponse<CommentsMypageResponseDto> =
-        mypageService.commentsMypage(size, page)
+    override suspend fun commentsProfiles(page: Int, size: Int): BaseResponse<CommentsMypageResponseDto> =
+        mypageService.commentsMypage(page, size)
 
-    override suspend fun participateViewingPartyMypage(size: Int, page: Int): BaseResponse<ParticipateViewingPartyMypageResponseDto> =
-        mypageService.participateViewingPartyMypage(size, page)
+    override suspend fun participateViewingPartyMypage(page: Int, size: Int): BaseResponse<ParticipateViewingPartyMypageResponseDto> =
+        mypageService.participateViewingPartyMypage(page, size)
 
-    override suspend fun hostViewingPartyMypage(size: Int, page: Int): BaseResponse<HostViewingPartyMypageResponseDto> =
-        mypageService.hostViewingPartyMypage(size, page)
+    override suspend fun hostViewingPartyMypage(page: Int, size: Int): BaseResponse<HostViewingPartyMypageResponseDto> =
+        mypageService.hostViewingPartyMypage(page, size)
 
-    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean> =
+    override suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean> =
         mypageService.cancelParticipateViewingPartyMypage(viewingPartyId)
 
-    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean> =
+    override suspend fun cancelHostViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean> =
         mypageService.cancelHostViewingPartyMypage(viewingPartyId)
 
     override suspend fun logout(refreshToken: String): NonBaseResponse =

@@ -150,4 +150,10 @@
     <style name="CustomRadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
         <item name="android:button">@drawable/sel_today_match_prediction_radio</item>
     </style>
+
+    <style name="TextAppearance.LCK.18">
+        <item name="fontFamily">@font/cafe_ohsquare_air</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

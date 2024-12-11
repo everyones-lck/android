@@ -114,7 +114,7 @@
             style="@style/TextAppearance.LCK.Light.Title_18sp"
             app:layout_constraintTop_toTopOf="@id/view_mypage_profile_edit_nickname_bar"
             app:layout_constraintBottom_toBottomOf="@id/view_mypage_profile_edit_nickname_bar"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="20dp"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <View
@@ -127,6 +127,7 @@
             android:paddingVertical="16dp"
             android:paddingHorizontal="8dp"
             android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/shape_rect_4_white_line" />
 
         <EditText

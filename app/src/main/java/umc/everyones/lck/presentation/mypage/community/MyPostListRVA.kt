@@ -15,7 +15,7 @@ import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.util.extension.setOnSingleClickListener
 
-class MyPostListRVA(val readPost: (Int) -> Unit) : PagingDataAdapter<PostsMypageModel.PostsMypageElementModel, MyPostListRVA.PostViewHolder>(DiffCallback()) {
+class MyPostListRVA(val readPost: (Long) -> Unit) : PagingDataAdapter<PostsMypageModel.PostsMypageElementModel, MyPostListRVA.PostViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return PostViewHolder(
@@ -29,29 +29,28 @@ class MyPostListRVA(val readPost: (Int) -> Unit) : PagingDataAdapter<PostsMypage
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
-        if (post != null) {
+        if(post != null) {
             holder.bind(post)
         }
     }
 
     inner class PostViewHolder(private val binding: ItemMypageCommunityBinding) :
-        RecyclerView.ViewHolder(binding.tvMypageCommunityShortcuts) {
-        fun bind(postListItem: PostsMypageModel.PostsMypageElementModel) { // PostsMypageElementModel로 변경
-            with(binding) {
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(postListItem: PostsMypageModel.PostsMypageElementModel){
+            with(binding){
                 tvMypageCommunityTitle.text = postListItem.title
-                tvMypageCommunityCategory.text = postListItem.postType
-
+                tvMypageCommunityCategory.text = "#${postListItem.postType}"
                 // 게시글 postId 전달
-                tvMypageCommunityShortcuts.setOnSingleClickListener {
-                    readPost(postListItem.id) // id는 Int로 되어 있으므로 toLong() 필요 없음
+                root.setOnSingleClickListener {
+                    readPost(postListItem.id)
                 }
             }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<PostsMypageModel.PostsMypageElementModel>() { // 타입 변경
+    class DiffCallback : DiffUtil.ItemCallback<PostsMypageModel.PostsMypageElementModel>() {
         override fun areItemsTheSame(oldItem: PostsMypageModel.PostsMypageElementModel, newItem: PostsMypageModel.PostsMypageElementModel) =
-            oldItem.id == newItem.id // id 비교
+            oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: PostsMypageModel.PostsMypageElementModel, newItem: PostsMypageModel.PostsMypageElementModel) =
             oldItem == newItem

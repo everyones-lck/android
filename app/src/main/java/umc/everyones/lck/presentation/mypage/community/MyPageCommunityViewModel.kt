@@ -5,13 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import umc.everyones.lck.domain.model.community.Comment
 import umc.everyones.lck.domain.model.community.Post
+import umc.everyones.lck.domain.model.response.mypage.MyPost
 import umc.everyones.lck.domain.model.response.mypage.PostsMypageModel
 import umc.everyones.lck.domain.repository.MypageRepository
 import umc.everyones.lck.domain.repository.community.CommunityRepository
@@ -23,19 +28,36 @@ import kotlin.random.Random
 
 @HiltViewModel
 class MyPageCommunityViewModel @Inject constructor(
-    private val repository: MypageRepository,
+    private val repository: MypageRepository
 ) : ViewModel() {
-    private val _posts = MutableLiveData<List<PostsMypageModel.PostsMypageElementModel>>() // PostsMypageElementModel 타입 리스트
-    val posts: LiveData<List<PostsMypageModel.PostsMypageElementModel>> get() = _posts
+    val myPostPage = repository.fetchPostPagingSource("MY POST").cachedIn(viewModelScope)
+    val myCommentPage = repository.fetchCommentPagingSource("MY COMMENT").cachedIn(viewModelScope)
 
-    fun postMypage(page: Int, size: Int) {
+    private val _categoryNeedsRefresh = MutableStateFlow<String>("MY POST")
+    val categoryNeedsRefresh:StateFlow<String> get() = _categoryNeedsRefresh
+
+    fun fetchMypageCommunityPostList(page: Int, size: Int){
         viewModelScope.launch {
-            repository.postsMypage(page, size).onSuccess { response ->
-                _posts.value = response.posts // API 응답에서 posts 리스트를 가져옴
-                Timber.d("postMypage", response.toString())
-            }.onFailure { error ->
-                Timber.d("postMypage error", error.stackTraceToString())
+            repository.postsMypage(page,size).onSuccess {response ->
+                Timber.d("fetchMypageCommunityPostList", response.toString())
+            }.onFailure {
+                Timber.tag("fetchMypageCommunityPostList Error").d(it.stackTraceToString())
             }
         }
+    }
+
+    fun fetchMypageCommunityCommentList(page: Int, size: Int){
+        viewModelScope.launch {
+            repository.commentsMypage(page,size).onSuccess { response->
+                Timber.d("fetchMypageCommunityCommentList", response.toString())
+            }.onFailure {
+                Timber.tag("fetchMypageCommunityCommentList Error").d(it.stackTraceToString())
+            }
+        }
+    }
+
+    fun refreshCategoryPage(category: String){
+        _categoryNeedsRefresh.value = ""
+        _categoryNeedsRefresh.value = category
     }
 }

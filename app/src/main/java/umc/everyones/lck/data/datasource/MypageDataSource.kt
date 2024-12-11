@@ -18,17 +18,17 @@ import umc.everyones.lck.data.dto.response.mypage.UpdateProfilesResponseDto
 interface MypageDataSource {
     suspend fun inquiryProfiles(): BaseResponse<InquiryProfilesResponseDto>
 
-    suspend fun postsProfiles(size: Int, page: Int): BaseResponse<PostsMypageResponseDto>
+    suspend fun postsProfiles(page: Int, size: Int): BaseResponse<PostsMypageResponseDto>
 
-    suspend fun commentsProfiles(size: Int, page: Int): BaseResponse<CommentsMypageResponseDto>
+    suspend fun commentsProfiles(page: Int, size: Int): BaseResponse<CommentsMypageResponseDto>
 
-    suspend fun participateViewingPartyMypage(size: Int, page: Int): BaseResponse<ParticipateViewingPartyMypageResponseDto>
+    suspend fun participateViewingPartyMypage(page: Int, size: Int): BaseResponse<ParticipateViewingPartyMypageResponseDto>
 
-    suspend fun hostViewingPartyMypage(size: Int, page: Int): BaseResponse<HostViewingPartyMypageResponseDto>
+    suspend fun hostViewingPartyMypage(page: Int, size: Int): BaseResponse<HostViewingPartyMypageResponseDto>
 
-    suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean>
+    suspend fun cancelParticipateViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean>
 
-    suspend fun cancelHostViewingPartyMypage(viewingPartyId: Int): BaseResponse<Boolean>
+    suspend fun cancelHostViewingPartyMypage(viewingPartyId: Long): BaseResponse<Boolean>
 
     suspend fun logout(refreshToken: String): NonBaseResponse
 

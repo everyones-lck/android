@@ -170,8 +170,6 @@ class MyPageViewModel @Inject constructor(
         return MultipartBody.Part.createFormData("profileImage", "profile_image.png", requestBody)
     }
 
-
-
     fun updateTeam(teamId: Int) {
         viewModelScope.launch {
             repository.updateTeam(UpdateTeamModel(teamId)).onSuccess { response ->

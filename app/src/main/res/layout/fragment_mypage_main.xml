@@ -183,32 +183,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MY Post &amp; Comment"
-                style="@style/TextAppearance.LCK.Light.Title_18sp"
-                android:visibility="gone"/>
+                style="@style/TextAppearance.LCK.Light.Title_18sp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/white_20"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone"/>
+                android:layout_marginBottom="20dp"/>
 
             <TextView
                 android:id="@+id/tv_mypage_main_viewing_party_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MY Viewing Party"
-                style="@style/TextAppearance.LCK.Light.Title_18sp"
-                android:visibility="gone"/>
+                style="@style/TextAppearance.LCK.Light.Title_18sp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/white_20"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone"/>
+                android:layout_marginBottom="20dp"/>
 
         </LinearLayout>
 

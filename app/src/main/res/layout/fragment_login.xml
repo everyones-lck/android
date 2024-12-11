@@ -14,15 +14,18 @@
 
         <ImageView
             android:id="@+id/iv_login_icon"
-            android:layout_width="274dp"
-            android:layout_height="124dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/ic_icon"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="276dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="403dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintWidth_percent="0.8"
+            />
 
         <ImageView
             android:id="@+id/iv_login_kakao"
@@ -30,9 +33,9 @@
             android:layout_height="45dp"
             android:src="@drawable/img_login_kakao"
             app:layout_constraintTop_toBottomOf="@id/iv_login_icon"
-            android:layout_marginTop="188dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="100dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

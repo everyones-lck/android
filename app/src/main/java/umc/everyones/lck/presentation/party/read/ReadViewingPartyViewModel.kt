@@ -111,4 +111,36 @@ class ReadViewingPartyViewModel @Inject constructor(
             }
         }
     }
+
+    private var _viewingParty: ReadViewingPartyModel? = null
+    val viewingParty: ReadViewingPartyModel?
+        get() = _viewingParty
+
+    fun fetchViewingParty(postId: Long) {
+        viewModelScope.launch {
+            Timber.d("fetchViewingParty called with id: $postId") // 로그 추가
+            _readViewingPartyEvent.value = UiState.Loading
+            repository.fetchViewingParty(postId).onSuccess { response ->
+                Timber.d("fetchViewingParty", response.toString())
+                _viewingParty = ReadViewingPartyModel(
+                    name = response.name,
+                    writerInfo = response.writerInfo,
+                    ownerImage = response.ownerImage,
+                    qualify = response.qualify,
+                    partyDate = response.partyDate,
+                    place = response.place,
+                    latitude = response.latitude,
+                    longitude = response.longitude,
+                    price = response.price,
+                    participants = response.participants,
+                    etc = response.etc,
+                    isParticipated = response.isParticipated
+                )
+                _readViewingPartyEvent.value = UiState.Success(ReadViewingPartyEvent.ReadViewingParty(response))
+            }.onFailure {
+                Timber.d("fetchViewingParty error", it.stackTraceToString())
+                _readViewingPartyEvent.value = UiState.Failure("뷰잉파티를 조회하지 못했습니다")
+            }
+        }
+    }
 }

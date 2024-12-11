@@ -8,7 +8,7 @@ data class ParticipateViewingPartyMypageResponseDto(
     val last: Boolean
 ) {
     data class ParticipateViewingPartyMypageResponseElementDto(
-        val id: Int,
+        val id: Long,
         val name: String,
         val date: String
     ){

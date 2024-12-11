@@ -31,36 +31,36 @@ interface MypageService {
 
     @GET("my-pages/posts")
     suspend fun postsMypage(
-        @Query("size") size: Int = 6, // 기본값 6
-        @Query("page") page: Int = 0 // 기본값 0
+        @Query("page") page: Int = 6, // 기본값 6
+        @Query("size") size: Int = 0 // 기본값 0
     ): BaseResponse<PostsMypageResponseDto>
 
     @GET("my-pages/comments")
     suspend fun commentsMypage(
-        @Query("size") size: Int = 6, // 기본값 6
-        @Query("page") page: Int = 0 // 기본값 0
+        @Query("page") page: Int = 6, // 기본값 6
+        @Query("size") size: Int = 0 // 기본값 0
     ):BaseResponse<CommentsMypageResponseDto>
 
     @GET("my-pages/viewing-parties/participate")
     suspend fun participateViewingPartyMypage(
-        @Query("size") size: Int = 6, // 기본값 6
-        @Query("page") page: Int = 0 // 기본값 0
+        @Query("page") page: Int = 6, // 기본값 6
+        @Query("size") size: Int = 0 // 기본값 0
     ):BaseResponse<ParticipateViewingPartyMypageResponseDto>
 
     @GET("my-pages/viewing-parties/host")
     suspend fun hostViewingPartyMypage(
-        @Query("size") size: Int = 6, // 기본값 6
-        @Query("page") page: Int = 0 // 기본값 0
+        @Query("page") page: Int = 6, // 기본값 6
+        @Query("size") size: Int = 0 // 기본값 0
     ):BaseResponse<HostViewingPartyMypageResponseDto>
 
     @DELETE("my-pages/viewing-parties/participate")
     suspend fun cancelParticipateViewingPartyMypage(
-        @Query ("viewingPartyId") viewingPartyId: Int
+        @Query ("viewingPartyId") viewingPartyId: Long
     ):BaseResponse<Boolean>
 
     @DELETE("my-pages/viewing-parties/host")
     suspend fun cancelHostViewingPartyMypage(
-        @Query ("viewingPartyId") viewingPartyId: Int
+        @Query ("viewingPartyId") viewingPartyId: Long
     ):BaseResponse<Boolean>
 
     @DELETE("my-pages/logout")

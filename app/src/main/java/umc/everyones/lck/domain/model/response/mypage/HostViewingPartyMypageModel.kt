@@ -7,7 +7,7 @@ data class HostViewingPartyMypageModel(
     val last: Boolean
 ) {
     data class HostViewingPartyMypageElementModel(
-        val id: Int,
+        val id: Long,
         val name: String,
         val date: String
     )

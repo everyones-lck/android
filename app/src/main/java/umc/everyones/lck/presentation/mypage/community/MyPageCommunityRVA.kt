@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import umc.everyones.lck.databinding.ItemCommentBinding
 import umc.everyones.lck.databinding.ItemMypageCommunityBinding
-import umc.everyones.lck.domain.model.community.Comment
-import umc.everyones.lck.domain.model.community.Post
 import umc.everyones.lck.domain.model.response.mypage.MyComment
 import umc.everyones.lck.domain.model.response.mypage.MyPost
 
@@ -17,7 +14,7 @@ sealed class CommunityItem {
     data class CommentItem(val comment: MyComment) : CommunityItem()
 }
 
-class MyPageCommunityItemAdapter : ListAdapter<CommunityItem, RecyclerView.ViewHolder>(
+class MyPageCommunityRVA : ListAdapter<CommunityItem, RecyclerView.ViewHolder>(
     CommunityItemDiffCallback()
 ) {
     companion object {
@@ -52,7 +49,6 @@ class MyPageCommunityItemAdapter : ListAdapter<CommunityItem, RecyclerView.ViewH
         fun bind(item: CommunityItem.PostItem) {
             binding.tvMypageCommunityTitle.text = item.post.title
             binding.tvMypageCommunityCategory.text = item.post.postType
-            binding.tvMypageCommunityShortcuts.text = "해당 게시글 바로가기"
             binding.executePendingBindings()
         }
     }
