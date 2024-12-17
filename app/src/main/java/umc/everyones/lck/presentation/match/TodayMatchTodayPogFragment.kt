@@ -33,10 +33,11 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     private lateinit var todayPogPlayerRVA5: TodayPogPlayerRVA
     private lateinit var todayPogPlayerRVAMatch: TodayPogPlayerRVA
     override fun initObserver() {
-        // 세트 수에 따라 레이아웃의 visibility를 조정
-        viewModel.setCount.observe(viewLifecycleOwner) { setCountModel ->
-            adjustLayoutVisibility(setCountModel.setCount)
-        }
+//        // 세트 수에 따라 레이아웃의 visibility를 조정
+//        viewModel.setCount.observe(viewLifecycleOwner) { setCountModel ->
+//            adjustLayoutVisibility(setCountModel.setCount)
+//        }
+
         // POG 데이터가 변경될 때마다 각 setIndex에 맞게 업데이트
         viewModel.matchPogData.observe(viewLifecycleOwner) { pogPlayerData ->
             // Match POG 데이터 업데이트
@@ -51,10 +52,10 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
             }
         }
 
-        // 모든 항목이 선택되었을 때 투표 버튼 활성화
-        viewModel.allItemsSelected.observe(viewLifecycleOwner) { allSelected ->
-            binding.tvTodayMatchTodayPogVote.isEnabled = allSelected
-        }
+//        // 모든 항목이 선택되었을 때 투표 버튼 활성화
+//        viewModel.allItemsSelected.observe(viewLifecycleOwner) { allSelected ->
+//            binding.tvTodayMatchTodayPogVote.isEnabled = allSelected
+//        }
         // 투표 결과 메시지 스낵바로 표시
         viewModel.voteResponse.observe(viewLifecycleOwner) { message ->
             showCustomSnackBar(binding.root, message)
@@ -67,6 +68,26 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
                 Timber.d("Season %s", it.seasonName)
             }
         })
+
+        // 현재 세트 수를 관찰하여 visibility 설정
+        viewModel.currentSetIndex.observe(viewLifecycleOwner) { currentSetIndex ->
+            adjustLayoutVisibility(currentSetIndex)
+        }
+
+        // 매치가 끝나면 매치 pog 투표 시작
+        viewModel.isMatchPogVisible.observe(viewLifecycleOwner) { isVisible ->
+            binding.layoutTodayMatchMatchVote.visibility = if (isVisible) View.VISIBLE else View.GONE
+            // matchPog가 visible일 때, 세트 POG 레이아웃을 숨기기
+            if (isVisible) {
+                binding.layoutTodayMatch1stVote.visibility = View.GONE
+                binding.layoutTodayMatch2ndVote.visibility = View.GONE
+                binding.layoutTodayMatch3rdVote.visibility = View.GONE
+                binding.layoutTodayMatch4thVote.visibility = View.GONE
+                binding.layoutTodayMatch5thVote.visibility = View.GONE
+            } else {
+                adjustLayoutVisibility(viewModel.currentSetIndex.value ?: 0)
+            }
+        }
     }
 
     override fun initView() {
@@ -90,18 +111,33 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     private fun pogVoteButton() {
         binding.tvTodayMatchTodayPogVote.setOnSingleClickListener {
             val matchId = arguments?.getLong("matchId") ?: return@setOnSingleClickListener
+//            모두 선택해야 투표할 수 있을 때 사용하는 코드
+//            // 세트 POG 투표
+//            viewModel.setCount.value?.setCount?.let { setCount ->
+//                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: return@setOnSingleClickListener
+//                for (setIndex in 1..setCount) {
+//                    val playerId = selectedSetPlayers[setIndex] ?: return@setOnSingleClickListener
+//                    viewModel.voteSetPog(matchId, setIndex, playerId)
+//                }
+//            }
+//            // 매치 POG 투표
+//            val selectedMatchPlayer = viewModel.selectedMatchPlayer.value ?: return@setOnSingleClickListener
+//            viewModel.voteMatchPog(matchId, selectedMatchPlayer)
+
             // 세트 POG 투표
             viewModel.setCount.value?.setCount?.let { setCount ->
-                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: return@setOnSingleClickListener
+                val selectedSetPlayers = viewModel.selectedSetPlayers.value ?: emptyMap()
                 for (setIndex in 1..setCount) {
-                    val playerId = selectedSetPlayers[setIndex] ?: return@setOnSingleClickListener
-                    viewModel.voteSetPog(matchId, setIndex, playerId)
+                    selectedSetPlayers[setIndex]?.let { playerId ->
+                        viewModel.voteSetPog(matchId, setIndex, playerId)
+                    }
                 }
             }
-            // 매치 POG 투표
-            val selectedMatchPlayer = viewModel.selectedMatchPlayer.value ?: return@setOnSingleClickListener
-            viewModel.voteMatchPog(matchId, selectedMatchPlayer)
 
+            // 매치 POG 투표
+            viewModel.selectedMatchPlayer.value?.let { selectedMatchPlayer ->
+                viewModel.voteMatchPog(matchId, selectedMatchPlayer)
+            }
         }
     }
     // RecyclerView의 아이템을 업데이트하는 함수
@@ -138,14 +174,12 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
         binding.rvTodayMatchTodayPogMatchVote.adapter = todayPogPlayerRVAMatch
     }
 
-    // setCount 수 만큼 리사이클러뷰 개수 설정
-    private fun adjustLayoutVisibility(setCount: Int) {
-        binding.layoutTodayMatch1stVote.visibility = if (setCount >= 1) View.VISIBLE else View.GONE
-        binding.layoutTodayMatch2ndVote.visibility = if (setCount >= 2) View.VISIBLE else View.GONE
-        binding.layoutTodayMatch3rdVote.visibility = if (setCount >= 3) View.VISIBLE else View.GONE
-        binding.layoutTodayMatch4thVote.visibility = if (setCount >= 4) View.VISIBLE else View.GONE
-        binding.layoutTodayMatch5thVote.visibility = if (setCount >= 5) View.VISIBLE else View.GONE
-        binding.layoutTodayMatchMatchVote.visibility = View.VISIBLE // 매치 POG는 항상 visible
+    private fun adjustLayoutVisibility(currentSetIndex: Int) {
+        binding.layoutTodayMatch1stVote.visibility = if (currentSetIndex == 1) View.VISIBLE else View.GONE
+        binding.layoutTodayMatch2ndVote.visibility = if (currentSetIndex == 2) View.VISIBLE else View.GONE
+        binding.layoutTodayMatch3rdVote.visibility = if (currentSetIndex == 3) View.VISIBLE else View.GONE
+        binding.layoutTodayMatch4thVote.visibility = if (currentSetIndex == 4) View.VISIBLE else View.GONE
+        binding.layoutTodayMatch5thVote.visibility = if (currentSetIndex == 5) View.VISIBLE else View.GONE
     }
 
     private fun setupVoteImageViewClick() {

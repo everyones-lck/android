@@ -42,292 +42,288 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tv_home_today_match_title"
-            style="@style/TextAppearance.LCK.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="Today's Matches"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_home_topbar" />
-
-        <!--        <androidx.recyclerview.widget.RecyclerView-->
-        <!--            android:id="@+id/rv_home_match_content"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="0dp"-->
-        <!--            tools:listitem="@layout/item_home_match_content"-->
-        <!--            android:orientation="horizontal"-->
-        <!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-        <!--            android:layout_marginTop="28dp"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toBottomOf="@+id/tv_home_today_match_title"/>-->
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vp_home_match_content"
+        
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="28dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_home_today_match_title"/>
-
-        <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
-            android:id="@+id/indicator_home_dot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:dotsColor="@color/white"
-            app:dotsStrokeColor="@color/gray_indicator"
-            app:dotsStrokeWidth="4dp"
-            app:dotsCornerRadius="8dp"
-            app:dotsSize="8dp"
-            app:dotsSpacing="4dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="@id/vp_home_match_content"
-            app:layout_constraintStart_toStartOf="@id/vp_home_match_content"
-            app:layout_constraintTop_toBottomOf="@id/vp_home_match_content" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_home_match_result"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_marginEnd="260dp"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="@id/vp_home_match_content"
-            app:layout_constraintEnd_toEndOf="@id/vp_home_match_content"
-            app:layout_constraintTop_toBottomOf="@id/indicator_home_dot">
-
-            <TextView
-                android:id="@+id/tv_home_match_result"
-                style="@style/TextAppearance.LCK.Bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="35dp"
-                android:layout_marginTop="17dp"
-                android:text="LCK\nMatches\nResult"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@id/layout_home_match_result"
-                app:layout_constraintTop_toTopOf="@id/layout_home_match_result" />
-
-            <ImageView
-                android:id="@+id/iv_home_match_result_arrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_arrow_right"
-                app:layout_constraintStart_toStartOf="@id/tv_home_match_result"
-                app:layout_constraintTop_toBottomOf="@id/tv_home_match_result" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_home_match_result"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            tools:listitem="@layout/item_home_match_result"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_marginTop="30dp"
-            android:overScrollMode="never"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintStart_toEndOf="@+id/layout_home_match_result"
-            app:layout_constraintTop_toBottomOf="@+id/indicator_home_dot"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_home_match_result"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@+id/layout_home_topbar"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_home_about_lck"
+                android:id="@+id/layout_home_scroll"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/iv_home_about_lck_box"
-                    android:layout_width="160dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/shape_rect_8_gray_line"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                android:layout_height="wrap_content"
+                >
 
                 <TextView
-                    android:id="@+id/tv_home_about_lck1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/TextAppearance.LCK.Light"
-                    android:text="About"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="15dp"/>
-
-                <TextView
-                    android:id="@+id/tv_home_about_lck2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_home_today_match_title"
                     style="@style/TextAppearance.LCK.Bold"
-                    android:text="LCK"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="@id/tv_home_about_lck1"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_home_about_lck1"/>
-
-                <ImageView
-                    android:id="@+id/iv_home_about_lck_arrow"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:layout_marginTop="19dp"
-                    android:layout_marginEnd="13dp"
-                    app:layout_constraintEnd_toEndOf="@id/iv_home_about_lck_box"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <ImageView
-                    android:id="@+id/iv_home_about_lck_logo"
-                    android:layout_width="119dp"
-                    android:layout_height="68.97dp"
-                    android:src="@drawable/ic_polished_lck"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintEnd_toEndOf="@id/iv_home_about_lck_box"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_home_community"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="15dp"
-                app:layout_constraintStart_toEndOf="@+id/layout_home_about_lck"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/layout_home_viewing_party"
-                app:layout_constraintTop_toTopOf="@id/layout_home_about_lck">
-
-                <ImageView
-                    android:id="@+id/iv_home_community_box"
-                    android:layout_width="150dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/shape_rect_8_gray_line"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <TextView
-                    android:id="@+id/tv_home_community"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/TextAppearance.LCK.Light"
-                    android:text="Community"
+                    android:layout_marginTop="15dp"
+                    android:text="Today's Matches"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <ImageView
-                    android:id="@+id/iv_home_community_arrow"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/iv_home_community_box"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_home_viewing_party"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                app:layout_constraintStart_toEndOf="@+id/layout_home_about_lck"
-                app:layout_constraintTop_toBottomOf="@id/layout_home_community"
-                app:layout_constraintBottom_toBottomOf="@id/layout_home_about_lck">
-
-                <ImageView
-                    android:id="@+id/iv_home_viewing_party_box"
-                    android:layout_width="150dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/shape_rect_8_gray_line"
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vp_home_match_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="28dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toBottomOf="@+id/tv_home_today_match_title"/>
 
-                <TextView
-                    android:id="@+id/tv_home_viewing_party"
+                <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
+                    android:id="@+id/indicator_home_dot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/TextAppearance.LCK.Light"
-                    android:text="Viewing\nParty"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:dotsColor="@color/white"
+                    app:dotsStrokeColor="@color/gray_indicator"
+                    app:dotsStrokeWidth="4dp"
+                    app:dotsCornerRadius="8dp"
+                    app:dotsSize="8dp"
+                    app:dotsSpacing="4dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@id/vp_home_match_content"
+                    app:layout_constraintStart_toStartOf="@id/vp_home_match_content"
+                    app:layout_constraintTop_toBottomOf="@id/vp_home_match_content" />
 
-                <ImageView
-                    android:id="@+id/iv_home_viewing_party_arrow"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/iv_home_viewing_party_box"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_home_match_result"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginEnd="260dp"
+                    app:layout_constraintStart_toStartOf="@id/vp_home_match_content"
+                    app:layout_constraintEnd_toEndOf="@id/vp_home_match_content"
+                    app:layout_constraintTop_toTopOf="@+id/rv_home_match_result"
+                    app:layout_constraintBottom_toBottomOf="@+id/rv_home_match_result">
+
+                    <TextView
+                        android:id="@+id/tv_home_match_result"
+                        style="@style/TextAppearance.LCK.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="35dp"
+                        android:layout_marginTop="17dp"
+                        android:text="LCK\nMatches\nResult"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@id/layout_home_match_result"
+                        app:layout_constraintTop_toTopOf="@id/layout_home_match_result" />
+
+                    <ImageView
+                        android:id="@+id/iv_home_match_result_arrow"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/ic_arrow_right"
+                        app:layout_constraintStart_toStartOf="@id/tv_home_match_result"
+                        app:layout_constraintTop_toBottomOf="@id/tv_home_match_result" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_home_match_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal"
+                    tools:listitem="@layout/item_home_match_result"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:layout_marginTop="30dp"
+                    android:overScrollMode="never"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toEndOf="@+id/layout_home_match_result"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator_home_dot"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_home_navigation_box"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_home_navigation_box"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_min="200dp"
+                    app:layout_constraintHeight_max="300dp"
+                    app:layout_constraintWidth_max="500dp"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginHorizontal="15dp"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_home_match_result"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_home_about_lck"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/layout_home_community"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <ImageView
+                            android:id="@+id/iv_home_about_lck_box"
+                            android:layout_width="0dp"
+                            app:layout_constraintWidth_min="160dp"
+                            android:layout_height="0dp"
+                            android:padding="2dp"
+                            android:src="@drawable/shape_rect_8_gray_line"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/tv_home_about_lck1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextAppearance.LCK.Light"
+                            android:text="About"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginStart="15dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_home_about_lck2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextAppearance.LCK.Bold"
+                            android:text="LCK"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="@id/tv_home_about_lck1"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_home_about_lck1"/>
+
+                        <ImageView
+                            android:id="@+id/iv_home_about_lck_arrow"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_right"
+                            android:layout_marginTop="19dp"
+                            android:layout_marginEnd="13dp"
+                            app:layout_constraintEnd_toEndOf="@id/iv_home_about_lck_box"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <ImageView
+                            android:id="@+id/iv_home_about_lck_logo"
+                            android:layout_width="119dp"
+                            android:layout_height="68.97dp"
+                            android:src="@drawable/ic_polished_lck"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintEnd_toEndOf="@id/iv_home_about_lck_box"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_home_community"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="15dp"
+                        app:layout_constraintStart_toEndOf="@+id/layout_home_about_lck"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/layout_home_viewing_party"
+                        app:layout_constraintTop_toTopOf="@id/layout_home_about_lck">
+
+                        <ImageView
+                            android:id="@+id/iv_home_community_box"
+                            android:layout_width="0dp"
+                            app:layout_constraintWidth_min="150dp"
+                            android:layout_height="0dp"
+                            android:padding="2dp"
+                            android:src="@drawable/shape_rect_8_gray_line"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/tv_home_community"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextAppearance.LCK.Light"
+                            android:text="Community"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="12dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <ImageView
+                            android:id="@+id/iv_home_community_arrow"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_arrow_right"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/iv_home_community_box"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_home_viewing_party"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="15dp"
+                        app:layout_constraintStart_toEndOf="@+id/layout_home_about_lck"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/layout_home_community"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <ImageView
+                            android:id="@+id/iv_home_viewing_party_box"
+                            android:layout_width="0dp"
+                            app:layout_constraintWidth_min="150dp"
+                            android:layout_height="0dp"
+                            android:padding="2dp"
+                            android:src="@drawable/shape_rect_8_gray_line"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/tv_home_viewing_party"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextAppearance.LCK.Light"
+                            android:text="Viewing\nParty"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="12dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <ImageView
+                            android:id="@+id/iv_home_viewing_party_arrow"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_arrow_right"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/iv_home_viewing_party_box"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!--        &lt;!&ndash;로그아웃 대충 구현이라 삭제해주세요&ndash;&gt;-->
-        <!--        <Button-->
-        <!--            android:id="@+id/btnLogout"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Logout"-->
-        <!--            style="@style/TextAppearance.LCK.Light.Body_14sp"-->
-        <!--            android:textColor="@color/white"-->
-        <!--            app:layout_constraintBottom_toTopOf="@id/main_bnv"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            android:layout_marginEnd="75dp"-->
-        <!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--        &lt;!&ndash;마이 페이지 대충 구현 &ndash;&gt;-->
-        <!--        <Button-->
-        <!--            android:id="@+id/btnmypage"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="My Page"-->
-        <!--            style="@style/TextAppearance.LCK.Light.Body_14sp"-->
-        <!--            android:textColor="@color/white"-->
-        <!--            app:layout_constraintBottom_toTopOf="@id/main_bnv"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            android:layout_marginStart="75dp"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"/>-->
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
