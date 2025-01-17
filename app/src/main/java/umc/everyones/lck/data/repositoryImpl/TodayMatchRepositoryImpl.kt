@@ -1,5 +1,6 @@
 package umc.everyones.lck.data.repositoryImpl
 
+import timber.log.Timber
 import umc.everyones.lck.data.datasource.TodayMatchDataSource
 import umc.everyones.lck.domain.model.request.match.CommonPogModel
 import umc.everyones.lck.domain.model.request.match.VoteMatchModel
@@ -26,7 +27,11 @@ class TodayMatchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchTodayMatchPogPlayer(matchId: Long): Result<PogPlayerTodayMatchModel> = runCatching {
-        todayMatchDataSource.fetchTodayMatchPogPlayer(matchId).data.toPogPlayerTodayMatchModel()
+        val response = todayMatchDataSource.fetchTodayMatchPogPlayer(matchId).data
+        if (response.matchPogVoteCandidate == null) {
+            Timber.e("MatchPogVoteCandidate is null for matchId: $matchId")
+        }
+        response.toPogPlayerTodayMatchModel()
     }
 
     override suspend fun fetchTodayMatchPog(request: CommonPogModel): Result<CommonTodayMatchPogModel> = runCatching {

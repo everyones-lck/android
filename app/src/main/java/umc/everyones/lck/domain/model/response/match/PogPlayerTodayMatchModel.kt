@@ -1,7 +1,7 @@
 package umc.everyones.lck.domain.model.response.match
 
 data class PogPlayerTodayMatchModel(
-    val matchPogVoteCandidate: MatchPogVoteCandidateModel,
+    val matchPogVoteCandidate: MatchPogVoteCandidateModel?,
     val setPogVoteCandidates: List<SetPogVoteCandidatesModel>
 ) {
     data class MatchPogVoteCandidateModel(
