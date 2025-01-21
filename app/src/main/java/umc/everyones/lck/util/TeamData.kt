@@ -24,7 +24,7 @@ object TeamData {
         4 to "DK",
         5 to "T1",
         6 to "KT",
-        7 to "KDF",
+        7 to "DNF",
         8 to "BNK",
         9 to "NS",
         10 to "DRX",

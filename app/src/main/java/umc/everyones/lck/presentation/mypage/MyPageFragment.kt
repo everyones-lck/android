@@ -1,6 +1,7 @@
 package umc.everyones.lck.presentation.mypage
 
 import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide

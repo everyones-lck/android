@@ -117,6 +117,8 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
             val isDuplicated = false // 여기에 실제 중복 확인 로직을 추가해야 합니다.
             val isValid = validateNickname(nickname) // 유효성 검사 추가
 
+            binding.tvMypageProfileEditTopbarEdit.isEnabled = false
+
             if (isValid) {
                 // 유효한 닉네임일 경우
                 if (!isDuplicated) {
@@ -124,6 +126,7 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
                     binding.tvMypageNicknameDuplication.setBackgroundResource(R.drawable.shape_rect_12_white_line) // 기본 배경
                     binding.tvMypageNicknameDuplication.setOnClickListener {
                         signupViewModel.checkNicknameAvailability(nickname) // 중복 확인 로직 호출
+                        binding.tvMypageProfileEditTopbarEdit.isEnabled = true
                     }
                     binding.tvMypageNicknameDuplication.isEnabled = true // 버튼 활성화
                 } else {
@@ -131,11 +134,13 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
                     setNicknameUnavailableState() // 중복 상태 설정
                     binding.layoutMypageProfileEditWarning4.visibility = View.GONE // 중복 아님
                     binding.tvMypageNicknameDuplication.isEnabled = false // 버튼 비활성화
+                    binding.tvMypageProfileEditTopbarEdit.isEnabled = false
                 }
             } else {
                 // 유효하지 않은 경우
                 setNicknameUnavailableState() // 닉네임이 비어 있을 때 상태 설정
                 binding.tvMypageNicknameDuplication.isEnabled = false // 버튼 비활성화
+                binding.tvMypageProfileEditTopbarEdit.isEnabled = false
             }
         }
 
@@ -185,6 +190,8 @@ class MyPageProfileEditFragment : BaseFragment<FragmentMypageProfileEditBinding>
     private fun setInitialState() {
         binding.tvMypageNicknameDuplication.setTextColor(requireContext().getColor(R.color.nickname_gray)) // 회색
         binding.tvMypageNicknameDuplication.setBackgroundResource(R.drawable.shape_rect_12_gray_line) // 회색 배경
+        binding.viewMypageProfileEditNicknameBar.setBackgroundResource(R.drawable.shape_rect_4_white_line)
+        binding.layoutMypageProfileEditValid.visibility = View.GONE
         binding.layoutMypageProfileEditWarning4.visibility = View.GONE // 초기 경고 숨기기
     }
 
