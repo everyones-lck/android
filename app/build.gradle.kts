@@ -35,22 +35,22 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            manifestPlaceholders["NAVER_CLIENT_ID"] = properties["NAVER_CLIENT_ID"] as String
-            manifestPlaceholders["KAKAO_APP_KEY"] = properties["KAKAO_APP_KEY"] as String
+            manifestPlaceholders["NAVER_CLIENT_ID"] = (properties["NAVER_CLIENT_ID"] as? String) ?: ""
+            manifestPlaceholders["KAKAO_APP_KEY"] = (properties["KAKAO_APP_KEY"] as? String) ?: ""
         }
 
         release {
-            manifestPlaceholders += mapOf()
             isMinifyEnabled = false
-            manifestPlaceholders["NAVER_CLIENT_ID"] = properties["NAVER_CLIENT_ID"] as String
-            manifestPlaceholders["KAKAO_APP_KEY"] = properties["KAKAO_APP_KEY"] as String
+            manifestPlaceholders["NAVER_CLIENT_ID"] = (properties["NAVER_CLIENT_ID"] as? String) ?: ""
+            manifestPlaceholders["KAKAO_APP_KEY"] = (properties["KAKAO_APP_KEY"] as? String) ?: ""
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
