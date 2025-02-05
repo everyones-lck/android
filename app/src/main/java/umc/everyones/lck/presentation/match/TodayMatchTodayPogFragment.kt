@@ -32,6 +32,8 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     private lateinit var todayPogPlayerRVA4: TodayPogPlayerRVA
     private lateinit var todayPogPlayerRVA5: TodayPogPlayerRVA
     private lateinit var todayPogPlayerRVAMatch: TodayPogPlayerRVA
+    private var matchNumber: Long? = null
+
     override fun initObserver() {
 //        // 세트 수에 따라 레이아웃의 visibility를 조정
 //        viewModel.setCount.observe(viewLifecycleOwner) { setCountModel ->
@@ -68,18 +70,18 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
                 // seasonName과 서수를 포함한 matchNumber 설정
                 binding.tvTodayMatchTodayPogDate.text = "${it.seasonName} ${it.matchNumber.toOrdinal()} Match"
                 Timber.d("Season %s", it.seasonName)
-                val matchNumber = it.matchNumber
+                matchNumber = it.matchNumber.toLong()
 
-                // 필요한 API 호출
-                viewModel.fetchTodayMatchSetCount(matchNumber.toLong())
-                viewModel.fetchTodayMatchPogPlayer(matchNumber.toLong())
-
-                // 디버깅 로그
-                Timber.d("MatchNumber used for APIs: $matchNumber")
+                // 필요한 API 호출 시 matchNumber 사용 (null 체크 필요)
+                matchNumber?.let { number ->
+                    viewModel.fetchTodayMatchSetCount(number)
+                    viewModel.fetchTodayMatchPogPlayer(number)
+                    Timber.d("MatchNumber used for APIs: $number")
+                }
             }
         })
 
-// 현재 세트 수를 관찰하여 visibility 설정
+        // 현재 세트 수를 관찰하여 visibility 설정
         viewModel.currentSetIndex.observe(viewLifecycleOwner) { currentSetIndex ->
             Timber.d("Observed currentSetIndex: $currentSetIndex")
             if (viewModel.setCount.value?.setCount == 0) {
@@ -146,7 +148,7 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     }
     private fun pogVoteButton() {
         binding.tvTodayMatchTodayPogVote.setOnSingleClickListener {
-            val matchId = arguments?.getLong("matchId") ?: return@setOnSingleClickListener
+            val matchId = matchNumber ?: return@setOnSingleClickListener
 //            모두 선택해야 투표할 수 있을 때 사용하는 코드
 //            // 세트 POG 투표
 //            viewModel.setCount.value?.setCount?.let { setCount ->
