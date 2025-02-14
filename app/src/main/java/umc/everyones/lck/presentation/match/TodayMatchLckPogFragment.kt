@@ -23,12 +23,16 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
     private val todayViewModel: TodayMatchLckMatchViewModel by activityViewModels()
     private lateinit var lckPogMatchRVA: LckPogMatchRVA
     private var tabIndex = 0
+    private val pogDataList = mutableListOf<CommonTodayMatchPogModel>()
+    private var hasMatchData: Boolean = false // 초깃값은 false
+
 
     override fun initObserver() {
         // 세트 수를 받아와서 탭 레이아웃 설정
         viewModel.setCount.observe(viewLifecycleOwner) { setCountModel ->
             setupRecyclerView(setCountModel.setCount) // setCount 변경 시 RecyclerView 초기화
             Timber.d("Set Count: ${setCountModel.setCount}")
+
         }
 
 //        viewModel.pogData.observe(viewLifecycleOwner) { response ->
@@ -38,11 +42,8 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
 //            }
 //        }
 
-        // pogData를 누적 저장할 리스트
-        val pogDataList = mutableListOf<CommonTodayMatchPogModel>()
-
         // ViewModel의 pogData를 관찰하여 데이터를 누적
-        viewModel.pogData.distinctUntilChanged().observe(viewLifecycleOwner) { response ->
+        viewModel.pogData.observe(viewLifecycleOwner) { response ->
             response?.let {
                 // 새로운 데이터를 리스트에 추가
                 val newData = CommonTodayMatchPogModel(
@@ -64,18 +65,21 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
                 // 어댑터에 정렬된 리스트 전달
                 lckPogMatchRVA.submitList(sortedList)
                 Timber.d("Updated Sorted POG Data List: $sortedList")
-
             }
         }
 
         // ViewModel의 matchData를 관찰하여 matchId를 가져와서 사용
         todayViewModel.matchData.observe(viewLifecycleOwner) { matchData ->
+            Timber.d("matchData changed: $matchData")
+
             if (matchData == null || matchData.matchResponses.isEmpty()) {
                 // 경기가 없을 때
+                hasMatchData = false
                 binding.layoutTodayMatchPogNoMatch.visibility = View.VISIBLE
                 binding.rvTodayMatchLckPogContainer.visibility = View.GONE
             } else {
                 // 경기가 있을 때
+                hasMatchData = true
                 binding.layoutTodayMatchPogNoMatch.visibility = View.GONE
                 binding.rvTodayMatchLckPogContainer.visibility = View.VISIBLE
 
@@ -88,14 +92,18 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
 //                // 초기 데이터 로드
 //                viewModel.fetchTodayMatchPog(matchId)
 
-                // 모든 matchId 가져오기
-                val matchIds = matchData.matchResponses.map { it.matchId }
+                // 모든 matchId와 matchNumber 가져오기
+                matchData.matchResponses.forEach { matchResponse ->
+                    val matchId = matchResponse.matchId
+                    val matchNumber = matchResponse.matchNumber
 
-                // 각 matchId에 대해 작업 수행
-                matchIds.forEach { matchId ->
+                    // matchId를 사용하여 세트 수를 가져오고
                     viewModel.fetchTodayMatchSetCount(matchId)
+
+                    // matchNumber를 사용하여 POG 데이터 가져오기
                     viewModel.fetchTodayMatchPog(matchId)
-                    Timber.d("Match ID: $matchId")
+
+                    Timber.d("Match ID: $matchId, Match Number: $matchNumber")
                 }
             }
         }
@@ -105,13 +113,36 @@ class TodayMatchLckPogFragment : BaseFragment<FragmentTodayMatchLckPogBinding>(R
 
     }
     private fun setupRecyclerView(newSetCount: Int) {
-        // 어댑터가 초기화되지 않았을 때만 생성
-        lckPogMatchRVA = LckPogMatchRVA(
-            setCount = newSetCount,
-            onTabSelected = tabIndex
-        )
-        binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
-        binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
-        binding.rvTodayMatchLckPogContainer.itemAnimator = null
+        if (!::lckPogMatchRVA.isInitialized) {
+            lckPogMatchRVA = LckPogMatchRVA(
+                setCount = newSetCount,
+                onTabSelected = tabIndex
+            )
+            binding.rvTodayMatchLckPogContainer.layoutManager = LinearLayoutManager(context)
+            binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
+            binding.rvTodayMatchLckPogContainer.itemAnimator = null
+        } else {
+            lckPogMatchRVA.updateSetCount(newSetCount)
+        }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (hasMatchData) {
+            // 경기가 있을 때만 RecyclerView 보이게
+            binding.rvTodayMatchLckPogContainer.visibility = View.VISIBLE
+            // 이미 lckPogMatchRVA가 초기화된 상태면 재할당만
+            if (!::lckPogMatchRVA.isInitialized) {
+                lckPogMatchRVA = LckPogMatchRVA(0, 0)
+                binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
+            } else {
+                binding.rvTodayMatchLckPogContainer.adapter = lckPogMatchRVA
+            }
+        } else {
+            // 경기가 없으면 재설정하지 않고, GONE 상태 유지
+            binding.rvTodayMatchLckPogContainer.visibility = View.GONE
+        }
+    }
+
 }

@@ -72,7 +72,7 @@
             android:id="@+id/tv_today_match_lck_pog_playing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="50dp"
             style="@style/TextAppearance.LCK.Light"
             android:text="During the game"
             android:visibility="gone"

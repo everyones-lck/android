@@ -43,52 +43,37 @@ class LckPogMatchRVA(
         init {
             binding.rvTodayMatchLckPogPlayer.adapter = playerAdapter
 
-            // 탭 레이아웃 초기화 및 세트 수에 맞춰 탭 추가
-            binding.tabTodayMatchLckPog.removeAllTabs()
-            for (i in 1..setCount) {
-                binding.tabTodayMatchLckPog.addTab(binding.tabTodayMatchLckPog.newTab().setText("${i.toOrdinal()} POG"))
-            }
-            binding.tabTodayMatchLckPog.addTab(binding.tabTodayMatchLckPog.newTab().setText("by Match"))
-
-            // 탭의 마진 설정
-            for (i in 0 until binding.tabTodayMatchLckPog.tabCount) {
-                val tab = (binding.tabTodayMatchLckPog.getChildAt(0) as? ViewGroup)?.getChildAt(i)
-                tab?.let {
-                    val layoutParams = it.layoutParams as LinearLayout.LayoutParams
-                    layoutParams.marginStart = 20
-                    layoutParams.marginEnd = 20 // 20dp margin between tabs
-                    it.layoutParams = layoutParams
-                }
-            }
-
-            // 탭 선택 리스너
+            // 탭 선택 리스너는 ViewHolder 생성 시 한 번만 추가합니다.
             binding.tabTodayMatchLckPog.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     tab?.position?.let { position ->
+                        // by Match 탭이 추가되었는지 여부는 탭 개수로 판단합니다.
+                        val hasByMatchTab = binding.tabTodayMatchLckPog.tabCount > setCount
                         val playerList: List<CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel> = when {
-                            position < currentItem.setPogResponses.size -> {
-                                // 현재 탭 위치에 따라 setIndex를 결정
-                                currentItem.setPogResponses.filter { it.setIndex == (position + 1) }.take(1) // index 조정
+                            // 0 ~ (setCount-1): 각 세트 탭
+                            position < setCount -> {
+                                // setIndex는 1부터 시작하므로 position + 1
+                                currentItem.setPogResponses.filter { it.setIndex == (position + 1) }.take(1)
                             }
-                            // byMatch 탭의 선수
-                            position == currentItem.setPogResponses.size -> currentItem.matchPogResponse?.let { matchPogResponse ->
-                                listOf(
-                                    CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel(
-                                        matchPogResponse.name,
-                                        matchPogResponse.profileImageUrl,
-                                        matchPogResponse.playerId,
-                                        0 // setIndex는 필요 없으므로 0으로 설정
+                            // 마지막 탭이 by Match 탭인 경우
+                            position == setCount && hasByMatchTab -> {
+                                currentItem.matchPogResponse?.let { matchPogResponse ->
+                                    listOf(
+                                        CommonTodayMatchPogModel.PogPlayerModel.SetPogResponsesModel(
+                                            matchPogResponse.name,
+                                            matchPogResponse.profileImageUrl,
+                                            matchPogResponse.playerId,
+                                            0 // setIndex는 필요 없으므로 0으로 설정
+                                        )
                                     )
-                                )
-                            } ?: emptyList() // matchPogResponse가 null일 경우 빈 리스트 반환
+                                } ?: emptyList()
+                            }
                             else -> emptyList()
                         }
-                        // 데이터가 없는 경우
                         if (playerList.isEmpty()) {
                             binding.tvTodayMatchLckPogPlaying.visibility = View.VISIBLE
                             binding.rvTodayMatchLckPogPlayer.visibility = View.GONE
                         } else {
-                            // 데이터가 있는 경우
                             binding.tvTodayMatchLckPogPlaying.visibility = View.GONE
                             binding.rvTodayMatchLckPogPlayer.visibility = View.VISIBLE
                             playerAdapter.submitList(playerList)
@@ -99,18 +84,55 @@ class LckPogMatchRVA(
                 override fun onTabUnselected(tab: TabLayout.Tab?) {}
                 override fun onTabReselected(tab: TabLayout.Tab?) {}
             })
+
+            // (선택 사항) 탭 간 margin 설정
+            for (i in 0 until binding.tabTodayMatchLckPog.tabCount) {
+                val tabView = (binding.tabTodayMatchLckPog.getChildAt(0) as? ViewGroup)?.getChildAt(i)
+                tabView?.let {
+                    val layoutParams = it.layoutParams as LinearLayout.LayoutParams
+                    layoutParams.marginStart = 20
+                    layoutParams.marginEnd = 20 // 20dp margin between tabs
+                    it.layoutParams = layoutParams
+                }
+            }
         }
 
+        // 탭 생성 로직을 별도 함수로 분리 (item의 matchPogResponse 값을 확인)
+        private fun setupTabs(item: CommonTodayMatchPogModel) {
+            binding.tabTodayMatchLckPog.removeAllTabs()
+            // 세트 탭 추가
+            for (i in 1..setCount) {
+                binding.tabTodayMatchLckPog.addTab(
+                    binding.tabTodayMatchLckPog.newTab().setText("${i.toOrdinal()} POG")
+                )
+            }
+            // matchPogResponse가 기본값인지 확인
+            val shouldShowByMatch = item.matchPogResponse?.let { response ->
+                // 이름이 "기본" 이거나, 프로필 이미지 URL이 "defaultimage" (대소문자 무시),
+                // 또는 playerId가 1이면 기본값으로 판단하여 by Match 탭을 표시하지 않음.
+                !(response.name == "기본" ||
+                        response.profileImageUrl.equals("defaultimage", ignoreCase = true) ||
+                        response.playerId == 1)
+            } ?: false
+
+            if (shouldShowByMatch) {
+                binding.tabTodayMatchLckPog.addTab(
+                    binding.tabTodayMatchLckPog.newTab().setText("by Match")
+                )
+            }
+        }
 
         fun bind(item: CommonTodayMatchPogModel) {
             currentItem = item
             binding.tvTodayMatchLckPogMatchTitle.text = "${item.seasonInfo} ${item.matchNumber.toOrdinal()} Match"
             binding.tvTodayMatchLckPogMatchDate.text = item.matchDate
-            // 첫 번째 탭을 기본으로 설정 (1st POG tab에 해당하는 플레이어만 표시)
-            val firstTabPlayerList = item.setPogResponses.filter { it.setIndex == 1 }.take(1)
 
-            // setPogResponses와 matchPogResponse를 체크하여 visibility 설정
-            if (firstTabPlayerList.isEmpty() && item.matchPogResponse == null) {
+            // item 데이터에 따라 탭을 다시 생성합니다.
+            setupTabs(item)
+
+            // 첫 번째 탭(세트 1 탭)을 기본 선택하여 데이터를 표시합니다.
+            val firstTabPlayerList = item.setPogResponses.filter { it.setIndex == 1 }.take(1)
+            if (firstTabPlayerList.isEmpty()) {
                 binding.tvTodayMatchLckPogPlaying.visibility = View.VISIBLE
                 binding.rvTodayMatchLckPogPlayer.visibility = View.GONE
             } else {
@@ -130,7 +152,7 @@ class LckPogMatchRVA(
         }
 
         override fun areContentsTheSame(oldItem: CommonTodayMatchPogModel, newItem: CommonTodayMatchPogModel): Boolean {
-            return oldItem == newItem // 전체 항목이 동일한지 비교
+            return false
         }
     }
 }

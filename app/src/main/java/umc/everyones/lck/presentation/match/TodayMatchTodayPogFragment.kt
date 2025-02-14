@@ -32,7 +32,7 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     private lateinit var todayPogPlayerRVA4: TodayPogPlayerRVA
     private lateinit var todayPogPlayerRVA5: TodayPogPlayerRVA
     private lateinit var todayPogPlayerRVAMatch: TodayPogPlayerRVA
-    private var matchNumber: Long? = null
+    private var matchId: Long = 0L
 
     override fun initObserver() {
 //        // 세트 수에 따라 레이아웃의 visibility를 조정
@@ -70,14 +70,13 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
                 // seasonName과 서수를 포함한 matchNumber 설정
                 binding.tvTodayMatchTodayPogDate.text = "${it.seasonName} ${it.matchNumber.toOrdinal()} Match"
                 Timber.d("Season %s", it.seasonName)
-                matchNumber = it.matchNumber.toLong()
 
-                // 필요한 API 호출 시 matchNumber 사용 (null 체크 필요)
-                matchNumber?.let { number ->
-                    viewModel.fetchTodayMatchSetCount(number)
-                    viewModel.fetchTodayMatchPogPlayer(number)
-                    Timber.d("MatchNumber used for APIs: $number")
-                }
+                // 필요한 API 호출
+                viewModel.fetchTodayMatchSetCount(matchId)
+                viewModel.fetchTodayMatchPogPlayer(matchId)
+
+                // 디버깅 로그
+                Timber.d("MatchID used for APIs: $matchId")
             }
         })
 
@@ -97,7 +96,7 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
             }
         }
 
-// 매치가 끝나면 매치 pog 투표 시작
+        // 매치가 끝나면 매치 pog 투표 시작
         viewModel.isMatchPogVisible.observe(viewLifecycleOwner) { isVisible ->
             Timber.d("Observed isMatchPogVisible: $isVisible")
             if (isVisible) {
@@ -133,7 +132,7 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
         setupRecyclerView()
         setupVoteImageViewClick()
 
-        val matchId = arguments?.getLong("matchId") ?: return
+        matchId = arguments?.getLong("matchId") ?: return
 
         Timber.d("TodayMatchTodayPogFragment matchId: $matchId") // matchId 로그 출력
         todayViewModel.fetchTodayMatchVoteMatch(matchId)
@@ -148,7 +147,7 @@ class TodayMatchTodayPogFragment : BaseFragment<FragmentTodayMatchTodayPogBindin
     }
     private fun pogVoteButton() {
         binding.tvTodayMatchTodayPogVote.setOnSingleClickListener {
-            val matchId = matchNumber ?: return@setOnSingleClickListener
+            val matchId = arguments?.getLong("matchId") ?: return@setOnSingleClickListener
 //            모두 선택해야 투표할 수 있을 때 사용하는 코드
 //            // 세트 POG 투표
 //            viewModel.setCount.value?.setCount?.let { setCount ->
